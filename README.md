@@ -1,0 +1,4 @@
+Lethe
+=====
+
+Simple PHP framework
