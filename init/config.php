@@ -1,0 +1,31 @@
+<?php
+/**
+* Lethe framework base config
+*
+* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @package Lethe
+*/
+
+// Filesystem basics
+$config['system']['public'] = '/public';
+$config['system']['publicAbs'] = __LETHE_ROOT__.'/public';
+$config['system']['cache'] = __LETHE_ROOT__.'/public/temp';
+
+// Memcache 
+$config['system']['memcacheEnabled'] = true;
+$config['system']['memcacheServer'] = "localhost";
+$config['system']['memcachePort'] = 11211;
+
+// Permissions 
+$config['system']['filePermission'] = 0777;
+$config['system']['directoryPermission'] = 0777;
+
+// Time limit
+$config['system']['sessionLifetime'] = 86400*30;
+$config['system']['sessionCacheExpirre'] = 86400*30;
+$config['system']['cookieLifetime'] = 86400*30;
+
+$config['system']['version'] = '1.2';
+
+// Syslog
+$config['store']['log'] = array();
