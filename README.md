@@ -3,4 +3,5 @@ Lethe
 
 Simple PHP toolkit
 
-REquired: PHP 5.3+
+Required: PHP 5.3+, gdlib
+
