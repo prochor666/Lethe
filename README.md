@@ -1,4 +1,6 @@
 Lethe
 =====
 
-Simple PHP framework
+Simple PHP toolkit
+
+REquired: PHP 5.3+
