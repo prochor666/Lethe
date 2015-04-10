@@ -1,0 +1,19 @@
+{
+    "name": "prochor666/Lethe",
+    "type": "library",
+    "description": "PHP 5.3+ toolkit",
+    "keywords": ["toolkit","framework"],
+    "homepage": "https://github.com/prochor666/Lethe",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Jan Prochazka",
+            "email": "prochor666@gmail.com",
+            "homepage": "http://lethe.warp.rocks",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    }
+}
