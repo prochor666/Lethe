@@ -319,12 +319,10 @@ class Storage{
 	*/
 	public static function listDir($path, $recursive = true)
 	{
-		$stat = array();
+		$stat = array('dirs' => array(), 'files' => array());
 
 		if(self::isDir($path)){
 			$dir = opendir($path);
-
-			$stat = array('dirs' => array(), 'files' => array());
 
 			while(false !== ( $o = readdir($dir)) )
 			{
