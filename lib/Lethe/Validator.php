@@ -43,7 +43,7 @@ class Validator{
 	 * @return bool
 	*/
 	public static function isInt($var){
-		return is_int($var) && $var>0 ? true: false;
+		return is_int($var) ? true: false;
 	}
 
 	/**
@@ -52,7 +52,7 @@ class Validator{
 	 * @return bool
 	*/
 	public static function isNumber($var){
-		return is_numeric($var) && $var>0 ? true: false;
+		return is_numeric($var) ? true: false;
 	}
 
 	/**
