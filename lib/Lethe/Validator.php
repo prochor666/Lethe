@@ -47,6 +47,15 @@ class Validator{
 	}
 
 	/**
+	 * Test numeric
+	 * @param mixed $var
+	 * @return bool
+	*/
+	public static function isNumber($var){
+		return is_numeric($var) && $var>0 ? true: false;
+	}
+
+	/**
 	* Time format checker
 	* @param string $val
 	* @return bool
