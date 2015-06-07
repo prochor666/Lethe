@@ -50,7 +50,7 @@ class Tools{
 	* @return string
 	*/
 	public static function hash($str, $algo = 'sha512'){
-		
+
 		// Blowfish salted
 		if (CRYPT_BLOWFISH == 1 && $algo == 'blowfish') {
 		    return crypt($str, '$2a$07$hezfCdUE7PoPH62VKGqEEY$');
@@ -95,7 +95,7 @@ class Tools{
 	}
 
 	/**
-	* Dump 
+	* Dump
 	* @return string
 	*/
 	public static function dump(){
@@ -113,12 +113,12 @@ class Tools{
 			echo PHP_SAPI === 'cli' ? 'DUMP: no-data': '<pre>DUMP: no-data</pre>';
 		}
 		$result = ob_get_clean();
-		
+
 		return $result;
 	}
 
 	/**
-	* Die dump 
+	* Die dump
 	* @return void
 	*/
 	public static function dd(){
@@ -138,7 +138,7 @@ class Tools{
 			$newDataset = array_slice($data, $from, $to);
 			unset($data);
 		}
-	  
+
 		return $newDataset;
 	}
 
@@ -153,9 +153,9 @@ class Tools{
 		usort($data, function($a, $b) {
 			return mb_strlen($b) - mb_strlen($a);
 		});
-		
+
 		return $data;
-	}	
+	}
 
 
 	/**
@@ -202,10 +202,10 @@ class Tools{
 		}
 
 		$needle = self::sortByLength($needle);
-		
+
 		foreach($needle as $s){
 			$l = mb_strlen($s);
-			
+
 			if( mb_strlen($s) > 0 && mb_substr($str, -mb_strlen($s)) == $s ){
 				return $s;
 			}
@@ -230,17 +230,17 @@ class Tools{
 	* @return string
 	*/
 	public static function detectDomain(){
-		
+
 		$domain = 'www';
-		
+
 		if(array_key_exists('SERVER_NAME', $_SERVER)){
 			$strs = explode('.', $_SERVER['SERVER_NAME']);
-			
+
 			if(count($strs) == 3){
 				$domain = $strs[0];
 			}
 		}
-		
+
 		/*
 		if($domain == 'adm' || $domain == 'dev' || $domain == 'beta' || $domain == 'conf' ){
 			$domain = 'www';
@@ -258,8 +258,8 @@ class Tools{
 		$url = !is_null($url) && !is_array($url) && mb_strlen($url)>0 ? $url: false;
 		if( $url !== false ){
 			header("Location:".$url);
-			header("Connection: close"); 
-		}	
+			header("Connection: close");
+		}
 	}
 
 	/**
@@ -273,7 +273,7 @@ class Tools{
 		}else{
 			header($headerStatus, $replace);
 		}
-		
+
 	}
 
 	/**
@@ -296,19 +296,20 @@ class Tools{
 	  }
 	}
 
+
 	/**
 	* Get client IPv4/IPv6 address (proxies enabled)
 	* @return string
 	*/
 	public static function clientIp() {
-		
+
 		$clientVars = array(
-			'HTTP_CLIENT_IP', 
-			'HTTP_X_FORWARDED_FOR', 
-			'HTTP_X_FORWARDED', 
-			'HTTP_X_CLUSTER_CLIENT_IP', 
-			'HTTP_FORWARDED_FOR', 
-			'HTTP_FORWARDED', 
+			'HTTP_CLIENT_IP',
+			'HTTP_X_FORWARDED_FOR',
+			'HTTP_X_FORWARDED',
+			'HTTP_X_CLUSTER_CLIENT_IP',
+			'HTTP_FORWARDED_FOR',
+			'HTTP_FORWARDED',
 			'REMOTE_ADDR'
 		);
 
@@ -321,6 +322,14 @@ class Tools{
 				}
 			}
 		}
+	}
+
+	/**
+	* Detect SSL (proxies enabled)
+	* @return bool
+	*/
+	public static function ssl() {
+		return isset($_SERVER['HTTP_X_FORWARDED_SSL']) || isset($_SERVER['HTTPS']);
 	}
 
 }
