@@ -66,9 +66,9 @@ class Cmd extends Lethe{
 			return call_user_func_array($this->command, $this->options);
 		}
 
+		// not used yet
 		if( method_exists($this, $this->command) && is_callable(array('self', $this->command)) ){
-			return 'Lethe error: command '.$this->getColored($this->command, 'light_red').' not found'.PHP_EOL;
-			//return call_user_func_array(self::$this->command, $this->options);
+			return call_user_func_array(self::$this->command, $this->options);
 		}
 
 		return 'Lethe error: command '.$this->getColored($this->command, 'light_red').' not found'.PHP_EOL;
