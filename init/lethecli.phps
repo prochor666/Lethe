@@ -1,11 +1,7 @@
 #!/usr/bin/php
 <?php 
-namespace Lethe;
-
 use Lethe\Lethe;
-use Lethe\Tools;
 use Lethe\Cmd;
-use Lethe\Config;
 
 if(PHP_SAPI === 'cli') 
 { 

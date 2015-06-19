@@ -53,24 +53,25 @@ class Cmd extends Lethe{
 		$this->backgroundColors['light_gray'] = '47';
 
 		$this->options = array();
-		$this->command = 'Cmd::info';
+		$this->command = 'info';
 	}
 
 	public function run(){
 		
-		$i = is_callable(array($this, $this->command));
-		$s = is_callable(self::$this->command);
-		
-		if( method_exists($this, $this->command) && ($s === true || $i === true) ){
-			
-			if($i === true){
-				return call_user_func_array(array($this, $this->command), $this->options);
-			}else{	
-				return call_user_func_array(self::$this->command, $this->options);
-			}
-		}else{
-			return 'Lethe error: command '.$this->getColored($this->command, 'light_red').' not found'.PHP_EOL;
+		if( method_exists($this, $this->command) && is_callable(array($this, $this->command)) ){
+			return call_user_func_array(array($this, $this->command), $this->options);
 		}
+
+		if( function_exists($this->command) ){
+			return call_user_func_array($this->command, $this->options);
+		}
+
+		if( method_exists($this, $this->command) && is_callable(array('self', $this->command)) ){
+			return 'Lethe error: command '.$this->getColored($this->command, 'light_red').' not found'.PHP_EOL;
+			//return call_user_func_array(self::$this->command, $this->options);
+		}
+
+		return 'Lethe error: command '.$this->getColored($this->command, 'light_red').' not found'.PHP_EOL;
 	}
 
 	public function info(){
@@ -82,13 +83,13 @@ class Cmd extends Lethe{
 	}
 
 	public function conf(){
-		$info = 'Config/system: '.PHP_EOL.$this->getColored(Tools::dump($this->config('system')), 'light_green').PHP_EOL;
+		$info = $this->getColored(Tools::dump($this->config('system')), 'light_green').PHP_EOL;
 
 		return $info;
 	}
 
-	public static function registry(){
-		$info = 'Registry: '.Tools::dump(Reg::read()).PHP_EOL;
+	public function registry(){
+		$info = $this->getColored(Tools::dump(Reg::read()), 'yellow').PHP_EOL;
 
 		return $info;
 	}
