@@ -90,9 +90,9 @@ class Mysqldb extends Lethe{
 			if (!$link) {
 				$link = false;
 			}else{
-				$link = mysqli_connect($this->host, $this->user, $this->password);
+				$link = @mysqli_connect($this->host, $this->user, $this->password);
 				if($link !== false){
-					$db = mysqli_select_db($link, $this->db); 
+					$db = @mysqli_select_db($link, $this->db); 
 					mysqli_set_charset($link, "utf8");
 				}
 			}
@@ -101,9 +101,9 @@ class Mysqldb extends Lethe{
 				$this->error('MySQL query error: '.mysqli_connect_error());
 			}
 		}else{
-			$link = mysql_connect($this->host, $this->user, $this->password);
+			$link = @mysql_connect($this->host, $this->user, $this->password);
 			if($link !== false){ 
-				$db = mysql_select_db($this->db,$link); 
+				$db = @mysql_select_db($this->db,$link); 
 				mysql_query("SET NAMES 'utf8'");
 			}else{
 				if($link === false){
