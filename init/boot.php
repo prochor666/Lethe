@@ -30,7 +30,7 @@ use Lethe\Lethe;
 use Lethe\Autoloader;
 use Lethe\Config;
 use Lethe\Reg;
-
+use Lethe\Tools;
 
 if(	file_exists(__LETHE_LETHE__.'/lib/Lethe/Autoloader.php') )
 { 
@@ -38,13 +38,16 @@ if(	file_exists(__LETHE_LETHE__.'/lib/Lethe/Autoloader.php') )
 
 	try {
 		
-		session_start();
-		
 		ob_start('mb_output_handler');
+
 		Autoloader::init()->register(array(
 			__LETHE_LETHE__.'/interfaces/',
 			__LETHE_LETHE__.'/lib/',
 		));
+
+		Tools::cookieDomain();
+		
+		session_start();
 
 		Config::init();
 		Reg::init();
