@@ -17,8 +17,8 @@ $config['system']['memcacheServer'] = "localhost";
 $config['system']['memcachePort'] = 11211;
 
 // Permissions 
-$config['system']['filePermission'] = 0777;
-$config['system']['directoryPermission'] = 0777;
+$config['system']['filePermission'] = 0644;
+$config['system']['directoryPermission'] = 0755;
 
 // Time limit
 $config['system']['sessionLifetime'] = 86400*30;
