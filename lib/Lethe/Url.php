@@ -98,7 +98,7 @@ class Url{
 	}
 
 	/**
-	* Fragment parse
+	* Fragment update
 	* @description Create identifier from given fragment!!!!
 	* @param array $urlArray 
 	* @param array $keys

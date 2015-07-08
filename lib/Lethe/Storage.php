@@ -33,7 +33,8 @@ class Storage{
 	* @param int $keepalive
 	* @return string
 	*/
-	public static function cache($file, $data, $keepalive = 3600){
+	public static function cache($file, $data, $keepalive = 3600)
+	{
 		$c = new Cache;
 		$c->cacheFile = $file;
 		$c->data = $data;
@@ -47,7 +48,8 @@ class Storage{
 	* @param string $data
 	* @return string
 	*/
-	public static function cacheWrite($file, $data){
+	public static function cacheWrite($file, $data)
+	{
 		return self::cache($file, $data, 0);
 	}
 
@@ -56,7 +58,8 @@ class Storage{
 	* @param string $file
 	* @return bool|string
 	*/
-	public static function cacheRead($file){
+	public static function cacheRead($file)
+	{
 		$c = new Cache;
 		$c->cacheFile = $file;
 		return $c->cacheRead();
@@ -68,7 +71,8 @@ class Storage{
 	* @param int $keepalive
 	* @return bool
 	*/
-	public static function isExpired($file, $keepalive = 3600){
+	public static function isExpired($file, $keepalive = 3600)
+	{
 		$c = new Cache;
 		$c->cacheFile = $file;
 		$c->keepalive = (int)$keepalive;
@@ -94,7 +98,7 @@ class Storage{
 
 	/**
 	* Open base dir effect, can we write?
-	* 
+	*
 	* @param string $path
 	* @return bool
 	*/
@@ -118,13 +122,15 @@ class Storage{
 	public static function copyFile($pathFrom, $pathTo)
 	{
 		$status = false;
-		if(self::canRead($pathFrom) && self::canWrite(dirname($pathTo)) && self::isFile($pathFrom)){
-			if(function_exists('copy')){
+		if(self::canRead($pathFrom) && self::canWrite(dirname($pathTo)) && self::isFile($pathFrom))
+		{
+			if(function_exists('copy'))
+			{
 				$status = copy($pathFrom, $pathTo);
 			}else{
 				$emz = file_get_contents($pathFrom);
 				$status = file_put_contents($pathTo, $emz);
-			}	
+			}
 			umask(0000);
 			chmod($pathTo, Config::query('system/filePermission'));
 		}
@@ -137,8 +143,10 @@ class Storage{
 	* @param string $pathTo
 	* @return bool
 	*/
-	public static function moveFile($pathFrom, $pathTo){
-		if(self::canRead($pathFrom) && self::canWrite(dirname($pathTo)) && self::isFile($pathFrom)){
+	public static function moveFile($pathFrom, $pathTo)
+	{
+		if(self::canRead($pathFrom) && self::canWrite(dirname($pathTo)) && self::isFile($pathFrom))
+		{
 			return rename($pathFrom, $pathTo);
 		}
 		return false;
@@ -149,8 +157,10 @@ class Storage{
 	* @param string $path
 	* @return bool
 	*/
-	public static function deleteFile($path){
-		if( self::canWrite($path) && self::isFile($path) ){
+	public static function deleteFile($path)
+	{
+		if( self::canWrite($path) && self::isFile($path) )
+		{
 			return unlink($path);
 		}
 		return false;
@@ -161,7 +171,8 @@ class Storage{
 	* @param string $path
 	* @return string|bool
 	*/
-	public static function getFileData($path = null){
+	public static function getFileData($path = null)
+	{
 		return self::canRead($path) && ( self::isFile($path) || self::isLink($path) ) ? file_get_contents($path): false;
 	}
 
@@ -171,9 +182,11 @@ class Storage{
 	* @param string $data
 	* @return int|bool
 	*/
-	public static function putFile($path = null, $data = null){
+	public static function putFile($path = null, $data = null)
+	{
 		$res = false;
-		if( self::canWrite(dirname($path)) ){
+		if( self::canWrite(dirname($path)) )
+		{
 			$res = file_put_contents($path, $data);
 			umask(0000);
 			chmod($path, Config::query('system/filePermission'));
@@ -186,34 +199,38 @@ class Storage{
 	* @param string $path
 	* @return bool
 	*/
-	public static function isFile($path){
+	public static function isFile($path)
+	{
 		return self::canRead($path) &&  file_exists($path) && is_file($path) ? true: false;
-	} 
+	}
 
 	/**
 	* Check symlink
 	* @param string $path
 	* @return bool
 	*/
-	public static function isLink($path){
+	public static function isLink($path)
+	{
 		return self::canRead($path) && file_exists($path) && is_link($path) ? true: false;
-	} 
+	}
 
 	/**
 	* File, symlink or directory information
 	* @param string $path
 	* @return array|bool
 	*/
-	public static function fileInfo($path){
+	public static function fileInfo($path)
+	{
 		return self::canRead($path) && self::isFile($path) ? lstat($path): stat($path);
-	} 
+	}
 
 	/**
 	* File extension, it's not checking with file_exists!
 	* @param string $path
 	* @return string
 	*/
-	public static function extension($path){
+	public static function extension($path)
+	{
 		return pathinfo($path, PATHINFO_EXTENSION);
 	}
 
@@ -222,7 +239,8 @@ class Storage{
 	* @param string $path
 	* @return string
 	*/
-	public static function ext($path){
+	public static function ext($path)
+	{
 		return self::extension($path);
 	}
 
@@ -231,8 +249,10 @@ class Storage{
 	* @param string $path
 	* @return string
 	*/
-	public static function fileNameOnly($path){
-		if(version_compare(PHP_VERSION, '5.2.0', '>=')) {
+	public static function fileNameOnly($path)
+	{
+		if(version_compare(PHP_VERSION, '5.2.0', '>='))
+		{
 			return pathinfo($path, PATHINFO_FILENAME);
 		}
 		$f = explode('.', $path);
@@ -252,33 +272,38 @@ class Storage{
 	* @param string $path
 	* @return bool
 	*/
-	public static function isDir($path){
+	public static function isDir($path)
+	{
 		return self::canRead($path) && file_exists($path) && is_dir($path) ? true: false;
-	} 
+	}
 
 	/**
 	* Create directory
 	* @param string $path
 	* @return bool
 	*/
-	public static function makeDir($path){
-		
+	public static function makeDir($path)
+	{
+
 		$path = explode('/', $path);
 		$stat = false;
 		$_dir = $_up = '';
 
-		foreach($path as $dir){
-			
+		foreach($path as $dir)
+		{
+
 			$_dir = $_dir.'/'.$dir;
-			
-			if( self::canWrite($_up) ){	
-				if(!self::isDir($_dir)){
+
+			if( self::canWrite($_up) )
+			{
+				if(!self::isDir($_dir))
+				{
 					umask(0000);
 					$stat = mkdir($_dir, Config::query('system/directoryPermission'));
 				}
 			}else{
 				//echo 'Invalid, can\'t write'.$_up.'<br>';
-			}	
+			}
 
 			$_up = $_dir;
 		}
@@ -292,8 +317,10 @@ class Storage{
 	* @param string $pathTo
 	* @return bool
 	*/
-	public static function moveDir($pathFrom, $pathTo){
-		if(self::isDir($pathFrom)){
+	public static function moveDir($pathFrom, $pathTo)
+	{
+		if(self::isDir($pathFrom))
+		{
 			return rename($pathFrom, $pathTo);
 		}
 		return false;
@@ -304,8 +331,10 @@ class Storage{
 	* @param string $path
 	* @return bool
 	*/
-	public static function deleteDir($path){
-		if(self::isDir($path) && self::isEmptyDir($path)){
+	public static function deleteDir($path)
+	{
+		if(self::isDir($path) && self::isEmptyDir($path))
+		{
 			return rmdir($path);
 		}
 		return false;
@@ -321,39 +350,40 @@ class Storage{
 	{
 		$stat = array('dirs' => array(), 'files' => array());
 
-		if(self::isDir($path)){
+		if(self::isDir($path))
+		{
 			$dir = opendir($path);
 
-			while(false !== ( $o = readdir($dir)) )
+			while(false !== ( $o = readdir($dir)))
 			{
-				if (( $o != '.' ) && ( $o != '..' ))
+				if(( $o != '.' ) && ( $o != '..' ))
 				{
-					if ( self::isDir($path . '/' . $o) )
+					if(self::isDir($path . '/' . $o))
 					{
-						$stat['dirs'][$o] = array( 
-							'path' => $path. '/' . $o, 
-							'info' => self::fileInfo( $path. '/' . $o )	
-						);	
+						$stat['dirs'][$o] = array(
+							'path' => $path. '/' . $o,
+							'info' => self::fileInfo( $path. '/' . $o )
+						);
 
-						if( $recursive === true )
-						{	
+						if($recursive === true)
+						{
 							$stat['dirs'][$o]['subdirs'] = self::listDir( $path . '/' . $o, $recursive);
 						}
 
 					}else{
-						$stat['files'][$o] = array( 
-							'path' => $path. '/' . $o, 
+						$stat['files'][$o] = array(
+							'path' => $path. '/' . $o,
 							'info' => self::fileInfo( $path. '/' . $o )
 						);
 					}
 				}
 			}
-			closedir($dir); 
+			closedir($dir);
 		}
 
 		ksort($stat['dirs']);
 		ksort($stat['files']);
-	
+
 		return $stat;
 	}
 
@@ -363,22 +393,28 @@ class Storage{
 	* @param string $pathTo
 	* @return bool
 	*/
-	public static function copyDir($pathFrom, $pathTo){
+	public static function copyDir($pathFrom, $pathTo)
+	{
 		$stat = self::isEmptyDir($pathFrom);
 
-		if(self::isDir($pathFrom)){
+		if(self::isDir($pathFrom))
+		{
 			$dir = opendir($pathFrom);
 			self::makeDir($pathTo);
-			while(false !== ( $file = readdir($dir)) ) {
-				if (( $file != '.' ) && ( $file != '..' )) {
-					if ( self::isDir($pathFrom . '/' . $file) ) {
+			while(false !== ( $file = readdir($dir)) )
+			{
+				if (( $file != '.' ) && ( $file != '..' ))
+				{
+					if ( self::isDir($pathFrom . '/' . $file) )
+					{
 						$stat = self::copyDir($pathFrom . '/' . $file, $pathTo . '/' . $file);
-					}elseif( self::isFile($pathFrom . '/' . $file) ){
+					}elseif( self::isFile($pathFrom . '/' . $file) )
+					{
 						$stat = self::copyFile($pathFrom . '/' . $file, $pathTo . '/' . $file);
 					}
 				}
 			}
-			closedir($dir); 
+			closedir($dir);
 		}
 
 		return $stat;
@@ -389,10 +425,11 @@ class Storage{
 	* @param string $path
 	* @return bool
 	*/
-	public static function isEmptyDir($path){
+	public static function isEmptyDir($path)
+	{
 		$dir = $path;
 		return ( self::isDir($dir) && ($files = @scandir($dir)) && count($files) <= 2);
-	} 
+	}
 
 	/*
 	* *******************
@@ -405,7 +442,8 @@ class Storage{
 	* @param string $path
 	* @return int|string|bool
 	*/
-	public static function permission($path){
+	public static function permission($path)
+	{
 		return self::canRead($path) ? substr(sprintf('%o', fileperms($path)), -4): false;
 	}
 
@@ -415,9 +453,11 @@ class Storage{
 	* @param int $perm
 	* @return bool
 	*/
-	public static function permissionChange($path, $perm = 0666){
+	public static function permissionChange($path, $perm = 0666)
+	{
 		$f = $path;
-		if( self::canWrite($f) ){
+		if( self::canWrite($f) )
+		{
 			umask(0000);
 			return chmod($f, $perm);
 		}
@@ -438,19 +478,18 @@ class Storage{
 	* @param string $pathTo
 	* @return bool|string
 	*/
-	public static function downloadFile($pathFrom, $pathTo){
+	public static function downloadFile($pathFrom, $pathTo)
+	{
 		$res = false;
 		$data = @file_get_contents($pathFrom);
-		
-		if($data !== false){
+
+		if($data !== false)
+		{
 			$res = $data;
 			self::putFile($pathTo, $data);
 		}
-		
+
 		return $res;
 	}
-
-
-
 }
 
