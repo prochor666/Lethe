@@ -182,7 +182,7 @@ class Image{
 	* @return int
 	*/
 	public function height(){
-		return $this->imageType;
+		return imagesy($this->image);
 	}
 
 	/**
@@ -191,7 +191,7 @@ class Image{
 	* @return string
 	*/
 	public function type(){
-		return imagesy($this->image);
+		return $this->imageType;
 	}
 
 	/**
