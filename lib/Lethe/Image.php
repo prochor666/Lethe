@@ -7,16 +7,16 @@
 */
 
 namespace Lethe;
- 
+
 /**
 * Lethe\Image - image manipulation class, resize/convert/save images
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 * @license http://opensource.org/licenses/mit-license.php MIT License
 * @version 1.0 (2014-06-28)
 * @filesource
-*/ 
+*/
 class Image{
- 
+
 	public $imageSource, $imageTarget, $compression, $permissions;
 
 	protected $image, $imageInfo, $extendedInfo, $imageType;
@@ -49,23 +49,23 @@ class Image{
 
 			$this->imageInfo = getimagesize($this->imageSource, $this->extendedInfo);
 			$this->imageType = $this->imageInfo[2];
-	
+
 			if(count($this->imageInfo)>0){
-				
+
 				switch( $this->imageType ){
 					case IMAGETYPE_JPEG:
 						$this->image = imagecreatefromjpeg($this->imageSource);
 					break; case IMAGETYPE_PNG:
 						$this->image = imagecreatefrompng($this->imageSource);
 					break; case IMAGETYPE_GIF:
-						$this->image = imagecreatefromgif($this->imageSource);						
-					/*				
+						$this->image = imagecreatefromgif($this->imageSource);
+					/*
 					break; case IMAGETYPE_WBMP:
 						$this->image = imagecreatefromwbmp($this->imageSource);
 					*/
 					break; default:
 						$this->image = NULL;
-				}	
+				}
 			}
 		}
 	}
@@ -81,7 +81,7 @@ class Image{
 		$result = false;
 
 		if($this->image !== false){
-			
+
 			if($save === true)
 			{
 				$result = (bool)file_put_contents($this->imageTarget, $this->show());
@@ -92,10 +92,10 @@ class Image{
 				}
 
 			}else{
-				
+
 				$result = $this->show();
 			}
-				
+
 		}
 
 		return $result;
@@ -110,7 +110,7 @@ class Image{
 
 		// Make buffer
 		ob_start();
-		
+
 		switch( $this->imageType ){
 			case IMAGETYPE_JPEG:
 				imagejpeg($this->image, null, $this->compression);
@@ -118,12 +118,12 @@ class Image{
 				$this->compression = $this->compression>9 ? 7: (int)$this->compression;
 				imagepng($this->image, null, $this->compression);
 			break; case IMAGETYPE_GIF:
-				imagegif($this->image, null);	
+				imagegif($this->image, null);
 			break; default:
-				echo 'IMAGE TYPE ERROR';						
+				echo 'IMAGE TYPE ERROR';
 		}
 
-		return ob_get_clean();			
+		return ob_get_clean();
 	}
 
 	/**
@@ -131,7 +131,7 @@ class Image{
 	* @param void
 	* @return bool
 	*/
-	public function convert($format = IMAGETYPE_JPEG) 
+	public function convert($format = IMAGETYPE_JPEG)
 	{
 		$this->imageType = $format;
 		return $this->process(true);
@@ -142,7 +142,7 @@ class Image{
 	* @param void
 	* @return bool
 	*/
-	public function save() 
+	public function save()
 	{
 		return $this->process(true);
 	}
@@ -182,6 +182,15 @@ class Image{
 	* @return int
 	*/
 	public function height(){
+		return $this->imageType;
+	}
+
+	/**
+	* Get image type
+	* @param void
+	* @return string
+	*/
+	public function type(){
 		return imagesy($this->image);
 	}
 
@@ -196,31 +205,31 @@ class Image{
 		$width = $this->width() * $ratio;
 		$this->resize($width, $height);
 	}
- 
+
 	/**
 	* Resize image, respect input width, set proper aspect ratio and calculate height
 	* @param int $height
 	* @return int
 	*/
-	public function resizeToWidth($width) 
+	public function resizeToWidth($width)
 	{
 		$ratio = $width / $this->width();
 		$height = $this->height() * $ratio;
 		$this->resize($width,$height);
 	}
- 
+
 	/**
 	* Resize image to $scale %, based on origin size
 	* @param int $scale
 	* @return void
 	*/
-	public function scale($scale) 
+	public function scale($scale)
 	{
 		$width = $this->width() * $scale/100;
 		$height = $this->height() * $scale/100;
 		$this->resize($width, $height);
 	}
- 
+
 
 	/**
 	* Resize image to $width & $height
@@ -228,22 +237,22 @@ class Image{
 	* @param int $height
 	* @return void
 	*/
-	public function resize($width, $height) 
+	public function resize($width, $height)
 	{
-		
+
 		$imageResized = imagecreatetruecolor($width, $height);
-		
+
 		if ( ($this->imageType == IMAGETYPE_GIF) || ($this->imageType == IMAGETYPE_PNG) )
 		{
 			$transparentIndex = imagecolortransparent($this->image);
-			
+
 			$ti = (int)imagecolorstotal($this->image);
-			
+
 			// Get transparent color
 			if($ti == 0){
 				$transparentIndex = imagetruecolortopalette($imageResized, false, $ti );
 			}
-			
+
 			// If specific transparent color present
 			if ($transparentIndex === true)
 			{
@@ -277,18 +286,18 @@ class Image{
 				imagesavealpha($imageResized, true);
 			}
 		}
-		
+
 		imagecopyresampled($imageResized, $this->image, 0, 0, 0, 0, $width, $height, $this->width(), $this->height());
-		
+
 		$this->image = $imageResized;
-	}	  
- 
+	}
+
 	/**
 	* Closet (destroy) image resource
 	* @param void
 	* @return void
 	*/
-	public function close() 
+	public function close()
 	{
 		imagedestroy($this->image);
 		$this->image = false;

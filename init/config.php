@@ -1,6 +1,6 @@
 <?php
 /**
-* Lethe framework base config
+* Lethe base config
 *
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 * @package Lethe
@@ -11,12 +11,12 @@ $config['system']['public'] = '/public';
 $config['system']['publicAbs'] = __LETHE_ROOT__.'/public';
 $config['system']['cache'] = __LETHE_ROOT__.'/public/temp';
 
-// Memcache 
+// Memcache
 $config['system']['memcacheEnabled'] = true;
 $config['system']['memcacheServer'] = "localhost";
 $config['system']['memcachePort'] = 11211;
 
-// Permissions 
+// Permissions
 $config['system']['filePermission'] = 0644;
 $config['system']['directoryPermission'] = 0755;
 
