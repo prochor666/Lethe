@@ -45,17 +45,14 @@ class Image{
 	*/
 	public function load()
 	{
-		if(file_exists($this->imageSource))
-		{
+		if(file_exists($this->imageSource)){
 
 			$this->imageInfo = getimagesize($this->imageSource, $this->extendedInfo);
 			$this->imageType = $this->imageInfo[2];
 	
-			if(count($this->imageInfo)>0)
-			{
+			if(count($this->imageInfo)>0){
 				
-				switch( $this->imageType )
-				{
+				switch( $this->imageType ){
 					case IMAGETYPE_JPEG:
 						$this->image = imagecreatefromjpeg($this->imageSource);
 					break; case IMAGETYPE_PNG:
@@ -67,7 +64,7 @@ class Image{
 						$this->image = imagecreatefromwbmp($this->imageSource);
 					*/
 					break; default:
-					
+						$this->image = NULL;
 				}	
 			}
 		}
@@ -79,38 +76,24 @@ class Image{
 	* @param bool $save
 	* @return bool
 	*/
-	protected function process($save = true)
-	{
+	protected function process($save = true){
 
 		$result = false;
 
-		if($this->image !== false)
-		{
+		if($this->image !== false){
 			
 			if($save === true)
 			{
-				
-				// Make buffer
-				ob_start();
-				$this->show();
-				// Read buffer		
-				$result = ob_get_clean();			
+				$result = (bool)file_put_contents($this->imageTarget, $this->show());
 
-				if($save === true)
-				{
-					$result = (bool)file_put_contents($this->imageTarget, $result);
-
-					if( $this->permissions != null ) 
-					{
-						umask(0000);
-						chmod($this->imageTarget, $this->permissions);
-					}
-				}	
+				if( $this->permissions != null ) {
+					umask(0000);
+					chmod($this->imageTarget, $this->permissions);
+				}
 
 			}else{
 				
-				$result = true;
-				$this->show();
+				$result = $this->show();
 			}
 				
 		}
@@ -123,22 +106,28 @@ class Image{
 	* @param void
 	* @return void
 	*/
-	protected function show()
-	{
-		switch( $this->imageType )
-		{
+	protected function show(){
+
+		// Make buffer
+		ob_start();
+		
+		switch( $this->imageType ){
 			case IMAGETYPE_JPEG:
 				imagejpeg($this->image, null, $this->compression);
 			break; case IMAGETYPE_PNG:
 				$this->compression = $this->compression>9 ? 7: (int)$this->compression;
 				imagepng($this->image, null, $this->compression);
 			break; case IMAGETYPE_GIF:
-				imagegif($this->image, null);						
+				imagegif($this->image, null);	
+			break; default:
+				echo 'IMAGE TYPE ERROR';						
 		}
+
+		return ob_get_clean();			
 	}
 
 	/**
-	* File conversion, set image type to force formt change
+	* File conversion, set image type to force format change
 	* @param void
 	* @return bool
 	*/
@@ -165,8 +154,7 @@ class Image{
 	*/
 	public function output()
 	{
-		switch( $this->imageType )
-		{
+		switch( $this->imageType ){
 			case IMAGETYPE_JPEG:
 				header('Content-Type: image/jpeg');
 			break; case IMAGETYPE_PNG:
@@ -189,22 +177,11 @@ class Image{
 	}
 
 	/**
-	* Get image type
-	* @param void
-	* @return string
-	*/
-	public function type()
-	{
-		return $this->imageType;
-	}
-
-	/**
 	* Get image height
 	* @param void
 	* @return int
 	*/
-	public function height()
-	{
+	public function height(){
 		return imagesy($this->image);
 	}
 
@@ -259,11 +236,11 @@ class Image{
 		if ( ($this->imageType == IMAGETYPE_GIF) || ($this->imageType == IMAGETYPE_PNG) )
 		{
 			$transparentIndex = imagecolortransparent($this->image);
+			
 			$ti = (int)imagecolorstotal($this->image);
 			
 			// Get transparent color
-			if($ti == 0)
-			{
+			if($ti == 0){
 				$transparentIndex = imagetruecolortopalette($imageResized, false, $ti );
 			}
 			
@@ -272,12 +249,16 @@ class Image{
 			{
 				// Get the original image transparent color RGB values
 				$trnprt_color = imagecolorsforindex($this->image, $transparentIndex);
+
 				// Allocate the same color in the new image resource
 				$transparentIndex = imagecolorallocate($imageResized, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
+
 				// Fill the background of the new image with allocated color.
 				imagefill($imageResized, 0, 0, $transparentIndex);
+
 				// Set transparent background color for new image
 				imagecolortransparent($imageResized, $transparentIndex);
+
 
 			}elseif ($this->imageType == IMAGETYPE_PNG)
 			{
@@ -285,16 +266,20 @@ class Image{
 
 				// Turn off transparency blending (temporarily)
 				imagealphablending($imageResized, false);
+
 				// Create a new transparent color for image
 				$color = imagecolorallocatealpha($imageResized, 0, 0, 0, 127);
+
 				// Completely fill the background of the new image with allocated color.
 				imagefill($imageResized, 0, 0, $color);
+
 				// Restore transparency blending
 				imagesavealpha($imageResized, true);
 			}
 		}
 		
 		imagecopyresampled($imageResized, $this->image, 0, 0, 0, 0, $width, $height, $this->width(), $this->height());
+		
 		$this->image = $imageResized;
 	}	  
  
