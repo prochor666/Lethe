@@ -113,7 +113,7 @@ class Lethe implements ISystem, IDebug{
 	* @return array
 	*/		
 	public function langConfig(){
-		return json_decode(Storage::getFileData($this->config('system/root').'/core/Lethe/init/lang.json'), true);
+		return json_decode(Storage::getFileData(__LETHE_LETHE__.'/init/lang.json'), true);
 	}
 
 }
