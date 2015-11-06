@@ -25,7 +25,7 @@ $config['system']['sessionLifetime'] = 86400*30;
 $config['system']['sessionCacheExpirre'] = 86400*30;
 $config['system']['cookieLifetime'] = 86400*30;
 
-$config['system']['version'] = '1.2';
+$config['system']['version'] = '0.6.0';
 
 // Syslog
 $config['store']['log'] = array();
