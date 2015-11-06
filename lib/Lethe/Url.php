@@ -14,9 +14,10 @@ use Lethe\Tools;
 * Lethe\Url - universal url parser/extractor
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 * @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2014-04-28)
+* @version 1.0 (2015-02-15)
 */
-class Url{
+class Url
+{
 	
 	/**
 	* @ignore
@@ -34,19 +35,23 @@ class Url{
 	* @param string $path = some/path/to
 	* @return string
 	*/
-	public static function parse($path = null, $delimiter = '-'){
+	public static function parse($path = null, $delimiter = '-')
+	{
 		
 		$result = array(0 => array(), 1 => array());
 		
 		$qspos = strpos( $path, '?' );
-		if( $qspos !== false ){
+		if( $qspos !== false )
+		{
 			$path = mb_substr( $path, 0, $qspos );
 		}
 		$src = explode('/', $path);
 		$src = array_filter($src, array('self', 'string'));
 		
-		if (!is_null($delimiter) || mb_strlen($delimiter) > 0) {
-			foreach($src as $s){
+		if (!is_null($delimiter) || mb_strlen($delimiter) > 0) 
+		{
+			foreach($src as $s)
+			{
 				$result[0][] = self::extract($s, $delimiter); 	
 				$result[1][$s] = self::extract($s, $delimiter); 	
 			}
@@ -55,7 +60,15 @@ class Url{
 		return $result;
 	}
 
-	public static function string($v){
+
+	/**
+	* Check string
+	* @description Check string length
+	* @mixed $index
+	* @return bool
+	*/
+	public static function string($v)
+	{
 		$v = (string)$v;
 		return mb_strlen($v)>0 ? true: false;
 	}	
@@ -67,7 +80,8 @@ class Url{
 	* @param int $index
 	* @return bool|string
 	*/
-	public static function check($model, $index = 0){
+	public static function check($model, $index = 0)
+	{
 		return is_array($model) && array_key_exists($index, $model) ? $model[$index]['path']: false;
 	}
 
@@ -78,7 +92,8 @@ class Url{
 	* @param string $delimiter = null, '-'...
 	* @return string
 	*/
-	public static function extract($path = null, $delimiter = null){
+	public static function extract($path = null, $delimiter = null)
+	{
 		
 		$result = array('path' => null, 'name' => null, 'id' => null);
 
@@ -87,7 +102,8 @@ class Url{
 		$src = array_filter(explode($delimiter, $path));
 		$i = count($src) - 1;
 		
-		if($i>0){
+		if($i>0)
+		{
 			$id = $src[$i];
 			array_pop($src);
 			$result['name'] = implode($delimiter, $src);
@@ -104,14 +120,16 @@ class Url{
 	* @param array $keys
 	* @return string
 	*/
-	public static function update($urlArray, $keys = array()){
-	
+	public static function update($urlArray, $keys = array())
+	{
 		$query = array();
-		if( array_key_exists('query', $urlArray) ){
+		if( array_key_exists('query', $urlArray) )
+		{
 			parse_str( $urlArray['query'], $query );
 		}
 
-		foreach($keys as $key => $value){
+		foreach($keys as $key => $value)
+		{
 			$query[$key] = $value;
 		}
 
