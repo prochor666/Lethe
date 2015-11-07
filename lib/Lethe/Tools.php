@@ -311,47 +311,6 @@ class Tools{
 	}
 
 	/**
-	* Set proper domain cookie
-	*/
-	public static function cookieDomain()
-	{
-		if(isset($_SERVER['HTTP_HOST']))
-		{
-			if(strpos($_SERVER['HTTP_HOST'], ':') !== false)
-			{
-				$domain = substr($_SERVER['HTTP_HOST'], 0, (int)strpos($_SERVER['HTTP_HOST'], ':'));
-			}else{
-				$domain = $_SERVER['HTTP_HOST'];
-			}
-
-			$domain = preg_replace('`^www.`', '', $domain);
-
-			$rootDomain = $domain;
-
-			// Per RFC 2109, cookie domains must contain at least one dot other than the
-			// first. For hosts such as 'localhost', we don't set a cookie domain.
-			$nd = explode('.', $domain);
-			if (count($nd) > 2)
-			{
-				unset($nd[0]);
-				$rootDomain = implode('.', $nd);
-			}
-
-			$currentCookieParams = session_get_cookie_params();
-			ini_set('session.cookie_domain', '.'.$rootDomain);
-
-			session_set_cookie_params(
-				$currentCookieParams['lifetime'],
-				$currentCookieParams['path'],
-				'.'.$rootDomain,
-				$currentCookieParams['secure'],
-				$currentCookieParams['httponly']
-			);
-		}
-	}
-
-
-	/**
 	* Get client IPv4/IPv6 address (proxies enabled)
 	* @return string
 	*/

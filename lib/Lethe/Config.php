@@ -176,6 +176,40 @@ class Config{
 		return self::read();
 	}
 
+
+	/**
+	* Set proper and safe session cookie
+	* @param integer sessionLifetime
+	* @return void
+	*/
+	protected static function cookieDomain($sessionLifetime)
+	{
+		if(isset($_SERVER['HTTP_HOST']))
+		{
+			if(strpos($_SERVER['HTTP_HOST'], ':') !== false)
+			{
+				$domain = substr($_SERVER['HTTP_HOST'], 0, (int)strpos($_SERVER['HTTP_HOST'], ':'));
+			}else{
+				$domain = $_SERVER['HTTP_HOST'];
+			}
+
+			$domain = preg_replace('`^www.`', '', $domain);
+
+			$rootDomain = $domain;
+
+			// Per RFC 2109, cookie domains must contain at least one dot other than the
+			// first. For hosts such as 'localhost', we don't set a cookie domain.
+			$nd = explode('.', $domain);
+			if (count($nd) > 2)
+			{
+				unset($nd[0]);
+				$rootDomain = implode('.', $nd);
+			}
+
+			session_set_cookie_params ( $sessionLifetime, '/', '.'.$rootDomain, false, true );
+		}
+	}
+
 	/**
 	* Initialize registry, core values, readonly system variables
 	* @param void
@@ -255,7 +289,7 @@ class Config{
 		require_once __LETHE_LETHE__.'/init/config.php';
 
 		session_cache_limiter('nocache');
-		session_set_cookie_params ( $config['system']['sessionLifetime'], '/', $config['system']['domainName'], false, true );
+		self::cookieDomain($config['system']['sessionLifetime']);
 
 		if($config['system']['memcacheEnabled'] === true)
 		{

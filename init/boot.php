@@ -46,7 +46,6 @@ if(	file_exists(__LETHE_LETHE__.'/lib/Lethe/Autoloader.php') )
 			__LETHE_LETHE__.'/lib/',
 		));
 
-		Tools::cookieDomain();
 		Config::init();
 		Reg::init();
 
