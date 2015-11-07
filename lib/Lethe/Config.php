@@ -32,20 +32,23 @@ class Config{
 	/**
 	* @ignore
 	*/
-	private function __construct() {
+	private function __construct()
+	{
 	}
 
 	/**
 	* @ignore
 	*/
-	public function __clone() {
+	public function __clone()
+	{
 		trigger_error('Clone is not allowed.', E_USER_ERROR);
 	}
 
  	/**
 	* @ignore
 	*/
-	public function __wakeup() {
+	public function __wakeup()
+	{
 		trigger_error('Unserializing is not allowed.', E_USER_ERROR);
 	}
 
@@ -54,8 +57,10 @@ class Config{
 	* @param void
 	* @return object
 	*/
-	public static function init() {
-		if (self::$instance == NULL) {
+	public static function init()
+	{
+		if (self::$instance == NULL)
+		{
 			self::$instance = new self();
 			self::release();
 		}
@@ -67,19 +72,24 @@ class Config{
 	* @param string $q
 	* @return mixed
 	*/
-	public static function query($q = null){
+	public static function query($q = null)
+	{
 		$origin = self::$config;
 		$section = explode('/', trim($q, ' /'));
 		$valid = array('user', 'db', 'mail', 'store', 'system', 'error' );
 		$result = false; //array('status' => false, 'reason' => 'No value found');
 
-		if(count($section)>0 && array_key_exists($section[0], $origin) && in_array($section[0], $valid) ){
+		if(count($section)>0 && array_key_exists($section[0], $origin) && in_array($section[0], $valid) )
+		{
 			$lastRound = count($section)-1;
 
-			foreach($section as $k => $s){
-				if(array_key_exists($s, $origin)){
+			foreach($section as $k => $s)
+			{
+				if(array_key_exists($s, $origin))
+				{
 					$origin = $origin[$s];
-					if($lastRound == $k){
+					if($lastRound == $k)
+					{
 						$result = $origin;
 					}
 				}
@@ -94,8 +104,10 @@ class Config{
 	* @param array $block
 	* @return void
 	*/
-	public static function setBlock( $block = array() ){
-		foreach($block as $k => $v){
+	public static function setBlock( $block = array() )
+	{
+		foreach($block as $k => $v)
+		{
 			self::set($k, $v);
 		}
 	}
@@ -106,8 +118,10 @@ class Config{
 	* @param array $block
 	* @return void
 	*/
-	public static function configure( $block = array() ){
-		if(is_array($block)){
+	public static function configure( $block = array() )
+	{
+		if(is_array($block))
+		{
 			self::setBlock($block);
 		}
 	}
@@ -118,18 +132,21 @@ class Config{
 	* @param mixed $value
 	* @return void
 	*/
-	public static function set($q = 'store/blind', $value = false){
+	public static function set($q = 'store/blind', $value = false)
+	{
 		$branch = &self::$config;
 		$section = explode('/', trim($q, ' /'));
 		$valid = array('user', 'store', 'mail', 'db');
 
-		if(count($section)>1 && in_array($section[0], $valid)){
-
+		if(count($section)>1 && in_array($section[0], $valid))
+		{
 			$lastRound = count($section)-1;
 
-			foreach($section as $k => $s){
+			foreach($section as $k => $s)
+			{
 				$branch = &$branch[$s];
-				if($lastRound == $k){
+				if($lastRound == $k)
+				{
 					$branch = $value;
 				}
 			}
@@ -142,7 +159,8 @@ class Config{
 	* @param void
 	* @return array
 	*/
-	public static function read(){
+	public static function read()
+	{
 		return self::$config;
 	}
 
@@ -151,7 +169,8 @@ class Config{
 	* @param void
 	* @return array
 	*/
-	public static function reset(){
+	public static function reset()
+	{
 		self::$config = array();
 		self::init();
 		return self::read();
@@ -162,37 +181,26 @@ class Config{
 	* @param void
 	* @return void
 	*/
-	private static function release(){
+	private static function release()
+	{
 
 		// Read only
 		$config = array();
 		$valid = array('db', 'mail', 'store', 'system');
 
-		foreach($valid as $v){
-			if(!Tools::chef(self::$config, $v) || !is_array(self::$config)){
+		foreach($valid as $v)
+		{
+			if(!Tools::chef(self::$config, $v))
+			{
 				$config[$v] = array();
 			}
 		}
-
-
 
 		// Server override
 		$__SERVER_NAME = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME']: PHP_SAPI;
 		$__REQUEST_URI = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI']: '';
 
 		// INIT defaults
-
-		// SESSION ID
-		$config['system']['uid'] = session_id();
-
-		// Initial time
-		$config['system']['start'] = microtime(true);
-
-		// Initial max memory usage
-		$config['system']['initMemTop'] = memory_get_usage(true);
-
-		// Initial avg memory usage
-		$config['system']['initMemPeakTop'] = memory_get_peak_usage(true);
 
 		// Server root directory
 		$config['system']['root'] = __LETHE_ROOT__;
@@ -237,10 +245,36 @@ class Config{
 
 		// Browser query string parsed
 		$_queryArray = array();
-		if( array_key_exists('query', $config['system']['urlArray']) ){
+		if( array_key_exists('query', $config['system']['urlArray']) )
+		{
 			parse_str( $config['system']['urlArray']['query'], $_queryArray );
 		}
 		$config['system']['queryArray'] = $_queryArray;
+
+		// User defined config variables
+		require_once __LETHE_LETHE__.'/init/config.php';
+
+		session_cache_limiter('nocache');
+		session_set_cookie_params ( $config['system']['sessionLifetime'], '/', $config['system']['domainName'], false, true );
+
+		if($config['system']['memcacheEnabled'] === true)
+		{
+			ini_set('session.save_handler', 'memcache');
+			ini_set('session.save_path', 'tcp://'.$config['system']['memcacheServer'].':'.$config['system']['memcachePort']);
+		}
+		session_start();
+
+		// SESSION ID
+		$config['system']['uid'] = session_id();
+
+		// Initial time
+		$config['system']['start'] = microtime(true);
+
+		// Initial max memory usage
+		$config['system']['initMemTop'] = memory_get_usage(true);
+
+		// Initial avg memory usage
+		$config['system']['initMemPeakTop'] = memory_get_peak_usage(true);
 
 		// Browser language
 		$config['system']['lang'] = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2): 'en';
@@ -259,9 +293,6 @@ class Config{
 
 		// Code name
 		$config['system']['productCodename'] = 'Rising Decay';
-
-		// User defined config
-		require_once __LETHE_LETHE__.'/init/config.php';
 
 		// External config
 		self::$config = $config;

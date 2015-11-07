@@ -7,7 +7,8 @@
 */
 
 
-if (version_compare(PHP_VERSION, '5.3.0', '<') ) {
+if (version_compare(PHP_VERSION, '5.3.0', '<') )
+{
 	die('Now runing '.PHP_VERSION.'. You need PHP version 5.3.0 or later.');
 }
 
@@ -33,11 +34,11 @@ use Lethe\Reg;
 use Lethe\Tools;
 
 if(	file_exists(__LETHE_LETHE__.'/lib/Lethe/Autoloader.php') )
-{ 
+{
 	require_once __LETHE_LETHE__.'/lib/Lethe/Autoloader.php';
 
-	try {
-		
+	try
+	{
 		ob_start('mb_output_handler');
 
 		Autoloader::init()->register(array(
@@ -46,20 +47,17 @@ if(	file_exists(__LETHE_LETHE__.'/lib/Lethe/Autoloader.php') )
 		));
 
 		Tools::cookieDomain();
-		
-		session_start();
-
 		Config::init();
 		Reg::init();
 
 		$buffer = ob_get_contents();
-
 		ob_end_clean();
 
 		echo trim($buffer);
 
-	}catch(Exception $e){ 
-	    echo 'Fix me: '.$e->getMessage(); 
+	}catch(Exception $e)
+	{
+	    echo 'Fix me: '.$e->getMessage();
 	}
 
 }else{

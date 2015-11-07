@@ -21,11 +21,10 @@ $config['system']['filePermission'] = 0644;
 $config['system']['directoryPermission'] = 0755;
 
 // Time limit
-$config['system']['sessionLifetime'] = 86400*30;
-$config['system']['sessionCacheExpirre'] = 86400*30;
-$config['system']['cookieLifetime'] = 86400*30;
+$config['system']['sessionLifetime'] = 86400*7;
 
+// Version
 $config['system']['version'] = '0.6.0';
 
-// Syslog
+// System log
 $config['store']['log'] = array();
