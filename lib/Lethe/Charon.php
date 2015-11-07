@@ -15,14 +15,16 @@ namespace Lethe;
 * @version 1.0 (2014-06-28)
 */
 
-class Charon extends Lethe{
+class Charon extends Lethe
+{
 
 	protected $souls;
 
-	/** 
+	/**
 	* @ignore
 	*/
-	public function __construct(){
+	public function __construct()
+	{
 		parent::__construct();
 
 		$this->souls = new StdCLass;
@@ -31,50 +33,56 @@ class Charon extends Lethe{
 		$this->souls->worker = function($config = array()){};
 	}
 
-	/** 
-	* Set queue item 
+	/**
+	* Set queue item
 	* @param array $data
 	* @return void
 	*/
-	public function add($data){
+	public function add($data)
+	{
 		$this->souls->data[] = $data;
 	}
 
-	/** 
+	/**
 	* Run queue
 	* @param int $usleep
 	* @return void
 	*/
-	public function ship($usleep=0){
-		foreach($this->souls->data[] as $task){
+	public function ship($usleep=0)
+	{
+		foreach($this->souls->data[] as $task)
+		{
 
 		}
 	}
 
-	/** 
+	/**
 	* Set custom worker
 	* @param object|function $worker
 	* @return void
 	*/
-	public function worker($worker){
+	public function worker($worker)
+	{
 		$this->souls->worker = $worker;
 	}
 
-	/** 
-	* Set custom queue identifier 
+	/**
+	* Set custom queue identifier
 	* @param string $identifier
 	* @return void
 	*/
-	public function setIdentity($identifier){
+	public function setIdentity($identifier)
+	{
 		$this->souls->identity = $identifier;
 	}
 
-	/** 
+	/**
 	* Get queue data
 	* @param void
 	* @return object
 	*/
-	public function getData(){
+	public function getData()
+	{
 		return $this->souls->data;
 	}
 

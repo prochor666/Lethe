@@ -288,6 +288,7 @@ class Config{
 		// User defined config variables
 		require_once __LETHE_LETHE__.'/init/config.php';
 
+		// Session handler and start
 		session_cache_limiter('nocache');
 		self::cookieDomain($config['system']['sessionLifetime']);
 

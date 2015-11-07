@@ -12,132 +12,187 @@ namespace Lethe;
 * Lethe\Postgresqldb - PostgreSQL database manipulation class
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 * @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2011-04-28)
+* @version 1.4 (2015-03-13)
 */
 
-class Postgresqldb extends Lethe{
+class Postgresqldb extends Lethe
+{
 
-   private $host, $db, $user, $pass;
+	private $host, $db, $user, $password, $engine, $errors, $stat;
+
+   /**
+	* Construcor, configures PostgreSQL driver
+	* @param array $conf
+	* @return void
+	*/
+	public function __construct($conf = null)
+	{
+		$this->host = 		null;
+		$this->user = 		null;
+		$this->password =	null;
+		$this->db =   		null;
+		$this->port =   	5432;
+		$this->errors = 	array();
+		$this->stat = 		false;
+
+		if($conf != null && is_array($conf) && count($conf)>3 && isset( $conf['host'], $conf['db'], $conf['user'], $conf['password'] ) )
+		{
+			$this->host =  		$conf['host'];
+			$this->user = 		$conf['user'];
+			$this->password = 	$conf['password'];
+			$this->db = 		$conf['db'];
+			$this->port = 		isset($conf['port']) ? $conf['port']: $this->port;
+			$this->stat = 		true;
+		}else{
+			$this->error('PostgreSQL configuration error');
+		}
+	}
+
+	private function error($e)
+	{
+		$this->errors[] = 	$e;
+		$this->log( array('case' => 'pgsql', 'message' => $e) );
+		$this->stat = 		false;
+	}
+
+	public function getErrors()
+	{
+		return $this->errors;
+	}
 
 	/**
-	* @ignore
-	 */
-	public function __construct($conf = null){
-	  if($conf != null && is_array($conf) && count($conf)>3 && isset( $conf['host'], $conf['db'], $conf['user'], $conf['pass'] ) ){
-		 $this->host =  $conf['host'];
-			$this->user = $conf['user'];
-			$this->pass = $conf['pass'];
-			$this->db = $conf['db'];
-			$this->port = $conf['port'];
-	  }else{
-		 $this->host =  _PGHOST_;
-			$this->user = _PGUSER_;
-			$this->pass = _PGPASS_;
-			$this->db = _PGMYDB_;
-			$this->port = _PGPORT_;
-	  }
-
-	}
-
-   /* Connection */
-	private function mydb_connect(){
+	* Database connection
+	*
+	* @param array $conf
+	* @return bool|resource
+	*/
+	private function connect()
+	{
 		$pg_conn_str = 'host='.$this->host.' port='.$this->port.' dbname='.$this->db.' user='.$this->user.' password='.$this->pass;
-		$DBLINK = pg_connect($pg_conn_str); 
-		return $DBLINK;
-	}
-	
-	/* test connection */
-	public function test_connection(){
-		$pg_conn_str = 'host='.$this->host.' port='.$this->port.' dbname='.$this->db.' user='.$this->user.' password='.$this->pass;
-		$DBLINK = @pg_connect($pg_conn_str); 
-		return $DBLINK;
-	}
-	
-	/* test database */
-	public function test_db(){
-		$pg_conn_str = 'host='.$this->host.' port='.$this->port.' dbname='.$this->db.' user='.$this->user.' password='.$this->pass;
-		$DBLINK = @pg_connect($pg_conn_str); 
-		return $DBLINK;
+		$link = pg_connect($pg_conn_str);
+		return  $link;
 	}
 
-	/* BASIC SQL query */
-	public function query($sqlquery){
-	  $DBLINK = $this->mydb_connect();
-		$RESULT = pg_query($DBLINK, trim($sqlquery));
-   	$_SESSION['weebo_sql_error'] = $RESULT ? null: pg_last_notice($DBLINK);
-		pg_close($DBLINK);
-		return $RESULT;
+
+	/**
+	* Database connection test
+	*
+	* @param array $conf
+	* @return bool|resource
+	*/
+	public function testConnection()
+	{
+		return $this->connect();
 	}
 
-	/* SQL result into array / object */
-	public function result($sqlquery, $arrayType = 'assoc'){
+	/**
+	* Database query INSERT/UPDATE?DELETE etc..
+	*
+	* @param string $query
+	* @return bool|resource
+	*/
+	public function query($sqlquery)
+	{
+		$link = $this->connect();
 
-	   $__RESULT = $this->query($sqlquery);
-	   $__PRECACHE = array();
-	   $_SESSION['weebo_sql_error_description'] = false;
+		$result = !$link ? false: pg_query($link, $sqlquery);
+		if($result === false)
+		{
+			$this->error('PostgreSQL query error: '.pg_last_notice($link).' Query: '.$sqlquery);
+		}
+		pg_close($link);
 
-	   if(!isset($_SESSION['weebo_sql_error']) && pg_num_rows($__RESULT)>0){
+		return $result === false ? $this->getErrors(): $result;
+	}
 
-		  switch($arrayType){
-			  case "array":
-				while($__TESTROW = pg_fetch_array($__RESULT)){
-				  array_push($__PRECACHE,$__TESTROW);
-				}
-			  break; case "row":
-				while($__TESTROW = pg_fetch_row($__RESULT)){
-				  array_push($__PRECACHE,$__TESTROW);
-				}
-			  break; case "object": 
-				  $__PRECACHE = $__RESULT;
-			  break; case "assoc": default:
-				while($__TESTROW = pg_fetch_assoc($__RESULT)){
-				  array_push($__PRECACHE,$__TESTROW);
-				}
-  
-		  }
 
-		  pg_free_result($__RESULT);
+	/**
+	* Database query result
+	*
+	* @param string $query
+	* @param string $type
+	* @return array|object
+	*/
+	public function result($sqlquery, $type = 'assoc')
+	{
+		$result = $this->query($sqlquery);
+		$data = array();
 
-		}else{
-			$_SESSION['weebo_sql_error_description'] = '<pre>Q: '.trim($sqlquery).' E:'.$_SESSION['weebo_sql_error'].'</pre>';
+		if($this->stat === true && pg_num_rows($result)>0)
+		{
+			switch($type)
+			{
+				case "array":
+					while($row = pg_fetch_array($result))
+					{
+						array_push($data, $row);
+					}
+				break; case "row":
+					while($row = pg_fetch_row($result))
+					{
+						array_push($data, $row);
+					}
+				break; case 'object':
+					$data = pg_fetch_object($result);
+
+				break; case "assoc": default:
+					while($row = pg_fetch_assoc($result))
+					{
+						array_push($data, $row);
+					}
+			}
+
+			pg_free_result($result);
 		}
 
-	 return $__PRECACHE;
+
+	 	return $data;
 	}
 
 
-  	/* LAST inserted ID, call it strictly after last query / in transaction */
-	public function get_last_id($table){
+	/**
+	* Get last serial value
+	*
+	* @param string $table
+	* @return int
+	*/
+	public function getLastId($table)
+	{
+		$link = $this->connect();
 
-		#make the initial query
-		$link = $this->mydb_connect();
-		  
-		 /* Auto field[0]  */
+		/* Auto field[0]  */
 		$sql = "SELECT * FROM " . $table;
 		$ret = pg_query($link, $sql);
 		$idseq = pg_field_name($ret, 0);
-		
-		/* last item */
-		$sql = "SELECT MAX(".$idseq.") FROM ".$table."";
-	   
-		#exec
-		$retorno = pg_query($link, $sql);
-		
-		if(pg_num_rows($ret)>0){
-			$data = pg_fetch_row($retorno);
-			return $data[0]; 
+
+		// Execute last item query
+		$result = $this->result("SELECT MAX(".$idseq.") FROM ".$table."", 'row');
+
+		if(count($result)>0)
+		{
+			return $result[0];
 		} else {
-			#case error, returns false
-			return false;
-		} 
+			// Case error
+			return 0;
+		}
 	}
-	
-	public function escapeField($data){
-		$DBLINK = $this->mydb_connect();
-		$RESULT = pg_escape_string($DBLINK, $data);
-   		$_SESSION['weebo_sql_error'] = $RESULT ? null: pg_last_notice($DBLINK);
-		pg_close($DBLINK);
-		return $RESULT; 
+
+
+	/**
+	* Escape data for safety
+	*
+	* @param string $data
+	* @return string
+	*/
+	public function sanitize($data){
+		$link = $this->connect();
+		$result = !$link ? false: pg_escape_string($link, $data);
+		if($result === false)
+		{
+			$this->error('PostgreSQL error: '.pg_last_notice($link));
+		}
+		pg_close($link);
+		return $result;
 	}
 
 }
