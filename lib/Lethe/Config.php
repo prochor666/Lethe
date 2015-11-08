@@ -135,11 +135,19 @@ class Config{
 
 			foreach($section as $k => $s)
 			{
-				$branch = &$branch[$s];
-				if($lastRound == $k)
-				{
-					$branch = $value;
-				}
+				if(is_object($branch))
+                {
+                    $branch = &$branch->$s;
+
+                }else{
+
+                    $branch = &$branch[$s];
+                }
+
+                if($lastRound == $k)
+                {
+                    $branch = $value;
+                }
 			}
 			unset($branch);
 		}
