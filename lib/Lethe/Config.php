@@ -1,22 +1,13 @@
 <?php
-/**
-* Lethe framework configurator
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
 namespace Lethe;
-
-/**
-* Lethe\Config - Lethe framework configurator
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2014-03-01)
-*/
 
 use Lethe\Tools;
 
+/**
+* Lethe\Config - Lethe configurator
+* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @version 1.0
+*/
 class Config{
 
 	/**
@@ -206,7 +197,7 @@ class Config{
 				$rootDomain = implode('.', $nd);
 			}
 
-			session_set_cookie_params ( $sessionLifetime, '/', '.'.$rootDomain, false, true );
+			session_set_cookie_params ( $sessionLifetime, '/', '.'.$rootDomain, Tools::ssl(), true );
 		}
 	}
 

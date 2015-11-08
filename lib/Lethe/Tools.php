@@ -1,22 +1,13 @@
 <?php
-/**
-* Base tools/helper class
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
-
 namespace Lethe;
 
 /**
-* Lethe\Tools - Lethe framework tools/generators
+* Lethe\Tools - Lethe tools/generators
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2014-04-28)
+* @version 1.5
 */
-class Tools{
-
+class Tools
+{
 	/**
 	* @ignore
 	*/
@@ -53,7 +44,6 @@ class Tools{
 	*/
 	public static function hash($str, $algo = 'sha512')
 	{
-
 		// Blowfish salted
 		if (CRYPT_BLOWFISH == 1 && $algo == 'blowfish')
 		{
@@ -115,7 +105,8 @@ class Tools{
 		$a = func_get_args();
 
 		ob_start();
-		if($n>0){
+		if($n>0)
+		{
 			foreach($a as $var)
 			{
 				if(PHP_SAPI !== 'cli'){ echo '<pre>'; }

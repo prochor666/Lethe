@@ -1,23 +1,13 @@
 <?php
-/**
-* Database wrapper
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
 namespace Lethe;
 
 /**
-* Lethe\Db - databse wrapper, multiple SQL databases/engines support 
-* 
+* Lethe\Db - databse wrapper, multiple SQL databases/engines support
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2011-04-28)
+* @version 1.7
 */
-
-class Db{
-
+class Db
+{
 	/**
 	* @ignore
 	*/
@@ -34,8 +24,9 @@ class Db{
 	* @param array $conf
 	* @return object
 	*/
-	private static function instance($conf){
-		
+	private static function instance($conf)
+	{
+
 		$driver = Tools::chef($conf, 'driver', NULL);
 
 		if(is_null($driver))
@@ -43,10 +34,11 @@ class Db{
 			$driver = Config::query('db/0');
 		}
 
-		switch($driver['engine']){
-			case 'Mysqldb':
+		switch($driver['engine'])
+		{
+			case 'Mysqldb': case 'mysqldb': case 'mysql':
 				return new Mysqldb($driver);
-			break; case 'PostgreSQLdb':
+			break; case 'PostgreSQLdb': case 'Postgresqldb': case 'postgresql':
 				return new Postgresqldb($driver);
 			break; default:
 				return new Mysqldb($driver);
@@ -59,7 +51,8 @@ class Db{
 	* @param array $conf
 	* @return bool|resource
 	*/
-	public static function testConnection($conf){
+	public static function testConnection($conf)
+	{
 		$db = self::instance($conf);
 		return $db->testConnection();
 	}
@@ -72,7 +65,8 @@ class Db{
 	*/
 
 	// $type = 'assoc'
-	public static function result($conf){
+	public static function result($conf)
+	{
 		$conf['type'] = Tools::chef($conf, 'type', 'assoc');
 		$db = self::instance($conf);
 		return $db->result($conf['query'], $conf['type'] );
@@ -84,18 +78,20 @@ class Db{
 	* @param array $conf
 	* @return bool|resource
 	*/
-	public static function query($conf){
+	public static function query($conf)
+	{
 		$db = self::instance($conf);
 		return $db->query($conf['query']);
 	}
 
 	/**
-	* Get next autoincrement value 
+	* Get next autoincrement value
 	*
 	* @param array $conf
 	* @return int
 	*/
-	public static function getLastId($conf){
+	public static function getLastId($conf)
+	{
 		$db = self::instance($conf);
 		return $db->getLastId($conf['table']);
 	}
@@ -106,7 +102,8 @@ class Db{
 	* @param array $conf
 	* @return string
 	*/
-	public static function sanitize($conf){
+	public static function sanitize($conf)
+	{
 		$db = self::instance($conf);
 		return $db->sanitize($conf['query']);
 	}
@@ -117,7 +114,8 @@ class Db{
 	* @param array $conf
 	* @return mixed
 	*/
-	public static function memAuto($conf){
+	public static function memAuto($conf)
+	{
 		$conf['timeout'] = Tools::chef($conf, 'timeout', 10);
 		$result = self::memGet(Tools::hash($conf['query']));
 		$result = $result === false ? self::memSet(Tools::hash($conf['query']), self::result($conf), $conf['timeout']): $result;
@@ -130,7 +128,8 @@ class Db{
 	* @param string $key
 	* @return mixed
 	*/
-	public static function memGet($key){
+	public static function memGet($key)
+	{
 		$m = new Mem;
 		$m->key = $key;
 		if(Config::query('system/memcacheEnabled') === true && $m->test() === true)
@@ -149,7 +148,8 @@ class Db{
 	* @param int $timeout
 	* @return mixed
 	*/
-	public static function memSet($key, $data, $timeout = 10){
+	public static function memSet($key, $data, $timeout = 10)
+	{
 		$m = new Mem;
 		$m->key = $key;
 		$m->data = $data;
@@ -159,7 +159,7 @@ class Db{
 			$m->store();
 		}
 		return $data;
-	}	
+	}
 
 }
 

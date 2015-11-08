@@ -1,21 +1,13 @@
 <?php
-/**
-* Validator
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
 namespace Lethe;
 
 /**
 * Lethe\Validator - Lethe data validator
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2014-05-04)
+* @version 1.2
 */
-class Validator{
-
+class Validator
+{
 	/**
 	* @ignore
 	*/
@@ -33,7 +25,8 @@ class Validator{
 	* @param mixed $d default value
 	* @return mixed
 	*/
-	public static function chef($a, $k, $d = false){
+	public static function chef($a, $k, $d = false)
+	{
 		return is_array($a) && array_key_exists($k, $a) ? $a[$k]: $d;
 	}
 
@@ -42,7 +35,8 @@ class Validator{
 	 * @param mixed $var
 	 * @return bool
 	*/
-	public static function isInt($var){
+	public static function isInt($var)
+	{
 		return is_int($var);
 	}
 
@@ -51,7 +45,8 @@ class Validator{
 	 * @param mixed $var
 	 * @return bool
 	*/
-	public static function isNumber($var){
+	public static function isNumber($var)
+	{
 		return is_numeric($var);
 	}
 
@@ -60,7 +55,8 @@ class Validator{
 	* @param string $val
 	* @return bool
 	*/
-	public static function isTime($val){
+	public static function isTime($val)
+	{
 		return (bool)strtotime($val);
 	}
 
@@ -70,7 +66,8 @@ class Validator{
 	* @param string $val2
 	* @return bool
 	*/
-	public static function compare($val1, $val2){
+	public static function compare($val1, $val2)
+	{
 		return $val1 === $val2 ? true: false;
 	}
 
@@ -79,7 +76,8 @@ class Validator{
 	* @param string $email
 	* @return bool
 	*/
-	public static function checkMail($email){
+	public static function checkMail($email)
+	{
 		return (bool)filter_var($email, FILTER_VALIDATE_EMAIL);
 	}
 
@@ -88,7 +86,8 @@ class Validator{
 	* @param string $url
 	* @return bool
 	*/
-	public static function checkUrl($url){
+	public static function checkUrl($url)
+	{
 		return (bool)filter_var($url, FILTER_VALIDATE_URL);
 	}
 
@@ -97,7 +96,8 @@ class Validator{
 	* @param string $url
 	* @return bool
 	*/
-	public static function checkHttp($url){
+	public static function checkHttp($url)
+	{
 		return (bool)preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
 	}
 

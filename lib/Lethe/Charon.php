@@ -1,23 +1,13 @@
 <?php
-/**
-* Queue system
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
 namespace Lethe;
 
 /**
-* Lethe\Charon - Lethe framework queue system
+* Lethe\Charon - Lethe queue system, not aplicable yet!
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2014-06-28)
+* @version 1.0
 */
-
 class Charon extends Lethe
 {
-
 	protected $souls;
 
 	/**

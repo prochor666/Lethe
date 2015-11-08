@@ -1,23 +1,13 @@
 <?php
-/**
-* PostgreSQL database support
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
 namespace Lethe;
 
 /**
 * Lethe\Postgresqldb - PostgreSQL database manipulation class
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.4 (2015-03-13)
+* @version 1.4
 */
-
 class Postgresqldb extends Lethe
 {
-
 	private $host, $db, $user, $password, $engine, $errors, $stat;
 
    /**

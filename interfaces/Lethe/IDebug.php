@@ -1,23 +1,13 @@
 <?php
-/**
-* Lethe framework debug interface
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
-
 namespace Lethe;
 
 /**
-* interface.idebug.php
-*
+* interface.IDebug.php
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2014-06-26)
+* @version 1.1
 */
-interface IDebug{
-
+interface IDebug
+{
 	public function debugSet($code, $message);
 	public function debugRead();
 	public function debugClear();

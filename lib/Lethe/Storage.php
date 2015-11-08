@@ -1,21 +1,13 @@
 <?php
-/**
-* Storage - filesystem operation wrapper
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
 namespace Lethe;
 
 /**
 * Lethe\Storage - basic filesystem operations, copy/delete/create files and directories
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2014-05-20)
+* @version 1.2
 */
-class Storage{
-
+class Storage
+{
 	/**
 	* @ignore
 	*/
@@ -466,14 +458,8 @@ class Storage{
 	}
 
 
-	/*
-	* *******************
-	* HTTP / Local  download
-	* *******************
-	*/
-
 	/**
-	* Downloads file data to local file
+	* Downloads file data from specified path to local file
 	* @param string $pathFrom
 	* @param string $pathTo
 	* @return bool|string

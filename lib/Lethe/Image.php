@@ -1,22 +1,13 @@
 <?php
-/**
-* Image operations, resize, convert, save
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
 namespace Lethe;
 
 /**
 * Lethe\Image - image manipulation class, resize/convert/save images
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2014-06-28)
-* @filesource
+* @version 1.1
 */
-class Image{
-
+class Image
+{
 	public $imageSource, $imageTarget, $compression, $permissions;
 
 	protected $image, $imageInfo, $extendedInfo, $imageType;
@@ -45,14 +36,17 @@ class Image{
 	*/
 	public function load()
 	{
-		if(file_exists($this->imageSource)){
+		if(file_exists($this->imageSource))
+		{
 
 			$this->imageInfo = getimagesize($this->imageSource, $this->extendedInfo);
 			$this->imageType = $this->imageInfo[2];
 
-			if(count($this->imageInfo)>0){
+			if(count($this->imageInfo)>0)
+			{
 
-				switch( $this->imageType ){
+				switch( $this->imageType )
+				{
 					case IMAGETYPE_JPEG:
 						$this->image = imagecreatefromjpeg($this->imageSource);
 					break; case IMAGETYPE_PNG:
@@ -76,17 +70,20 @@ class Image{
 	* @param bool $save
 	* @return bool
 	*/
-	protected function process($save = true){
+	protected function process($save = true)
+	{
 
 		$result = false;
 
-		if($this->image !== false){
+		if($this->image !== false)
+		{
 
 			if($save === true)
 			{
 				$result = (bool)file_put_contents($this->imageTarget, $this->show());
 
-				if( $this->permissions != null ) {
+				if( $this->permissions != null )
+				{
 					umask(0000);
 					chmod($this->imageTarget, $this->permissions);
 				}
@@ -106,12 +103,14 @@ class Image{
 	* @param void
 	* @return void
 	*/
-	protected function show(){
+	protected function show()
+	{
 
 		// Make buffer
 		ob_start();
 
-		switch( $this->imageType ){
+		switch( $this->imageType )
+		{
 			case IMAGETYPE_JPEG:
 				imagejpeg($this->image, null, $this->compression);
 			break; case IMAGETYPE_PNG:
@@ -154,7 +153,8 @@ class Image{
 	*/
 	public function output()
 	{
-		switch( $this->imageType ){
+		switch( $this->imageType )
+		{
 			case IMAGETYPE_JPEG:
 				header('Content-Type: image/jpeg');
 			break; case IMAGETYPE_PNG:
@@ -181,7 +181,8 @@ class Image{
 	* @param void
 	* @return int
 	*/
-	public function height(){
+	public function height()
+	{
 		return imagesy($this->image);
 	}
 
@@ -190,7 +191,8 @@ class Image{
 	* @param void
 	* @return string
 	*/
-	public function type(){
+	public function type()
+	{
 		return $this->imageType;
 	}
 
@@ -249,7 +251,8 @@ class Image{
 			$ti = (int)imagecolorstotal($this->image);
 
 			// Get transparent color
-			if($ti == 0){
+			if($ti == 0)
+			{
 				$transparentIndex = imagetruecolortopalette($imageResized, false, $ti );
 			}
 

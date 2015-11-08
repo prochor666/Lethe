@@ -1,11 +1,10 @@
 <?php
 /**
-* Lethe framework bootstrap
+* Lethe bootstrap
 *
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 * @package Lethe
 */
-
 
 if (version_compare(PHP_VERSION, '5.3.0', '<') )
 {
@@ -26,7 +25,6 @@ mb_regex_encoding('UTF-8');
 *  MAIN CONFIGURATION + CORE LOAD   *
 * *****************************************
 */
-
 use Lethe\Lethe;
 use Lethe\Autoloader;
 use Lethe\Config;

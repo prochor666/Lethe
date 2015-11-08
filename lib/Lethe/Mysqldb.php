@@ -1,24 +1,13 @@
 <?php
-/**
-* MySQL database support
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
 namespace Lethe;
 
 /**
 * Lethe\MysqlDb - mysql database manipulation class
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.3 (2015-09-06)
+* @version 1.3
 */
-
-use Lethe\Config;
-
 class Mysqldb extends Lethe
 {
-
 	private $host, $db, $user, $password, $engine, $errors, $stat;
 
     /**

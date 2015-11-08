@@ -1,25 +1,13 @@
 <?php
-/**
-* Memcache support
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
 namespace Lethe;
 
 /**
-* Lethe\Mem - Lethe framework memcache wrapper
+* Lethe\Mem - Lethe memcache wrapper
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2014-06-10)
+* @version 1.1
 */
-
-use Lethe\Lethe;
-
 class Mem extends Lethe
 {
-
 	public $key, $data, $keepalive, $server, $port, $output, $connection, $message;
 
 	/**

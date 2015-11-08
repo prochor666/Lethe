@@ -1,24 +1,13 @@
 <?php
-/**
-* Url parser
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
 namespace Lethe;
-
-use Lethe\Tools;
 
 /**
 * Lethe\Url - universal url parser/extractor
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2015-02-15)
+* @version 1.1
 */
 class Url
 {
-	
 	/**
 	* @ignore
 	*/
@@ -37,9 +26,9 @@ class Url
 	*/
 	public static function parse($path = null, $delimiter = '-')
 	{
-		
+
 		$result = array(0 => array(), 1 => array());
-		
+
 		$qspos = strpos( $path, '?' );
 		if( $qspos !== false )
 		{
@@ -47,13 +36,13 @@ class Url
 		}
 		$src = explode('/', $path);
 		$src = array_filter($src, array('self', 'string'));
-		
-		if (!is_null($delimiter) || mb_strlen($delimiter) > 0) 
+
+		if (!is_null($delimiter) || mb_strlen($delimiter) > 0)
 		{
 			foreach($src as $s)
 			{
-				$result[0][] = self::extract($s, $delimiter); 	
-				$result[1][$s] = self::extract($s, $delimiter); 	
+				$result[0][] = self::extract($s, $delimiter);
+				$result[1][$s] = self::extract($s, $delimiter);
 			}
 		}
 
@@ -71,7 +60,7 @@ class Url
 	{
 		$v = (string)$v;
 		return mb_strlen($v)>0 ? true: false;
-	}	
+	}
 
 	/**
 	* Url model checker
@@ -94,14 +83,14 @@ class Url
 	*/
 	public static function extract($path = null, $delimiter = null)
 	{
-		
+
 		$result = array('path' => null, 'name' => null, 'id' => null);
 
 		$result['path'] = $result['name'] = $path;
 
 		$src = array_filter(explode($delimiter, $path));
 		$i = count($src) - 1;
-		
+
 		if($i>0)
 		{
 			$id = $src[$i];
@@ -116,7 +105,7 @@ class Url
 	/**
 	* Fragment update
 	* @description Create identifier from given fragment!!!!
-	* @param array $urlArray 
+	* @param array $urlArray
 	* @param array $keys
 	* @return string
 	*/
@@ -136,7 +125,7 @@ class Url
 		$urlArray['query'] = http_build_query($query, 'p', '&amp;');
 
 		$url = $urlArray['scheme'].'://'.$urlArray['host'].rtrim($urlArray['path'], '/').'?'.$urlArray['query'];
-	
+
 		return $url;
 	}
 

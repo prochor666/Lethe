@@ -1,21 +1,13 @@
 <?php
-/**
-* Session registry manager
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
-
 namespace Lethe;
 
 /**
 * Lethe\Reg - session registry configuration engine
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2014-03-01)
+* @version 1.1
 */
-class Reg{
-	
+class Reg
+{
 	/**
 	* @ignore
 	*/
@@ -29,34 +21,40 @@ class Reg{
 	/**
 	* Config init, creating registry, use it once at boot!!!!
 	* @param void
-	* @return array 
+	* @return array
 	*/
-	public static function init(){
-		if(!isset($_SESSION['__lethe_registry'][session_id()]) || !is_array($_SESSION['__lethe_registry'])){
+	public static function init()
+	{
+		if(!isset($_SESSION['__lethe_registry'][session_id()]) || !is_array($_SESSION['__lethe_registry']))
+		{
 			$_SESSION['__lethe_registry'][session_id()] = array();
-		}  
+		}
 		self::release();
 		return self::read();
 	}
 
 	/**
 	* Read key/value pair
-	* @param string $q 
-	* @return mixed 
+	* @param string $q
+	* @return mixed
 	*/
-	public static function query($q = null){
+	public static function query($q = null)
+	{
 		$origin = $_SESSION['__lethe_registry'][session_id()];
 		$section = explode('/', trim($q, ' /'));
 		$valid = array('store', 'system', 'error' );
 		$result = false;
 
-		if(count($section)>0 && array_key_exists($section[0], $origin) && in_array($section[0], $valid) ){
+		if(count($section)>0 && array_key_exists($section[0], $origin) && in_array($section[0], $valid) )
+		{
 			$lastRound = count($section)-1;
-			
+
 			foreach($section as $k => $s){
-				if(array_key_exists($s, $origin)){
+				if(array_key_exists($s, $origin))
+				{
 					$origin = $origin[$s];
-					if($lastRound == $k){
+					if($lastRound == $k)
+					{
 						$result = $origin;
 					}
 				}
@@ -71,10 +69,12 @@ class Reg{
 	* @param array $block
 	* @return void
 	*/
-	public static function setBlock( $block = array() ){
-		foreach($block as $k => $v){
+	public static function setBlock( $block = array() )
+	{
+		foreach($block as $k => $v)
+		{
 			self::set($k, $v);
-		}	
+		}
 	}
 
 	/**
@@ -83,28 +83,33 @@ class Reg{
 	* @param array $block
 	* @return void
 	*/
-	public static function configure( $block = array() ){
+	public static function configure( $block = array() )
+	{
 		self::setBlock($block);
 	}
 
 	/**
 	* Config pair, key/value pair
 	* @param string $q = 'path/to'
-	* @param mixed $value 
+	* @param mixed $value
 	* @return void
 	*/
-	public static function set($q = 'store/blind', $value = false){
+	public static function set($q = 'store/blind', $value = false)
+	{
 		$branch = &$_SESSION['__lethe_registry'][session_id()];
 		$section = explode('/', trim($q, ' /'));
 		$valid = array('user', 'store', 'system');
-		
-		if(count($section)>1 && in_array($section[0], $valid)){
-			
+
+		if(count($section)>1 && in_array($section[0], $valid))
+		{
+
 			$lastRound = count($section)-1;
-			
-			foreach($section as $k => $s){
+
+			foreach($section as $k => $s)
+			{
 				$branch = &$branch[$s];
-				if($lastRound == $k){
+				if($lastRound == $k)
+				{
 					$branch = $value;
 				}
 			}
@@ -115,9 +120,10 @@ class Reg{
 	/**
 	* Read whole registry, use for development
 	* @param void
-	* @return array 
+	* @return array
 	*/
-	public static function read(){
+	public static function read()
+	{
 		return $_SESSION['__lethe_registry'][session_id()];
 	}
 
@@ -126,7 +132,8 @@ class Reg{
 	* @param void
 	* @return array
 	*/
-	public static function reset(){
+	public static function reset()
+	{
 		unset($_SESSION['__lethe_registry'][session_id()]);
 		self::init();
 		return self::read();
@@ -137,21 +144,23 @@ class Reg{
 	* @param void
 	* @return void
 	*/
-	private static function release(){
-		
+	private static function release()
+	{
 		// Read only
 		$config = array(); //$_SESSION['__lethe_registry'][session_id()];
 		$valid = array('user', 'store', 'system');
 
-		foreach($valid as $v){
-			if(!Tools::chef($_SESSION['__lethe_registry'][session_id()], $v) || !is_array($_SESSION['__lethe_registry'][session_id()])){
+		foreach($valid as $v)
+		{
+			if(!Tools::chef($_SESSION['__lethe_registry'][session_id()], $v) || !is_array($_SESSION['__lethe_registry'][session_id()]))
+			{
 				$config[$v] = array();
 			}
 		}
 
 		// INIT defaults
 		$config['system']['uid'] = session_id();
-		
+
 		$_SESSION['__lethe_registry'][session_id()] = array_merge($_SESSION['__lethe_registry'][session_id()], $config);
 	}
 }

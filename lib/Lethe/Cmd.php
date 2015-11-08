@@ -1,28 +1,22 @@
 <?php
-/**
-* Lethe framework commandline
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @package Lethe
-*/
 namespace Lethe;
 
 /**
-* Lethe\Cmd - Lethe framework commandline 
+* Lethe\Cmd - commandline class
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @license http://opensource.org/licenses/mit-license.php MIT License
-* @version 1.0 (2014-04-28)
+* @version 1.1
 */
-class Cmd extends Lethe{
-
+class Cmd extends Lethe
+{
 	public $command, $options;
 
 	private $foregroundColors, $backgroundColors;
 
-	/** 
+	/**
 	* @ignore
 	*/
-	public function __construct(){
+	public function __construct()
+	{
 		parent::__construct();
 
 		// Set up shell colors
@@ -56,25 +50,40 @@ class Cmd extends Lethe{
 		$this->command = 'info';
 	}
 
-	public function run(){
-		
-		if( method_exists($this, $this->command) && is_callable(array($this, $this->command)) ){
+
+    /**
+	* Run command
+	* @param void
+	* @return mixed
+	*/
+	public function run()
+	{
+		if( method_exists($this, $this->command) && is_callable(array($this, $this->command)) )
+		{
 			return call_user_func_array(array($this, $this->command), $this->options);
 		}
 
-		if( function_exists($this->command) ){
+		if( function_exists($this->command) )
+		{
 			return call_user_func_array($this->command, $this->options);
 		}
 
 		// not used yet
-		if( method_exists($this, $this->command) && is_callable(array('self', $this->command)) ){
+		if( method_exists($this, $this->command) && is_callable(array('self', $this->command)) )
+		{
 			return call_user_func_array(self::$this->command, $this->options);
 		}
 
 		return 'Lethe error: command '.$this->getColored($this->command, 'light_red').' not found'.PHP_EOL;
 	}
 
-	public function info(){
+    /**
+	* Run info command
+	* @param void
+	* @return string
+	*/
+	public function info()
+	{
 		$info = 'Lethe environment: '.$this->getColored(PHP_OS.'/'.PHP_SAPI.'', 'light_green').PHP_EOL
 				.'Lethe version: '.$this->getColored($this->config('system/version'), 'light_green').PHP_EOL
 				.'Lethe codename: '.$this->getColored($this->config('system/productCodename'), 'light_green').PHP_EOL;
@@ -82,28 +91,47 @@ class Cmd extends Lethe{
 		return $info;
 	}
 
-	public function conf(){
+    /**
+	* Get configuration options
+	* @param void
+	* @return string
+	*/
+	public function conf()
+	{
 		$info = $this->getColored(Tools::dump($this->config('system')), 'light_green').PHP_EOL;
 
 		return $info;
 	}
 
-	public function registry(){
+    /**
+	* Get registry options
+	* @param void
+	* @return string
+	*/
+	public function registry()
+	{
 		$info = $this->getColored(Tools::dump(Reg::read()), 'yellow').PHP_EOL;
 
 		return $info;
 	}
-	
-	// Returns colored string
-	public function getColored($string, $foregroundColor = null, $backgroundColor = null) {
+
+    /**
+	* Get colored string
+	* @param void
+	* @return string
+	*/
+	public function getColored($string, $foregroundColor = null, $backgroundColor = null)
+	{
 		$coloredString = "";
 
 		// Check if given foreground color found
-		if (isset($this->foregroundColors[$foregroundColor])) {
+		if (isset($this->foregroundColors[$foregroundColor]))
+		{
 			$coloredString .= "\033[" . $this->foregroundColors[$foregroundColor] . "m";
 		}
 		// Check if given background color found
-		if (isset($this->backgroundColors[$backgroundColor])) {
+		if (isset($this->backgroundColors[$backgroundColor]))
+		{
 			$coloredString .= "\033[" . $this->backgroundColors[$backgroundColor] . "m";
 		}
 
@@ -113,13 +141,23 @@ class Cmd extends Lethe{
 		return $coloredString;
 	}
 
-	// Returns all foreground color names
-	public function getForegroundColors() {
+    /**
+	* Returns all foreground color names
+	* @param void
+	* @return array
+	*/
+	public function getForegroundColors()
+	{
 		return array_keys($this->foregroundColors);
 	}
 
-	// Returns all background color names
-	public function getBackgroundColors() {
+	/**
+	* Returns all background color names
+	* @param void
+	* @return array
+	*/
+	public function getBackgroundColors()
+	{
 		return array_keys($this->backgroundColors);
 	}
 

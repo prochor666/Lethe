@@ -1,16 +1,17 @@
 <?php
-/**
-* Route.php - routing helper.
-*/
 namespace Lethe;
 
 use Lethe\Config;
 use Lethe\Tools;
 use Lethe\Url;
 
+/**
+* Lethe\Route - simple static router
+* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @version 1.2
+*/
 class Route
 {
-
 	/**
 	* @ignore
 	*/
