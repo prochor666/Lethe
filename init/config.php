@@ -15,6 +15,7 @@ $config['system']['cache'] = __LETHE_ROOT__.'/public/temp';
 $config['system']['memcacheEnabled'] = true;
 $config['system']['memcacheServer'] = "localhost";
 $config['system']['memcachePort'] = 11211;
+$config['system']['memcacheDriver'] = 'Memcached';
 
 // Permissions
 $config['system']['filePermission'] = 0644;

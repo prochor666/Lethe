@@ -2,16 +2,16 @@
 namespace Lethe;
 
 /**
-* Lethe\Mem - Lethe memcache wrapper
+* Lethe\Mem - Lethe Memcache/Memcached wrapper
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 * @version 1.1
 */
 class Mem extends Lethe
 {
-	public $key, $data, $keepalive, $server, $port, $output, $connection, $message;
+	protected $connection, $message, $server, $port, $driver;
 
 	/**
-	* Memcache wrapper contructor, configured by framework config
+	* Memcache wrapper constructor, configured by global config
 	* @param void
 	* @return void
 	*/
@@ -19,91 +19,84 @@ class Mem extends Lethe
 	{
 		$this->server = Config::query('system/memcacheServer');
 		$this->port = Config::query('system/memcachePort');
-		$this->keepalive = 30;
-		$this->key = null;
-		$this->data = null;
+		$this->driver = Config::query('system/memcacheDriver');
+		$this->class = '\\'.$this->driver;
 		$this->connection = false;
-		$this->output = false;
 		$this->message = null;
+
+		if(class_exists($this->class))
+		{
+			$this->connection = new $this->class();
+			$a = $this->connection->addServer($this->server, $this->port);
+
+			if($this->connection === false || $a == false)
+			{
+				$this->message = $this->driver.' connection failed';
+			}else{
+				$this->message = $this->driver.' connection ok';
+			}
+		}else{
+			$this->message = $this->driver.' class is not installed';
+		}
 	}
 
 	/**
-	* Memcache test connection
+	* Memcached test connection
 	* @param void
-	* @return bool
+	* @return string
 	*/
 	public function test()
 	{
-		if(class_exists('Memcache'))
-		{
-			$m = new \Memcache;
-			$this->connection = @$m->connect($this->server, $this->port, 1);
-			if($this->connection === false)
-			{
-				$this->message = 'Memcache connection failed';
-			}
-		}else{
-			$this->message = 'Memcache class is not installed';
-		}
-
-		return $this->connection;
+		return $this->message;
 	}
 
 	/**
-	* Automatic memcache get/set
-	*
+	* Memcached server status
+	* @param void
+	* @return string
+	*/
+	public function status()
+	{
+		return $this->connection->getStats();
+	}
+
+	/**
+	* Store data in Memcached
 	* @param string $key
-	* @param int $data
-	* @param int $timeout
+	* @param mixed $value
+	* @param int $expiration
+	* @return bool
+	*/
+	public function store($key, $value, $expiration = 0)
+	{
+		if($this->connection !== false && $this->driver == 'Memcache')
+		{
+			return $this->connection->set($key, $value, MEMCACHE_COMPRESSED, $expiration);
+
+		}elseif($this->connection !== false && $this->driver == 'Memcached')
+		{
+			return $this->connection->set($key, $value, $expiration);
+		}
+
+		return false;
+	}
+
+
+	/**
+	* Get data from Memcached
+	* @param string $key
 	* @return mixed
 	*/
-	public function auto($key, $data, $keepalive = 10)
+	public function get($key)
 	{
-		$this->key = $key;
-		$this->data = $data;
-		$this->keepalive = false;
-
-		$result = $this->get($key);
-		$result = $result === false ? $this->store(): $result;
-		$ret = $this->output;
-
-		return $ret;
-	}
-
-	/**
-	* Sotre data in Memcache
-	* @param void
-	* @return void
-	*/
-	public function store()
-	{
-		$m = new \Memcache;
-		$this->connection = @$m->connect($this->server, $this->port, 1);
-		if($this->connection === true)
+		if($this->connection !== false)
 		{
-			$m->set($this->key, $this->data, 0, $this->keepalive);
-			$m->close();
-			$this->output = $this->data;
+			return $this->connection->get($key);
 		}
-	}
 
-
-	/**
-	* Memcache wrapper contructor, configured by framework config
-	* @param void
-	* @return void
-	*/
-	public function get()
-	{
-		$m = new \Memcache;
-		$this->connection = @$m->connect($this->server, $this->port, 1);
-		if($this->connection === true)
-		{
-			$this->output = $m->get($this->key);
-			$m->close();
-		}
+		return false;
 	}
 
 
 }
-?>
+
