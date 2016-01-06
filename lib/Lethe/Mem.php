@@ -96,7 +96,5 @@ class Mem extends Lethe
 
 		return false;
 	}
-
-
 }
 

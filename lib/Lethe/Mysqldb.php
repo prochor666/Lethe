@@ -96,7 +96,7 @@ class Mysqldb extends Lethe
 
 			if($link === false)
 			{
-				$this->error('MySQL query error: '.mysqli_connect_error());
+				$this->error('MySQL connection error: '.mysqli_connect_error());
 			}
 		}else{
 			$link = @mysql_connect($this->host, $this->user, $this->password);
@@ -107,7 +107,7 @@ class Mysqldb extends Lethe
 			}else{
 				if($link === false)
 				{
-					$this->error('MySQL query error: '.mysql_error());
+					$this->error('MySQL connection error: '.mysql_error());
 				}
 			}
 		}

@@ -38,6 +38,8 @@ class Db
 		{
 			case 'Mysqldb': case 'mysqldb': case 'mysql':
 				return new Mysqldb($driver);
+			case 'Sqlitedb': case 'sqlitedb': case 'sqlite':
+				return new Sqlitedb($driver);
 			break; case 'PostgreSQLdb': case 'Postgresqldb': case 'postgresql':
 				return new Postgresqldb($driver);
 			break; default:
@@ -106,59 +108,6 @@ class Db
 	{
 		$db = self::instance($conf);
 		return $db->sanitize($conf['query']);
-	}
-
-	/**
-	* Automatic memcache fallback
-	*
-	* @param array $conf
-	* @return mixed
-	*/
-	public static function memAuto($conf)
-	{
-		$conf['timeout'] = Tools::chef($conf, 'timeout', 10);
-		$result = self::memGet(Tools::hash($conf['query']));
-		$result = $result === false ? self::memSet(Tools::hash($conf['query']), self::result($conf), $conf['timeout']): $result;
-		return $result;
-	}
-
-	/**
-	* Memcache get key value
-	*
-	* @param string $key
-	* @return mixed
-	*/
-	public static function memGet($key)
-	{
-		$m = new Mem;
-		$m->key = $key;
-		if(Config::query('system/memcacheEnabled') === true && $m->test() === true)
-		{
-			$m->get();
-			return $m->connection === true ? $m->output: false;
-		}
-		return false;
-	}
-
-	/**
-	* Memcache set key value
-	*
-	* @param string $key
-	* @param array $data
-	* @param int $timeout
-	* @return mixed
-	*/
-	public static function memSet($key, $data, $timeout = 10)
-	{
-		$m = new Mem;
-		$m->key = $key;
-		$m->data = $data;
-		$m->keepalive = $timeout;
-		if(Config::query('system/memcacheEnabled') === true && $m->test() === true)
-		{
-			$m->store();
-		}
-		return $data;
 	}
 
 }
