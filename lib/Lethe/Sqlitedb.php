@@ -120,16 +120,26 @@ class Sqlitedb extends Lethe
                 switch($type)
                 {
                     case "array":
-                        $data = $result->fetchArray(SQLITE3_BOTH);
                         
+                        while($row = $result->fetchArray(SQLITE3_BOTH))
+                        {
+                            $data[] = $row;
+                        }                        
                     break; case "row":
-                        $data = $result->fetchArray(SQLITE3_NUM);
-
+                        
+                        while($row = $result->fetchArray(SQLITE3_NUM))
+                        {
+                            $data[] = $row;
+                        }
                     break; case 'object':
+                        
                         $data = false;
-
                     break; case "assoc": default:
-                        $data = $result->fetchArray(SQLITE3_ASSOC);
+
+                        while($row = $result->fetchArray(SQLITE3_ASSOC))
+                        {
+                            $data[] = $row;
+                        }
                 }
 
                 $result->finalize();
