@@ -26,8 +26,8 @@ class Lethe implements ISystem, IDebug
 	*/
 	public function __construct()
 	{
-		$this->debug = array();
-		$this->debugHuman = array();
+		$this->debug = [];
+		$this->debugHuman = [];
 	}
 
 	/**
@@ -42,7 +42,7 @@ class Lethe implements ISystem, IDebug
 		$tt = explode('.', (string)$t);
 		$message = (int)$code < 1000 ? 'MESSAGE::'.$message: 'ERROR::'.$message;
 		$th = count($tt)>1 ? date('Y-m-d-H-i-s', $tt[0]).'-'.$tt[1]: date('Y-m-d-H-i-s', $tt[0]);
-		$this->debug[] = array('time' => $th, 'code' => $code, 'message' => $message);
+		$this->debug[] = ['time' => $th, 'code' => $code, 'message' => $message];
 	}
 
 	/**
@@ -62,7 +62,7 @@ class Lethe implements ISystem, IDebug
 	*/
 	public function debugClear()
 	{
-		$this->debug = array();
+		$this->debug = [];
 	}
 
 	/**
@@ -87,7 +87,7 @@ class Lethe implements ISystem, IDebug
 		if(
 			array_key_exists( 'case', $record ) && array_key_exists( 'message', $record )
 		){
-			$log[] = array( 'timestamp' => time(), 'case' => $record['case'], 'message' => $record['message'] );
+			$log[] = ['timestamp' => time(), 'case' => $record['case'], 'message' => $record['message']];
 		}
 
 		Config::set('store/log', $log);

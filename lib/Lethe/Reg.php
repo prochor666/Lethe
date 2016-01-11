@@ -27,7 +27,7 @@ class Reg
 	{
 		if(!isset($_SESSION['__lethe_registry'][session_id()]) || !is_array($_SESSION['__lethe_registry']))
 		{
-			$_SESSION['__lethe_registry'][session_id()] = array();
+			$_SESSION['__lethe_registry'][session_id()] = [];
 		}
 		self::release();
 		return self::read();
@@ -42,7 +42,7 @@ class Reg
 	{
 		$origin = $_SESSION['__lethe_registry'][session_id()];
 		$section = explode('/', trim($q, ' /'));
-		$valid = array('store', 'system', 'error' );
+		$valid = ['store', 'system', 'error'];
 		$result = false;
 
 		if(count($section)>0 && array_key_exists($section[0], $origin) && in_array($section[0], $valid) )
@@ -69,7 +69,7 @@ class Reg
 	* @param array $block
 	* @return void
 	*/
-	public static function setBlock( $block = array() )
+	public static function setBlock( $block = [] )
 	{
 		foreach($block as $k => $v)
 		{
@@ -83,7 +83,7 @@ class Reg
 	* @param array $block
 	* @return void
 	*/
-	public static function configure( $block = array() )
+	public static function configure( $block = [] )
 	{
 		self::setBlock($block);
 	}
@@ -98,7 +98,7 @@ class Reg
 	{
 		$branch = &$_SESSION['__lethe_registry'][session_id()];
 		$section = explode('/', trim($q, ' /'));
-		$valid = array('user', 'store', 'system');
+		$valid = ['user', 'store', 'system'];
 
 		if(count($section)>1 && in_array($section[0], $valid))
 		{
@@ -147,14 +147,14 @@ class Reg
 	private static function release()
 	{
 		// Read only
-		$config = array(); //$_SESSION['__lethe_registry'][session_id()];
-		$valid = array('user', 'store', 'system');
+		$config = []; //$_SESSION['__lethe_registry'][session_id()];
+		$valid = ['user', 'store', 'system'];
 
 		foreach($valid as $v)
 		{
 			if(!Tools::chef($_SESSION['__lethe_registry'][session_id()], $v) || !is_array($_SESSION['__lethe_registry'][session_id()]))
 			{
-				$config[$v] = array();
+				$config[$v] = [];
 			}
 		}
 

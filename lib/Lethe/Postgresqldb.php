@@ -22,7 +22,7 @@ class Postgresqldb extends Lethe
 		$this->password =	null;
 		$this->db =   		null;
 		$this->port =   	5432;
-		$this->errors = 	array();
+		$this->errors = 	[];
 		$this->stat = 		false;
 
 		if($conf != null && is_array($conf) && count($conf)>3 && isset( $conf['host'], $conf['db'], $conf['user'], $conf['password'] ) )
@@ -41,7 +41,7 @@ class Postgresqldb extends Lethe
 	private function error($e)
 	{
 		$this->errors[] = 	$e;
-		$this->log( array('case' => 'pgsql', 'message' => $e) );
+		$this->log( ['case' => 'pgsql', 'message' => $e] );
 		$this->stat = 		false;
 	}
 
@@ -106,7 +106,7 @@ class Postgresqldb extends Lethe
 	public function result($sqlquery, $type = 'assoc')
 	{
 		$result = $this->query($sqlquery);
-		$data = array();
+		$data = [];
 
 		if($this->stat === true && pg_num_rows($result)>0)
 		{

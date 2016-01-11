@@ -340,7 +340,7 @@ class Storage
 	*/
 	public static function listDir($path, $recursive = true)
 	{
-		$stat = array('dirs' => array(), 'files' => array());
+		$stat = ['dirs' => [], 'files' => []];
 
 		if(self::isDir($path))
 		{
@@ -352,10 +352,10 @@ class Storage
 				{
 					if(self::isDir($path . '/' . $o))
 					{
-						$stat['dirs'][$o] = array(
+						$stat['dirs'][$o] = [
 							'path' => $path. '/' . $o,
 							'info' => self::fileInfo( $path. '/' . $o )
-						);
+						];
 
 						if($recursive === true)
 						{
@@ -363,10 +363,10 @@ class Storage
 						}
 
 					}else{
-						$stat['files'][$o] = array(
+						$stat['files'][$o] = [
 							'path' => $path. '/' . $o,
 							'info' => self::fileInfo( $path. '/' . $o )
-						);
+						];
 					}
 				}
 			}

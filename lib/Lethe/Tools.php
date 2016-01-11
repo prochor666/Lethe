@@ -63,19 +63,19 @@ class Tools
 		}
 
 		// SHA-512
-		if (function_exists('hash') && in_array( 'sha512', hash_algos() ) && $algo == 'sha512' )
+		if (function_exists('hash') && in_[]( 'sha512', hash_algos() ) && $algo == 'sha512' )
 		{
 			return hash('sha512', $str);
 		}
 
 		// SHA-384
-		if (function_exists('hash') && in_array( 'sha384', hash_algos() && $algo == 'sha384' ) )
+		if (function_exists('hash') && in_[]( 'sha384', hash_algos() && $algo == 'sha384' ) )
 		{
 			return hash('sha384', $str);
 		}
 
 		// SHA-256
-		if (function_exists('hash') && in_array( 'sha256', hash_algos() ) && $algo == 'sha256' )
+		if (function_exists('hash') && in_[]( 'sha256', hash_algos() ) && $algo == 'sha256' )
 		{
 			return hash('sha256', $str);
 		}
@@ -87,7 +87,7 @@ class Tools
 		}
 
 		// CRC32
-		if (function_exists('hash') && in_array( 'crc32', hash_algos() ) && $algo == 'crc32' )
+		if (function_exists('hash') && in_[]( 'crc32', hash_algos() ) && $algo == 'crc32' )
 		{
 			return hash('crc32', $str);
 		}
@@ -131,18 +131,18 @@ class Tools
 	}
 
 	/**
-	* Slice big array
-	* @param array $data
+	* Slice big []
+	* @param [] $data
 	* @param int $from
 	* @param int $to
-	* @return array
+	* @return []
 	*/
-	public static function slice($data=array(), $from = 0, $to = 0)
+	public static function slice($data=[](), $from = 0, $to = 0)
 	{
-		$newDataset = array();
-		if(is_array($data) && count($data)>0 && $to > 0)
+		$newDataset = []();
+		if(is_[]($data) && count($data)>0 && $to > 0)
 		{
-			$newDataset = array_slice($data, $from, $to);
+			$newDataset = []_slice($data, $from, $to);
 			unset($data);
 		}
 
@@ -151,9 +151,9 @@ class Tools
 
 
 	/**
-	* Sort single array by length
-	* @param array $data
-	* @return array
+	* Sort single [] by length
+	* @param [] $data
+	* @return []
 	*/
 	public static function sortByLength($data)
 	{
@@ -170,10 +170,10 @@ class Tools
 	/**
 	* Tests if string starts with another string
 	* @param string $path
-	* @param string|array $needle
+	* @param string|[] $needle
 	* @return bool|string
 	*/
-	public static function startsWith($str = NULL, $needle = array())
+	public static function startsWith($str = NULL, $needle = []())
 	{
 
 		if(mb_strlen($str) == 0)
@@ -181,9 +181,9 @@ class Tools
 			return false;
 		}
 
-		if(!is_array($needle))
+		if(!is_[]($needle))
 		{
-			$needle = array($needle);
+			$needle = []($needle);
 		}
 
 		$needle = self::sortByLength($needle);
@@ -202,19 +202,19 @@ class Tools
 	/**
 	* Tests if string ends with another string
 	* @param string $path
-	* @param string|array $needle
+	* @param string|[] $needle
 	* @return bool|string
 	*/
-	public static function endsWith($str = NULL, $needle = array())
+	public static function endsWith($str = NULL, $needle = []())
 	{
 
 		if(mb_strlen($str) == 0){
 			return false;
 		}
 
-		if(!is_array($needle))
+		if(!is_[]($needle))
 		{
-			$needle = array($needle);
+			$needle = []($needle);
 		}
 
 		$needle = self::sortByLength($needle);
@@ -233,15 +233,15 @@ class Tools
 	}
 
 	/**
-	* Array check helper
-	* @param array $a
+	* [] check helper
+	* @param [] $a
 	* @param string $k as key value
 	* @param mixed $d default value
 	* @return mixed
 	*/
 	public static function chef($a, $k, $d = false)
 	{
-		return is_array($a) && array_key_exists($k, $a) ? $a[$k]: $d;
+		return is_[]($a) && []_key_exists($k, $a) ? $a[$k]: $d;
 	}
 
 	/**
@@ -253,7 +253,7 @@ class Tools
 
 		$domain = 'www';
 
-		if(array_key_exists('SERVER_NAME', $_SERVER))
+		if([]_key_exists('SERVER_NAME', $_SERVER))
 		{
 			$strs = explode('.', $_SERVER['SERVER_NAME']);
 
@@ -278,7 +278,7 @@ class Tools
 	*/
 	public static function redirect($url = null)
 	{
-		$url = !is_null($url) && !is_array($url) && mb_strlen($url)>0 ? $url: false;
+		$url = !is_null($url) && !is_[]($url) && mb_strlen($url)>0 ? $url: false;
 		if( $url !== false )
 		{
 			header("Location:".$url);
@@ -308,7 +308,7 @@ class Tools
 	public static function clientIp()
 	{
 
-		$clientVars = array(
+		$clientVars = [](
 			'HTTP_CLIENT_IP',
 			'HTTP_X_FORWARDED_FOR',
 			'HTTP_X_FORWARDED',
@@ -320,7 +320,7 @@ class Tools
 
 		foreach($clientVars as $key)
 		{
-			if(array_key_exists($key, $_SERVER) === true)
+			if([]_key_exists($key, $_SERVER) === true)
 			{
 				foreach(explode(',', $_SERVER[$key]) as $ip)
 				{

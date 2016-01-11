@@ -18,7 +18,7 @@ class Config{
 	/**
 	* @ignore
 	*/
-	private static $config = array();
+	private static $config = [];
 
 	/**
 	* @ignore
@@ -67,7 +67,7 @@ class Config{
 	{
 		$origin = self::$config;
 		$section = explode('/', trim($q, ' /'));
-		$valid = array('user', 'db', 'mail', 'store', 'system', 'error' );
+		$valid = ['user', 'db', 'mail', 'store', 'system', 'error'];
 		$result = false; //array('status' => false, 'reason' => 'No value found');
 
 		if(count($section)>0 && array_key_exists($section[0], $origin) && in_array($section[0], $valid) )
@@ -95,7 +95,7 @@ class Config{
 	* @param array $block
 	* @return void
 	*/
-	public static function setBlock( $block = array() )
+	public static function setBlock( $block = [] )
 	{
 		foreach($block as $k => $v)
 		{
@@ -109,7 +109,7 @@ class Config{
 	* @param array $block
 	* @return void
 	*/
-	public static function configure( $block = array() )
+	public static function configure( $block = [] )
 	{
 		if(is_array($block))
 		{
@@ -127,7 +127,7 @@ class Config{
 	{
 		$branch = &self::$config;
 		$section = explode('/', trim($q, ' /'));
-		$valid = array('user', 'store', 'mail', 'db');
+		$valid = ['user', 'store', 'mail', 'db'];
 
 		if(count($section)>1 && in_array($section[0], $valid))
 		{
@@ -170,7 +170,7 @@ class Config{
 	*/
 	public static function reset()
 	{
-		self::$config = array();
+		self::$config = [];
 		self::init();
 		return self::read();
 	}
@@ -218,14 +218,14 @@ class Config{
 	{
 
 		// Read only
-		$config = array();
-		$valid = array('db', 'mail', 'store', 'system');
+		$config = [];
+		$valid =['db', 'mail', 'store', 'system'];
 
 		foreach($valid as $v)
 		{
 			if(!Tools::chef(self::$config, $v))
 			{
-				$config[$v] = array();
+				$config[$v] = [];
 			}
 		}
 
@@ -277,7 +277,7 @@ class Config{
 		$config['system']['urlArray'] = parse_url($config['system']['url']);
 
 		// Browser query string parsed
-		$_queryArray = array();
+		$_queryArray = [];
 		if( array_key_exists('query', $config['system']['urlArray']) )
 		{
 			parse_str( $config['system']['urlArray']['query'], $_queryArray );

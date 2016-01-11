@@ -178,7 +178,7 @@ class Format
 	* @param array $replace
 	* @return string
 	*/
-	public static function urlSafe($str, $delimiter='-', $pathSafe=false, $replace=array())
+	public static function urlSafe($str, $delimiter='-', $pathSafe=false, $replace=[])
 	{
 
 		$str = mb_ereg_replace( '[^[:ascii:]]', '', $str);

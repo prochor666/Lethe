@@ -19,7 +19,7 @@ class Sqlitedb extends Lethe
     {
 
         $this->db =         'Lethe.db';
-        $this->errors =     array();
+        $this->errors =     [];
         $this->stat =       false;
 
         if($conf != null && is_array($conf) && count($conf)>1 && isset( $conf['db'] ) )
@@ -34,7 +34,7 @@ class Sqlitedb extends Lethe
     private function error($e)
     {
         $this->errors[] =   $e;
-        $this->log( array('case' => 'sqlite', 'message' => $e) );
+        $this->log( ['case' => 'sqlite', 'message' => $e] );
         $this->stat =       false;
     }
 
@@ -108,7 +108,7 @@ class Sqlitedb extends Lethe
     */
     public function result($sqlquery, $type = 'assoc')
     {
-        $data = array();
+        $data = [];
         $link = $this->connect();
 
         try{

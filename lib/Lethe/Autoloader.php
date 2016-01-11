@@ -59,9 +59,9 @@ class Autoloader
 	* Register inlcude/require paths
 	* @param array $param
 	*/
-	public function register($param = array())
+	public function register($param = [])
 	{
-		spl_autoload_register(array(self::$instance, 'append'));
+		spl_autoload_register([self::$instance, 'append')]);
 		$paths = is_array($param) ? implode(PATH_SEPARATOR, $param): $param;
 		self::$libreg = self::$libreg.PATH_SEPARATOR.$paths;
 		set_include_path(self::$libreg);
@@ -82,7 +82,7 @@ class Autoloader
 		array_pop($ns);
 
 		//, 'class.%s.php', 'static.class.%s.php', 'interface.%s.php'
-		$prefixes = array('%s.php', '%s.inc.php', 'class.%s.php');
+		$prefixes =['%s.php', '%s.inc.php', 'class.%s.php'];
 
 		$ex = explode(PATH_SEPARATOR, get_include_path());
 

@@ -21,8 +21,8 @@ class Image
 	{
 		$this->image = false;
 		$this->imageType = null;
-		$this->imageInfo = array();
-		$this->extendedInfo = array();
+		$this->imageInfo = [];
+		$this->extendedInfo = [];
 		$this->imageSource = null;
 		$this->imageTarget = null;
 		$this->compression = 90;

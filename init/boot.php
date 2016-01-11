@@ -39,10 +39,10 @@ if(	file_exists(__LETHE_LETHE__.'/lib/Lethe/Autoloader.php') )
 	{
 		ob_start('mb_output_handler');
 
-		Autoloader::init()->register(array(
+		Autoloader::init()->register([
 			__LETHE_LETHE__.'/interfaces/',
 			__LETHE_LETHE__.'/lib/',
-		));
+		]);
 
 		Config::init();
 		Reg::init();

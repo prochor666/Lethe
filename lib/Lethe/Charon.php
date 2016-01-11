@@ -19,8 +19,8 @@ class Charon extends Lethe
 
 		$this->souls = new StdCLass;
 		$this->souls->identity = $this->setIdentity(Tools::rnd(71));
-		$this->souls->data = array();
-		$this->souls->worker = function($config = array()){};
+		$this->souls->data = [];
+		$this->souls->worker = function($config = []){};
 	}
 
 	/**

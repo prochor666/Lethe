@@ -41,7 +41,7 @@ class Mysqldb extends Lethe
 		$this->password =	null;
 		$this->db =   		null;
 		$this->port =   	3306;
-		$this->errors = 	array();
+		$this->errors = 	[];
 		$this->stat = 		false;
 
 		if($conf != null && is_array($conf) && count($conf)>3 && isset( $conf['host'], $conf['db'], $conf['user'], $conf['password'] ) )
@@ -60,7 +60,7 @@ class Mysqldb extends Lethe
 	private function error($e)
 	{
 		$this->errors[] = 	$e;
-		$this->log( array('case' => 'mysql', 'message' => $e) );
+		$this->log( ['case' => 'mysql', 'message' => $e] );
 		$this->stat = 		false;
 	}
 
@@ -166,7 +166,7 @@ class Mysqldb extends Lethe
 	public function result($sqlquery, $type = 'assoc')
 	{
 		$result = $this->query($sqlquery);
-		$data = array();
+		$data = [];
 
 		if($this->driver == 'ext/mysqli')
 		{

@@ -46,7 +46,7 @@ class Cmd extends Lethe
 		$this->backgroundColors['cyan'] = '46';
 		$this->backgroundColors['light_gray'] = '47';
 
-		$this->options = array();
+		$this->options = [];
 		$this->command = 'info';
 	}
 
@@ -58,9 +58,9 @@ class Cmd extends Lethe
 	*/
 	public function run()
 	{
-		if( method_exists($this, $this->command) && is_callable(array($this, $this->command)) )
+		if( method_exists($this, $this->command) && is_callable([$this, $this->command)] )
 		{
-			return call_user_func_array(array($this, $this->command), $this->options);
+			return call_user_func_array( [$this, $this->command], $this->options);
 		}
 
 		if( function_exists($this->command) )

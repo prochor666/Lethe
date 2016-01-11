@@ -27,7 +27,7 @@ class Url
 	public static function parse($path = null, $delimiter = '-')
 	{
 
-		$result = array(0 => array(), 1 => array());
+		$result = [0 => [], 1 => []];
 
 		$qspos = strpos( $path, '?' );
 		if( $qspos !== false )
@@ -35,7 +35,7 @@ class Url
 			$path = mb_substr( $path, 0, $qspos );
 		}
 		$src = explode('/', $path);
-		$src = array_filter($src, array('self', 'string'));
+		$src = array_filter($src, ['self', 'string']);
 
 		if (!is_null($delimiter) || mb_strlen($delimiter) > 0)
 		{
@@ -84,7 +84,7 @@ class Url
 	public static function extract($path = null, $delimiter = null)
 	{
 
-		$result = array('path' => null, 'name' => null, 'id' => null);
+		$result = ['path' => null, 'name' => null, 'id' => null];
 
 		$result['path'] = $result['name'] = $path;
 
@@ -109,9 +109,9 @@ class Url
 	* @param array $keys
 	* @return string
 	*/
-	public static function update($urlArray, $keys = array())
+	public static function update($urlArray, $keys = [])
 	{
-		$query = array();
+		$query = [];
 		if( array_key_exists('query', $urlArray) )
 		{
 			parse_str( $urlArray['query'], $query );

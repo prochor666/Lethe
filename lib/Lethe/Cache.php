@@ -23,7 +23,7 @@ class Cache extends Lethe
 	public function __construct()
 	{
 		$this->keepalive = 3600;
-		$this->meta = array();
+		$this->meta = [];
 		$this->data = null;
 		$this->cacheFile = null;
 		$this->permission = $this->config('system/filePermission');
@@ -100,7 +100,7 @@ class Cache extends Lethe
 	*/
 	private function getMeta()
 	{
-		$this->meta = Storage::isFile($this->cacheFile) ? @stat($this->cacheFile): array();
+		$this->meta = Storage::isFile($this->cacheFile) ? @stat($this->cacheFile): [];
 	}
 
 }
