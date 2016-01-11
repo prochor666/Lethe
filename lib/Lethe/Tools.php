@@ -143,17 +143,10 @@ class Tools
 	* @param int $to
 	* @return []
 	*/
-<<<<<<< HEAD
 	public static function slice($data=[], $from = 0, $to = 0)
 	{
 		$newDataset = [];
 		if(is_array($data) && count($data)>0 && $to > 0)
-=======
-	public static function slice($data=[](), $from = 0, $to = 0)
-	{
-		$newDataset = []();
-		if(is_[]($data) && count($data)>0 && $to > 0)
->>>>>>> 7ef53a12a4c94584e0705854411a67c10a0f50b8
 		{
 			$newDataset = []_slice($data, $from, $to);
 			unset($data);
@@ -186,11 +179,7 @@ class Tools
 	* @param string|[] $needle
 	* @return bool|string
 	*/
-<<<<<<< HEAD
 	public static function startsWith($str = NULL, $needle = [])
-=======
-	public static function startsWith($str = NULL, $needle = []())
->>>>>>> 7ef53a12a4c94584e0705854411a67c10a0f50b8
 	{
 
 		if(mb_strlen($str) == 0)
@@ -200,11 +189,7 @@ class Tools
 
 		if(!is_[]($needle))
 		{
-<<<<<<< HEAD
 			$needle = [$needle];
-=======
-			$needle = []($needle);
->>>>>>> 7ef53a12a4c94584e0705854411a67c10a0f50b8
 		}
 
 		$needle = self::sortByLength($needle);
@@ -226,11 +211,7 @@ class Tools
 	* @param string|[] $needle
 	* @return bool|string
 	*/
-<<<<<<< HEAD
 	public static function endsWith($str = NULL, $needle = [])
-=======
-	public static function endsWith($str = NULL, $needle = []())
->>>>>>> 7ef53a12a4c94584e0705854411a67c10a0f50b8
 	{
 
 		if(mb_strlen($str) == 0){
@@ -239,11 +220,7 @@ class Tools
 
 		if(!is_[]($needle))
 		{
-<<<<<<< HEAD
 			$needle = [$needle];
-=======
-			$needle = []($needle);
->>>>>>> 7ef53a12a4c94584e0705854411a67c10a0f50b8
 		}
 
 		$needle = self::sortByLength($needle);
@@ -262,13 +239,8 @@ class Tools
 	}
 
 	/**
-<<<<<<< HEAD
 	* array check helper
 	* @param array $a
-=======
-	* [] check helper
-	* @param [] $a
->>>>>>> 7ef53a12a4c94584e0705854411a67c10a0f50b8
 	* @param string $k as key value
 	* @param mixed $d default value
 	* @return mixed
@@ -341,12 +313,7 @@ class Tools
 	*/
 	public static function clientIp()
 	{
-
-<<<<<<< HEAD
 		$clientVars = [
-=======
-		$clientVars = [](
->>>>>>> 7ef53a12a4c94584e0705854411a67c10a0f50b8
 			'HTTP_CLIENT_IP',
 			'HTTP_X_FORWARDED_FOR',
 			'HTTP_X_FORWARDED',
