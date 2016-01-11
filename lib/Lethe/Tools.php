@@ -63,19 +63,19 @@ class Tools
 		}
 
 		// SHA-512
-		if (function_exists('hash') && in_[]( 'sha512', hash_algos() ) && $algo == 'sha512' )
+		if (function_exists('hash') && in_array( 'sha512', hash_algos() ) && $algo == 'sha512' )
 		{
 			return hash('sha512', $str);
 		}
 
 		// SHA-384
-		if (function_exists('hash') && in_[]( 'sha384', hash_algos() && $algo == 'sha384' ) )
+		if (function_exists('hash') && in_array( 'sha384', hash_algos() && $algo == 'sha384' ) )
 		{
 			return hash('sha384', $str);
 		}
 
 		// SHA-256
-		if (function_exists('hash') && in_[]( 'sha256', hash_algos() ) && $algo == 'sha256' )
+		if (function_exists('hash') && in_array( 'sha256', hash_algos() ) && $algo == 'sha256' )
 		{
 			return hash('sha256', $str);
 		}
@@ -87,7 +87,7 @@ class Tools
 		}
 
 		// CRC32
-		if (function_exists('hash') && in_[]( 'crc32', hash_algos() ) && $algo == 'crc32' )
+		if (function_exists('hash') && in_array( 'crc32', hash_algos() ) && $algo == 'crc32' )
 		{
 			return hash('crc32', $str);
 		}
