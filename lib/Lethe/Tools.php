@@ -137,18 +137,18 @@ class Tools
 	}
 
 	/**
-	* Slice big []
-	* @param [] $data
+	* Slice big array
+	* @param array $data
 	* @param int $from
 	* @param int $to
-	* @return []
+	* @return array
 	*/
 	public static function slice($data=[], $from = 0, $to = 0)
 	{
 		$newDataset = [];
 		if(is_array($data) && count($data)>0 && $to > 0)
 		{
-			$newDataset = []_slice($data, $from, $to);
+			$newDataset = array_slice($data, $from, $to);
 			unset($data);
 		}
 
@@ -157,9 +157,9 @@ class Tools
 
 
 	/**
-	* Sort single [] by length
-	* @param [] $data
-	* @return []
+	* Sort single array by length
+	* @param array $data
+	* @return array
 	*/
 	public static function sortByLength($data)
 	{
@@ -176,7 +176,7 @@ class Tools
 	/**
 	* Tests if string starts with another string
 	* @param string $path
-	* @param string|[] $needle
+	* @param string|array $needle
 	* @return bool|string
 	*/
 	public static function startsWith($str = NULL, $needle = [])
@@ -187,7 +187,7 @@ class Tools
 			return false;
 		}
 
-		if(!is_[]($needle))
+		if(!is_array($needle))
 		{
 			$needle = [$needle];
 		}
@@ -208,7 +208,7 @@ class Tools
 	/**
 	* Tests if string ends with another string
 	* @param string $path
-	* @param string|[] $needle
+	* @param string|array $needle
 	* @return bool|string
 	*/
 	public static function endsWith($str = NULL, $needle = [])
@@ -218,7 +218,7 @@ class Tools
 			return false;
 		}
 
-		if(!is_[]($needle))
+		if(!is_array($needle))
 		{
 			$needle = [$needle];
 		}
@@ -247,7 +247,7 @@ class Tools
 	*/
 	public static function chef($a, $k, $d = false)
 	{
-		return is_[]($a) && []_key_exists($k, $a) ? $a[$k]: $d;
+		return is_array($a) && array_key_exists($k, $a) ? $a[$k]: $d;
 	}
 
 	/**
@@ -259,7 +259,7 @@ class Tools
 
 		$domain = 'www';
 
-		if([]_key_exists('SERVER_NAME', $_SERVER))
+		if(array_key_exists('SERVER_NAME', $_SERVER))
 		{
 			$strs = explode('.', $_SERVER['SERVER_NAME']);
 
@@ -284,7 +284,8 @@ class Tools
 	*/
 	public static function redirect($url = null)
 	{
-		$url = !is_null($url) && !is_[]($url) && mb_strlen($url)>0 ? $url: false;
+		$url = !is_null($url) && !is_array($url) && mb_strlen($url)>0 ? $url: false;
+		
 		if( $url !== false )
 		{
 			header("Location:".$url);
@@ -325,7 +326,7 @@ class Tools
 
 		foreach($clientVars as $key)
 		{
-			if([]_key_exists($key, $_SERVER) === true)
+			if(array_key_exists($key, $_SERVER) === true)
 			{
 				foreach(explode(',', $_SERVER[$key]) as $ip)
 				{
