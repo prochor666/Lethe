@@ -61,7 +61,7 @@ class Autoloader
 	*/
 	public function register($param = [])
 	{
-		spl_autoload_register([self::$instance, 'append')]);
+		spl_autoload_register([self::$instance, 'append']);
 		$paths = is_array($param) ? implode(PATH_SEPARATOR, $param): $param;
 		self::$libreg = self::$libreg.PATH_SEPARATOR.$paths;
 		set_include_path(self::$libreg);
