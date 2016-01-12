@@ -69,7 +69,7 @@ class Tools
 		}
 
 		// SHA-384
-		if (function_exists('hash') && in_array( 'sha384', hash_algos() && $algo == 'sha384' ) )
+		if (function_exists('hash') && in_array( 'sha384', hash_algos() ) && $algo == 'sha384' )
 		{
 			return hash('sha384', $str);
 		}

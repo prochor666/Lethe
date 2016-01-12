@@ -177,7 +177,7 @@ class Storage
 	public static function putFile($path = null, $data = null)
 	{
 		$res = false;
-		if( self::canWrite(dirname($path)) )
+		if( self::canWrite(dirname($path)) && !self::isDir($path) )
 		{
 			$res = file_put_contents($path, $data);
 			umask(0000);
@@ -276,28 +276,12 @@ class Storage
 	*/
 	public static function makeDir($path)
 	{
-
-		$path = explode('/', $path);
 		$stat = false;
-		$_dir = $_up = '';
 
-		foreach($path as $dir)
+		if(!self::isDir($path))
 		{
-
-			$_dir = $_dir.'/'.$dir;
-
-			if( self::canWrite($_up) )
-			{
-				if(!self::isDir($_dir))
-				{
-					umask(0000);
-					$stat = mkdir($_dir, Config::query('system/directoryPermission'));
-				}
-			}else{
-				//echo 'Invalid, can\'t write'.$_up.'<br>';
-			}
-
-			$_up = $_dir;
+			umask(0000);
+			$stat = mkdir($path, Config::query('system/directoryPermission'), true);
 		}
 
 		return $stat;
