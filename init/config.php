@@ -25,7 +25,7 @@ $config['system']['directoryPermission'] = 0755;
 $config['system']['sessionLifetime'] = 86400*7;
 
 // Version
-$config['system']['version'] = '0.7.3';
+$config['system']['version'] = '0.7.4';
 
 // System log
 $config['store']['log'] = [];
