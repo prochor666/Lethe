@@ -71,7 +71,7 @@ class Storage
 				$status = file_put_contents($pathTo, $emz);
 			}
 			umask(0000);
-			chmod($pathTo, Config::query('system/filePermission'));
+			chmod($pathTo, Config::query('system/filePermission')||0644);
 		}
 		return (bool)$status;
 	}
@@ -128,7 +128,7 @@ class Storage
 		{
 			$res = file_put_contents($path, $data);
 			umask(0000);
-			chmod($path, Config::query('system/filePermission'));
+			chmod($path, Config::query('system/filePermission')||0644);
 		}
 		return $res;
 	}
@@ -228,7 +228,7 @@ class Storage
 		if(!self::isDir($path))
 		{
 			umask(0000);
-			$stat = mkdir($path, Config::query('system/directoryPermission'), true);
+			$stat = mkdir($path, Config::query('system/directoryPermission')||0755, true);
 		}
 
 		return $stat;
