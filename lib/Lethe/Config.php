@@ -48,12 +48,12 @@ class Config{
 	* @param void
 	* @return object
 	*/
-	public static function init()
+	public static function init($config = [])
 	{
 		if (self::$instance == NULL)
 		{
 			self::$instance = new self();
-			self::release();
+			self::release($config);
 		}
 		return self::$instance;
 	}
@@ -127,9 +127,8 @@ class Config{
 	{
 		$branch = &self::$config;
 		$section = explode('/', trim($q, ' /'));
-		$valid = ['user', 'store', 'mail', 'db'];
 
-		if(count($section)>1 && in_array($section[0], $valid))
+		if(count($section)>1)
 		{
 			$lastRound = count($section)-1;
 
@@ -181,7 +180,7 @@ class Config{
 	* @param integer sessionLifetime
 	* @return void
 	*/
-	protected static function cookieDomain($sessionLifetime)
+	public static function cookieDomain($sessionLifetime)
 	{
 		if(isset($_SERVER['HTTP_HOST']))
 		{
@@ -214,11 +213,11 @@ class Config{
 	* @param void
 	* @return void
 	*/
-	private static function release()
+	private static function release($config = [])
 	{
 
 		// Read only
-		$config = [];
+		$config = !is_array($config) ? []: $config;
 		$valid =['db', 'mail', 'store', 'system'];
 
 		foreach($valid as $v)
@@ -284,23 +283,6 @@ class Config{
 		}
 		$config['system']['queryArray'] = $_queryArray;
 
-		// User defined config variables
-		require_once __LETHE_LETHE__.'/init/config.php';
-
-		// Session handler and start
-		session_cache_limiter('nocache');
-		self::cookieDomain($config['system']['sessionLifetime']);
-
-		if($config['system']['memcacheEnabled'] === true)
-		{
-			ini_set('session.save_handler', 'memcache');
-			ini_set('session.save_path', 'tcp://'.$config['system']['memcacheServer'].':'.$config['system']['memcachePort']);
-		}
-		session_start();
-
-		// SESSION ID
-		$config['system']['uid'] = session_id();
-
 		// Initial time
 		$config['system']['start'] = microtime(true);
 
@@ -322,13 +304,15 @@ class Config{
 		// Server API type
 		$config['system']['sapi'] = PHP_SAPI;
 
-		// Core identification
+		// System identification
 		$config['system']['productName'] = 'Lethe';
+
+		// System version
+		$config['system']['version'] = '0.7.7';
 
 		// Code name
 		$config['system']['productCodename'] = 'Rising Decay';
 
-		// External config
 		self::$config = $config;
 	}
 }

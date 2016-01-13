@@ -18,59 +18,6 @@ class Storage
 	*/
 	final public function __clone() { trigger_error('Clone is not allowed.', E_USER_ERROR); }
 
-	/**
-	* Cache auto compare
-	* @param string $file
-	* @param string $data
-	* @param int $keepalive
-	* @return string
-	*/
-	public static function cache($file, $data, $keepalive = 3600)
-	{
-		$c = new Cache;
-		$c->cacheFile = $file;
-		$c->data = $data;
-		$c->keepalive = (int)$keepalive;
-		return $c->auto();
-	}
-
-	/**
-	* Cache force write, based on keepalive = 0
-	* @param string $file
-	* @param string $data
-	* @return string
-	*/
-	public static function cacheWrite($file, $data)
-	{
-		return self::cache($file, $data, 0);
-	}
-
-	/**
-	* Cache file read
-	* @param string $file
-	* @return bool|string
-	*/
-	public static function cacheRead($file)
-	{
-		$c = new Cache;
-		$c->cacheFile = $file;
-		return $c->cacheRead();
-	}
-
-	/**
-	* Cache auto compare
-	* @param string $file
-	* @param int $keepalive
-	* @return bool
-	*/
-	public static function isExpired($file, $keepalive = 3600)
-	{
-		$c = new Cache;
-		$c->cacheFile = $file;
-		$c->keepalive = (int)$keepalive;
-		return $c->isExpired();
-	}
-
 
 	/*
 	* *******************
@@ -442,24 +389,98 @@ class Storage
 	}
 
 
+	/*
+	* *******************
+	* Downloader
+	* *******************
+	*/
+
+
 	/**
 	* Downloads file data from specified path to local file
+	* Returns -1 on fail
 	* @param string $pathFrom
 	* @param string $pathTo
-	* @return bool|string
+	* @return int
 	*/
 	public static function downloadFile($pathFrom, $pathTo)
 	{
-		$res = false;
-		$data = @file_get_contents($pathFrom);
+        $chunksize = 4*(1024*1024); // 4M default
 
-		if($data !== false)
-		{
-			$res = $data;
-			self::putFile($pathTo, $data);
-		}
+        try {
+            // parse_url() parse host, path, etc.
+            $parts = parse_url($pathFrom);
+            $i_handle = fsockopen($parts['host'], 80, $errstr, $errcode, 5);
+            $o_handle = fopen($pathTo, 'wb');
 
-		return $res;
+            if ($i_handle == false || $o_handle == false)
+            {
+                return false;
+            }
+
+            if (!empty($parts['query']))
+            {
+                $parts['path'] .= '?' . $parts['query'];
+            }
+
+            // Send http request to remote server
+            $request = "GET {$parts['path']} HTTP/1.1\r\n";
+            $request .= "Host: {$parts['host']}\r\n";
+            $request .= "User-Agent: Mozilla/5.0\r\n";
+            $request .= "Keep-Alive: 115\r\n";
+            $request .= "Connection: keep-alive\r\n\r\n";
+            fwrite($i_handle, $request);
+
+            // Read headers from remote server
+            $headers = array();
+            while(!feof($i_handle))
+            {
+                $line = fgets($i_handle);
+                if ($line == "\r\n") break;
+                $headers[] = $line;
+            }
+
+            // Look for the Content-Length header, and get the size of remote file
+            $length = 0;
+            foreach($headers as $header)
+            {
+                if (stripos($header, 'Content-Length:') === 0)
+                {
+                    $length = (int)str_replace('Content-Length: ', '', $header);
+                    break;
+                }
+            }
+
+            // Read remote file, and store it to the local file one chunk at a time.
+            $bytesTotal = 0;
+
+            while(!feof($i_handle))
+            {
+                $buf = '';
+                $buf = fread($i_handle, $chunksize);
+                $bytes = fwrite($o_handle, $buf);
+                if ($bytes == false)
+                {
+                    return false;
+                }
+                $bytesTotal += $bytes;
+
+                // Reading until reach the conent length
+                if($bytesTotal >= $length)
+                {
+                    break;
+                }
+            }
+
+            fclose($i_handle);
+            fclose($o_handle);
+
+        }catch(Exception $e)
+        {
+            $bytesTotal = -1;
+        }
+
+        return $bytesTotal;
 	}
 }
 
