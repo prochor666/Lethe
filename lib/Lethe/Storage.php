@@ -71,7 +71,7 @@ class Storage
 				$status = file_put_contents($pathTo, $emz);
 			}
 			umask(0000);
-			chmod($pathTo, Config::query('system/filePermission')||0644);
+			chmod($pathTo, self::defaultFilePermission());
 		}
 		return (bool)$status;
 	}
@@ -128,7 +128,7 @@ class Storage
 		{
 			$res = file_put_contents($path, $data);
 			umask(0000);
-			chmod($path, Config::query('system/filePermission')||0644);
+			chmod($path, self::defaultFilePermission());
 		}
 		return $res;
 	}
@@ -228,7 +228,7 @@ class Storage
 		if(!self::isDir($path))
 		{
 			umask(0000);
-			$stat = mkdir($path, Config::query('system/directoryPermission')||0755, true);
+			$stat = mkdir($path, self::defaultDirPermission(), true);
 		}
 
 		return $stat;
@@ -376,7 +376,7 @@ class Storage
 	* @param int $perm
 	* @return bool
 	*/
-	public static function permissionChange($path, $perm = 0666)
+	public static function permissionChange($path, $perm = 0644)
 	{
 		$f = $path;
 		if( self::canWrite($f) )
@@ -388,6 +388,25 @@ class Storage
 		return false;
 	}
 
+	/**
+	* Returns directory permission
+	* @return int
+	*/
+	protected static function defaultDirPermission()
+	{
+		return Config::query('system/directoryPermission')===false ? 0755: Config::query('system/directoryPermission');
+	}
+
+	/**
+	* Set permission $perm is octal int (0777 NOT 777)
+	* @param string $path
+	* @param int $perm
+	* @return bool
+	*/
+	protected static function defaultFilePermission()
+	{
+		return Config::query('system/filePermission')===false ? 0644: Config::query('system/filePermission');
+	}
 
 	/*
 	* *******************
@@ -474,6 +493,8 @@ class Storage
 
             fclose($i_handle);
             fclose($o_handle);
+
+            self::permissionChange($pathTo, self::defaultFilePermission());
 
         }catch(Exception $e)
         {
