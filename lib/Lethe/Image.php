@@ -77,7 +77,6 @@ class Image
 
 		if($this->image !== false)
 		{
-
 			if($save === true)
 			{
 				$result = (bool)file_put_contents($this->imageTarget, $this->show());
@@ -92,7 +91,6 @@ class Image
 
 				$result = $this->show();
 			}
-
 		}
 
 		return $result;
@@ -241,53 +239,14 @@ class Image
 	*/
 	public function resize($width, $height)
 	{
-
 		$imageResized = imagecreatetruecolor($width, $height);
 
 		if ( ($this->imageType == IMAGETYPE_GIF) || ($this->imageType == IMAGETYPE_PNG) )
 		{
-			$transparentIndex = imagecolortransparent($this->image);
-
-			$ti = (int)imagecolorstotal($this->image);
-
-			// Get transparent color
-			if($ti == 0)
-			{
-				$transparentIndex = imagetruecolortopalette($imageResized, false, $ti );
-			}
-
-			// If specific transparent color present
-			if ($transparentIndex === true)
-			{
-				// Get the original image transparent color RGB values
-				$trnprt_color = imagecolorsforindex($this->image, $transparentIndex);
-
-				// Allocate the same color in the new image resource
-				$transparentIndex = imagecolorallocate($imageResized, $trnprt_color['red'], $trnprt_color['green'], $trnprt_color['blue']);
-
-				// Fill the background of the new image with allocated color.
-				imagefill($imageResized, 0, 0, $transparentIndex);
-
-				// Set transparent background color for new image
-				imagecolortransparent($imageResized, $transparentIndex);
-
-
-			}elseif ($this->imageType == IMAGETYPE_PNG)
-			{
-				// Always make a transparent background color for PNGs that don't have one allocated already\
-
-				// Turn off transparency blending (temporarily)
-				imagealphablending($imageResized, false);
-
-				// Create a new transparent color for image
-				$color = imagecolorallocatealpha($imageResized, 0, 0, 0, 127);
-
-				// Completely fill the background of the new image with allocated color.
-				imagefill($imageResized, 0, 0, $color);
-
-				// Restore transparency blending
-				imagesavealpha($imageResized, true);
-			}
+			imagealphablending($imageResized, false);
+			imagesavealpha($imageResized, true);
+			$transparent = imagecolorallocatealpha($imageResized, 255, 255, 255, 127);
+			imagefilledrectangle($imageResized, 0, 0, $width, $height, $transparent);
 		}
 
 		imagecopyresampled($imageResized, $this->image, 0, 0, 0, 0, $width, $height, $this->width(), $this->height());
