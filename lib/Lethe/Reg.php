@@ -42,10 +42,9 @@ class Reg
 	{
 		$origin = $_SESSION['__lethe_registry'][session_id()];
 		$section = explode('/', trim($q, ' /'));
-		$valid = ['store', 'system', 'error'];
 		$result = false;
 
-		if(count($section)>0 && array_key_exists($section[0], $origin) && in_array($section[0], $valid) )
+		if(count($section)>0 && array_key_exists($section[0], $origin) )
 		{
 			$lastRound = count($section)-1;
 
@@ -98,9 +97,8 @@ class Reg
 	{
 		$branch = &$_SESSION['__lethe_registry'][session_id()];
 		$section = explode('/', trim($q, ' /'));
-		$valid = ['user', 'store', 'system'];
 
-		if(count($section)>1 && in_array($section[0], $valid))
+		if(count($section)>1)
 		{
 
 			$lastRound = count($section)-1;

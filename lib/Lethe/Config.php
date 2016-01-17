@@ -67,10 +67,10 @@ class Config{
 	{
 		$origin = self::$config;
 		$section = explode('/', trim($q, ' /'));
-		$valid = ['user', 'db', 'mail', 'store', 'system', 'error'];
-		$result = false; //array('status' => false, 'reason' => 'No value found');
+		//$valid = ['user', 'db', 'mail', 'store', 'system', 'error'];
+		$result = false;
 
-		if(count($section)>0 && array_key_exists($section[0], $origin) && in_array($section[0], $valid) )
+		if(count($section)>0 && array_key_exists($section[0], $origin)/* && in_array($section[0], $valid)*/ )
 		{
 			$lastRound = count($section)-1;
 
@@ -308,7 +308,7 @@ class Config{
 		$config['system']['productName'] = 'Lethe';
 
 		// System version
-		$config['system']['version'] = '0.7.7';
+		$config['system']['version'] = '0.7.8';
 
 		// Code name
 		$config['system']['productCodename'] = 'Rising Decay';
