@@ -244,22 +244,27 @@ class Format
 		$str = str_replace(array_keys($char_map), $char_map, $str);
 
 		// Replace non-alphanumeric characters with our delimiter
-		$str = preg_replace('/[^\p{L}\p{Nd}]+/u', $delimiter, $str);
-
+		if( $pathSafe === true )
+		{
+			$str = preg_replace('/[^\/.+\p{L}\p{Nd}]+/u', $delimiter, $str);
+		}else{
+			$str = preg_replace('/[^\p{L}\p{Nd}]+/u', $delimiter, $str);
+		}
+		
 		// Remove duplicate delimiters
 		$str = preg_replace('/(' . preg_quote($delimiter, '/') . '){2,}/', '$1', $str);
 
-		// Remove delimiter from ends
-		$str = trim($str, $delimiter);
-
 		$str = mb_strtolower($str, 'UTF-8');
 
-		if( $pathSafe === true)
+		if( $pathSafe === true )
 		{
 			$str = preg_replace("/[_|+ -]+/", $delimiter, $str);
 		}else{
 			$str = preg_replace("/[\/_|+ -]+/", $delimiter, $str);
 		}
+
+		// Remove delimiter from ends
+		$str = trim($str, $delimiter);
 
 		return $str;
 	}
