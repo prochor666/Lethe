@@ -17,9 +17,10 @@ class Mem extends Lethe
 	*/
 	public function __construct()
 	{
-		$this->server = Config::query('system/memcacheServer');
-		$this->port = Config::query('system/memcachePort');
-		$this->driver = Config::query('system/memcacheDriver');
+		parent::__construct();
+		$this->server = $this->config('system/memcacheServer');
+		$this->port = $this->config('system/memcachePort');
+		$this->driver = $this->config('system/memcacheDriver');
 		$this->class = '\\'.$this->driver;
 		$this->connection = false;
 		$this->message = null;

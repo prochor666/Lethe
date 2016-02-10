@@ -22,6 +22,7 @@ class Cache extends Lethe
 	*/
 	public function __construct()
 	{
+		parent::__construct();
 		$this->keepalive = 3600;
 		$this->meta = [];
 		$this->data = null;

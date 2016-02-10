@@ -38,6 +38,7 @@ class FtpClient extends Lethe
 	*/
 	public function __construct($host, $user = null, $password = null)
 	{
+		parent::__construct();
 		$this->host = $host;
 		$this->port = 21;
 		$this->passive = true;
