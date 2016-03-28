@@ -9,108 +9,108 @@ namespace Lethe;
 
 class Lethe implements ISystem, IDebug
 {
-	/**
-	* Debug info
-	*/
-	protected	$debug;
+    /**
+    * Debug info
+    */
+    protected   $debug;
 
-	/**
-	* Debug info, human readable
-	*/
-	protected	$debugHuman;
+    /**
+    * Debug info, human readable
+    */
+    protected   $debugHuman;
 
-	/**
-	* Lethe Zeus class contructor
-	* @param void
-	* @return void
-	*/
-	public function __construct()
-	{
-		$this->debug = [];
-		$this->debugHuman = [];
-	}
+    /**
+    * Lethe class contructor
+    * @param void
+    * @return void
+    */
+    public function __construct()
+    {
+        $this->debug = [];
+        $this->debugHuman = [];
+    }
 
-	/**
-	* Set debug message
-	* @param string|int $code
-	* @param string $message
-	* @return void
-	*/
-	public function debugSet($code, $message)
-	{
-		$t = microtime(true);
-		$tt = explode('.', (string)$t);
-		$message = (int)$code < 1000 ? 'MESSAGE::'.$message: 'ERROR::'.$message;
-		$th = count($tt)>1 ? date('Y-m-d-H-i-s', $tt[0]).'-'.$tt[1]: date('Y-m-d-H-i-s', $tt[0]);
-		$this->debug[] = ['time' => $th, 'code' => $code, 'message' => $message];
-	}
+    /**
+    * Set debug message
+    * @param string|int $code
+    * @param string $message
+    * @return void
+    */
+    public function debugSet($code, $message)
+    {
+        $t = microtime(true);
+        $tt = explode('.', (string)$t);
+        $message = (int)$code < 1000 ? 'MESSAGE::'.$message: 'ERROR::'.$message;
+        $th = count($tt)>1 ? date('Y-m-d-H-i-s', $tt[0]).'-'.$tt[1]: date('Y-m-d-H-i-s', $tt[0]);
+        $this->debug[] = ['time' => $th, 'code' => $code, 'message' => $message];
+    }
 
-	/**
-	* Read debug
-	* @param void
-	* @return array
-	*/
-	public function debugRead()
-	{
-		return $this->debug;
-	}
+    /**
+    * Read debug
+    * @param void
+    * @return array
+    */
+    public function debugRead()
+    {
+        return $this->debug;
+    }
 
-	/**
-	* Clear debug
-	* @param void
-	* @return void
-	*/
-	public function debugClear()
-	{
-		$this->debug = [];
-	}
+    /**
+    * Clear debug
+    * @param void
+    * @return void
+    */
+    public function debugClear()
+    {
+        $this->debug = [];
+    }
 
-	/**
-	* Query configuration
-	* @param string $query
-	* @return mixed
-	*/
-	public function config($query)
-	{
-		return Config::query($query);
-	}
+    /**
+    * Query configuration
+    * @param string $query
+    * @return mixed
+    */
+    public function config($query)
+    {
+        return Config::query($query);
+    }
 
-	/**
-	* Store log record (LIFO)
-	* @param array $record
-	* @return array
-	*/
-	public function log($record = [])
-	{
-		$log = Config::query('store/log');
+    /**
+    * Store log record (LIFO)
+    * @param array $record
+    * @return array
+    */
+    public function log($record = [])
+    {
+        $log = Config::query('store/log');
 
-		if(
-			array_key_exists( 'case', $record ) && array_key_exists( 'message', $record )
-		){
-			$log[] = ['timestamp' => time(), 'case' => $record['case'], 'message' => $record['message']];
-		}
+        if(
+            array_key_exists( 'case', $record ) && array_key_exists( 'message', $record )
+        ){
+            $log[] = ['timestamp' => time(), 'case' => $record['case'], 'message' => $record['message']];
+        }
 
-		Config::set('store/log', $log);
-	}
+        Config::set('store/log', $log);
+    }
 
-	/**
-	* Query SESSION based registry
-	* @param string $query
-	* @return mixed
-	*/
-	public function reg($query)
-	{
-		return Reg::query($query);
-	}
+    /**
+    * Query SESSION based registry
+    * @param string $query
+    * @return mixed
+    */
+    public function reg($query)
+    {
+        return Reg::query($query);
+    }
 
-	/**
-	* i18n ISO 639-1 JSON source
-	* @param void
-	* @return array
-	*/
-	public function langConfig()
-	{
-		return json_decode(Storage::getFileData(__LETHE_LETHE__.'/init/lang.json'), true);
-	}
+    /**
+    * i18n ISO 639-1 JSON source
+    * @param void
+    * @return array
+    */
+    public function langConfig()
+    {
+        return json_decode(Storage::getFileData(__LETHE_LETHE__.'/init/lang.json'), true);
+    }
 
 }

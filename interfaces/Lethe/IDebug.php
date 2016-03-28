@@ -8,7 +8,8 @@ namespace Lethe;
 */
 interface IDebug
 {
-	public function debugSet($code, $message);
-	public function debugRead();
-	public function debugClear();
+    public function debugSet($code, $message);
+    public function debugRead();
+    public function debugClear();
+    public function log($record);
 }

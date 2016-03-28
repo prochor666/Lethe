@@ -10,4 +10,5 @@ interface ISystem
 {
 	public function config($query);
 	public function reg($query);
+    public function langConfig();
 }
