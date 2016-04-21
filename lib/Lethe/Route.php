@@ -18,11 +18,6 @@ class Route
     final public function __construct(){}
 
     /**
-    * @ignore
-    */
-    final public function __clone() { throw new \Exception('Clone is not allowed.'); }
-
-    /**
     * Get relative path
     * @description full relative path
     * @return string

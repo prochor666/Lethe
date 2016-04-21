@@ -14,11 +14,6 @@ class Db
     final public function __construct(){}
 
     /**
-    * @ignore
-    */
-    final public function __clone() { throw new \Exception('Clone is not allowed.'); }
-
-    /**
     * Database driver choose
     *
     * @param array $conf

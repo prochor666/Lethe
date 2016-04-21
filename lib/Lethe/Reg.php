@@ -14,11 +14,6 @@ class Reg
     final public function __construct(){}
 
     /**
-    * @ignore
-    */
-    final public function __clone() { throw new \Exception('Clone is not allowed.'); }
-
-    /**
     * Config init, creating registry, use it once at boot!!!!
     * @param void
     * @return array

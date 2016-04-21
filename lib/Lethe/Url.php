@@ -14,11 +14,6 @@ class Url
     final public function __construct(){}
 
     /**
-    * @ignore
-    */
-    final public function __clone() { throw new \Exception('Clone is not allowed.'); }
-
-    /**
     * Url parse
     * @description Create array from given path!!!!
     * @param string $path = some/path/to

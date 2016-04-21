@@ -14,12 +14,6 @@ class Tools
     final public function __construct(){}
 
     /**
-    * @ignore
-    */
-    final public function __clone() { throw new \Exception('Clone is not allowed.'); }
-
-
-    /**
     * Random generator
     * @param int $length
     * @param bool $numOnly

@@ -14,18 +14,6 @@ class Storage
     final public function __construct(){}
 
     /**
-    * @ignore
-    */
-    final public function __clone() { throw new \Exception('Clone is not allowed.'); }
-
-
-    /*
-    * *******************
-    * Support
-    * *******************
-    */
-
-    /**
     * Open base dir effect, can we read?
     * @param string $path
     * @return bool
@@ -45,12 +33,6 @@ class Storage
     {
         return @is_readable($path) && @is_writable($path);
     }
-
-    /*
-    * *******************
-    * Files
-    * *******************
-    */
 
     /**
     * Copy file
@@ -198,13 +180,6 @@ class Storage
         $ext = array_pop($f);
         return trim(implode('.', $f));
     }
-
-
-    /*
-    * *******************
-    * Directories
-    * *******************
-    */
 
     /**
     * Directory test
@@ -354,12 +329,6 @@ class Storage
         return ( self::isDir($dir) && ($files = @scandir($dir)) && count($files) <= 2);
     }
 
-    /*
-    * *******************
-    * Permissions
-    * *******************
-    */
-
     /**
     * Check permission
     * @param string $path
@@ -407,13 +376,6 @@ class Storage
     {
         return Config::query('system/filePermission')===false ? 0644: Config::query('system/filePermission');
     }
-
-    /*
-    * *******************
-    * Downloader
-    * *******************
-    */
-
 
     /**
     * Downloads file data from specified path to local file
