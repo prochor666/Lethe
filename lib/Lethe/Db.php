@@ -11,12 +11,12 @@ class Db
     /**
     * @ignore
     */
-    final public function __construct() { trigger_error('Unserializing is not allowed.', E_USER_ERROR); }
+    final public function __construct(){}
 
     /**
     * @ignore
     */
-    final public function __clone() { trigger_error('Clone is not allowed.', E_USER_ERROR); }
+    final public function __clone() { throw new \Exception('Clone is not allowed.'); }
 
     /**
     * Database driver choose
@@ -26,7 +26,6 @@ class Db
     */
     private static function instance($conf)
     {
-
         $driver = Tools::chef($conf, 'driver', NULL);
 
         if(is_null($driver))
