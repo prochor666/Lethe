@@ -14,7 +14,7 @@ class Reg
     final public function __construct(){}
 
     /**
-    * Config init, creating registry, use it once at boot!!!!
+    * Session registry init, creating registry, use it once at boot
     * @param void
     * @return array
     */

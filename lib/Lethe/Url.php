@@ -21,7 +21,6 @@ class Url
     */
     public static function parse($path = null, $delimiter = '-')
     {
-
         $result = [0 => [], 1 => []];
 
         $qspos = strpos( $path, '?' );
