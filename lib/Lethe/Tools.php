@@ -283,7 +283,7 @@ class Tools
         if( $url !== false )
         {
             header("Location:".$url);
-            header("Connection: close");
+            exit();
         }
     }
 
