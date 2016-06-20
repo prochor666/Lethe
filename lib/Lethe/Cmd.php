@@ -58,7 +58,7 @@ class Cmd extends Lethe
     */
     public function run()
     {
-        if( method_exists($this, $this->command) && is_callable([$this, $this->command)] )
+        if( method_exists($this, $this->command) && is_callable([$this, $this->command]) )
         {
             return call_user_func_array( [$this, $this->command], $this->options);
         }
