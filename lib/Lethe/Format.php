@@ -2,7 +2,7 @@
 namespace Lethe;
 
 /**
-* Lethe\Format - data formatter, provides basic format and clenaup methods
+* Lethe\Format - data formatter
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 * @version 1.2
 */
@@ -13,25 +13,6 @@ class Format
     */
     final public function __construct(){}
 
-    /**
-     * Force to int
-     * @param string $var
-     * @return int
-    */
-    public static function makeInt($var)
-    {
-      return (int)$var;
-    }
-
-    /**
-     * Force to float
-     * @param string $var
-     * @return float
-    */
-    public static function makeFloat($var)
-    {
-      return  (float)str_replace(',', '.', $var);
-    }
 
     /**
      * Human readable bytes
@@ -48,7 +29,7 @@ class Format
         {
             (int)$size /= $mod;
         }
-        return round((int)$size, $round) . ' ' . $units[$i];
+        return round($size, $round) . ' ' . $units[$i];
     }
 
 
@@ -62,7 +43,6 @@ class Format
         $xml = NULL;
         foreach( $a as $k => $v )
         {
-
             $tag = trim( $k );
             $tagEnd = $tag = is_numeric( $tag ) ? 'num_'.$tag: $tag;
 
