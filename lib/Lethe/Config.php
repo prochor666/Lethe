@@ -250,11 +250,9 @@ class Config{
         $config['system']['site'] = (string)( $config['system']['protocol'].$__SERVER_NAME.$config['system']['portPath'].$__REQUEST_URI );
         $config['system']['site'] = mb_substr((string)$config['system']['site'], -1, 1, 'UTF-8') === '/' ? mb_substr((string)$config['system']['site'], 0, -1, 'UTF-8'): $config['system']['site'];
 
-
         // Full site, domain and REQUEST_URI (only dirname),
         // Mostly the same as site, but if you use some htaccess tricks:
-        // EXAMPLE:
-        // ReWriteCond %{REQUEST_URI} public-fake-dir
+        // EXAMPLE: ReWriteCond %{REQUEST_URI} public-fake-dir
         // ReWriteRule ^public-fake-dir/(.*)$ real/server/directory/$1 [L,QSA]
         // siteOrigin will point to 'real/server/directory'
         $config['system']['siteOrigin'] = (string)( $config['system']['protocol'].$__SERVER_NAME.$config['system']['portPath'].dirname($_SERVER['SCRIPT_NAME']) );
