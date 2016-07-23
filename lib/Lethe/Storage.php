@@ -466,4 +466,3 @@ class Storage
         return $bytesTotal;
     }
 }
-

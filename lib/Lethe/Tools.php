@@ -38,22 +38,34 @@ class Tools
     */
     public static function hash($str, $algo = 'sha512')
     {
+        $algo = mb_strtolower($algo);
+
+        // Blowfish salted
+        if (CRYPT_STD_DES == 1 && $algo == 'stddes')
+        {
+            return crypt($str, self::rnd(2));
+        }
+        // Blowfish salted
+        if (CRYPT_EXT_DES == 1 && $algo == 'extdes')
+        {
+            return crypt($str, '$2y$11$'.self::rnd(22).'$');
+        }
         // Blowfish salted
         if (CRYPT_BLOWFISH == 1 && $algo == 'blowfish')
         {
-            return crypt($str, '$2a$07$hezfCdUE7PoPH62VKGqEEY$');
+            return crypt($str, '$2y$11$'.self::rnd(22).'$');
         }
 
         // SHA-512 salted
         if (CRYPT_SHA512 == 1 && $algo == 'sha512salt')
         {
-            return crypt($str, '$6$rounds=5000$j3WFDYfdejLoqElh$');
+            return crypt($str, '$6$rounds=5000$'.self::rnd(16).'$');
         }
 
         // SHA-256 salted
         if (CRYPT_SHA256 == 1 && $algo == 'sha256salt')
         {
-            return crypt($str, '$5$rounds=5000$j3WFDYfdejLoqElh$');
+            return crypt($str, '$5$rounds=5000$'.self::rnd(16).'$');
         }
 
         // SHA-512
@@ -87,6 +99,16 @@ class Tools
         }
 
         return md5($str);
+    }
+
+    /**
+    * Validate str vs hash
+    * @param string $str
+    * @param string $hash
+    * @return string
+    */
+    public static function validate($str, $hash){
+        return crypt($str, $hash) == $hash;
     }
 
     /**
@@ -157,7 +179,6 @@ class Tools
     */
     public static function sortByLength($data)
     {
-
         usort($data, function($a, $b)
         {
             return mb_strlen($b) - mb_strlen($a);
@@ -343,4 +364,3 @@ class Tools
 
 }
 ?>
-

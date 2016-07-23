@@ -8,7 +8,7 @@ namespace Lethe;
 */
 class Sqlitedb extends Lethe
 {
-    private $host, $db, $user, $password, $engine, $errors, $stat;
+    private $host, $db, $user, $password, $engine, $errors, $stat, $lastInsert;
 
     /**
     * Construcor, configures Sqlite driver
@@ -17,7 +17,7 @@ class Sqlitedb extends Lethe
     */
     public function __construct($conf = null)
     {
-
+        $this->lastInsert = 0;
         $this->db =         'Lethe.db';
         $this->errors =     [];
         $this->stat =       false;
@@ -52,10 +52,10 @@ class Sqlitedb extends Lethe
     private function connect()
     {
         try {
-            
+
             $link = new \Sqlite3(__LETHE_ROOT__.'/'.$this->db);
             $this->stat = true;
-        } catch (Exception $e) 
+        } catch (Exception $e)
         {
             $link = false;
             $this->error('Sqlite connection error: '.$e->getMessage());
@@ -81,16 +81,22 @@ class Sqlitedb extends Lethe
     * @param string $query
     * @return bool|resource
     */
-    public function query($sqlquery)
+    public function query($sqlquery, $table = false)
     {
         $link = $this->connect();
 
         try {
-            
+
             $result = $link->exec($sqlquery);
+
+            if($this->handleInsert($sqlquery) !== false)
+            {
+                $this->lastInsert = $link->lastInsertRowID();
+            }
+
             $link->close();
-            
-        } catch (Exception $e) 
+
+        } catch (Exception $e)
         {
             $result = false;
             $this->error('Sqlite query error: '.$e->getMessage().' Query: '.$sqlquery);
@@ -112,7 +118,7 @@ class Sqlitedb extends Lethe
         $link = $this->connect();
 
         try{
-            
+
             $result = $link->query($sqlquery);
 
             if($this->stat === true && $result!==false)
@@ -120,19 +126,19 @@ class Sqlitedb extends Lethe
                 switch($type)
                 {
                     case "array":
-                        
+
                         while($row = $result->fetchArray(SQLITE3_BOTH))
                         {
                             $data[] = $row;
-                        }                        
+                        }
                     break; case "row":
-                        
+
                         while($row = $result->fetchArray(SQLITE3_NUM))
                         {
                             $data[] = $row;
                         }
                     break; case 'object':
-                        
+
                         $data = false;
                     break; case "assoc": default:
 
@@ -146,13 +152,35 @@ class Sqlitedb extends Lethe
                 $link->close();
             }
 
-        } catch (Exception $e) 
+        } catch (Exception $e)
         {
             $result = false;
             $this->error('Sqlite query error: '.$e->getMessage().' Query: '.$sqlquery);
         }
 
         return $data;
+    }
+
+    /**
+    * Ask for insert query
+    *
+    * @param string $query
+    * @return bool|string
+    */
+    protected function handleInsert($sqlquery)
+    {
+
+        if(Tools::startsWith($sqlquery, ['INSERT INTO', 'insert into']) !== false)
+        {
+            $res = explode(' ', trim($sqlquery));
+
+            if(count($res)>2)
+            {
+                return trim($res[2]);
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -163,8 +191,7 @@ class Sqlitedb extends Lethe
     */
     public function getLastId()
     {
-        $link = $this->connect();
-        return $link->lastInsertRowID(); 
+        return $this->lastInsert;
     }
 
     /**
@@ -181,10 +208,9 @@ class Sqlitedb extends Lethe
         {
             $this->error('Sqlite error: '.$link->lastErrorMsg());
         }
-        
+
         return $result;
     }
 
 }
 ?>
-

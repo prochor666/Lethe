@@ -162,4 +162,3 @@ class Cmd extends Lethe
     }
 
 }
-
