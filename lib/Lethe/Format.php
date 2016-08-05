@@ -35,25 +35,25 @@ class Format
 
     /**
      * Human readable xml array/object convertor
-     * @param object|array $a
+     * @param object|array $arr
+     * @param boolean $cdata
      * @return string
     */
-    public static function ObjXml( $a )
+    public static function ObjXml( $arr, $cdata = false )
     {
         $xml = NULL;
-        foreach( $a as $k => $v )
+        foreach( $arr as $k => $v )
         {
             $tag = trim( $k );
-            $tagEnd = $tag = is_numeric( $tag ) ? 'num_'.$tag: $tag;
+            $tag = is_numeric( $tag ) ? 'num_'.$tag: $tag;
+            $tag = str_replace([" ", "\t"], "-", $tag);
 
-            $tagObj = explode( ' ', $tag );
-
-            if( count( $tagObj ) > 1 )
+            if( is_array( $v ) || is_object( $v ) )
             {
-                $tagEnd = $tagObj[0];
+                $xml .=  "<$tag>".self::ObjXml( $v, $cdata )."</$tag>";
+            }else{
+                $xml .= $cdata === true ? "<$tag><![CDATA[".$v."]]></$tag>": "<$tag>".htmlentities( $v )."</$tag>";
             }
-
-            $xml .= is_array( $v ) || is_object( $v ) ? "<$tag>".self::ObjXml( $v )."</$tagEnd>": "<$tag>".htmlentities( $v )."</$tagEnd>";
         }
 
         return $xml;

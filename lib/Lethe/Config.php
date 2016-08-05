@@ -229,7 +229,7 @@ class Config{
         }
 
         // Server override
-        $__SERVER_NAME = isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME']: PHP_SAPI;
+        $__SERVER_NAME = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST']: PHP_SAPI;
         $__REQUEST_URI = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI']: '';
 
         // INIT defaults
