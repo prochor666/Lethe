@@ -308,10 +308,10 @@ class Config{
         $config['system']['productName'] = 'Lethe';
 
         // System version
-        $config['system']['version'] = '0.8.8';
+        $config['system']['version'] = '0.8.9';
 
         // Code name
-        $config['system']['productCodename'] = 'Rising Decay';
+        $config['system']['productCodename'] = 'Agonist';
 
         self::$config = $config;
     }
