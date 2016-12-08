@@ -40,15 +40,15 @@ class Tools
     {
         $algo = mb_strtolower($algo);
 
-        // Blowfish salted
+        // DES std, salted
         if (CRYPT_STD_DES == 1 && $algo == 'stddes')
         {
             return crypt($str, self::rnd(2));
         }
-        // Blowfish salted
+        // DES extended, salted
         if (CRYPT_EXT_DES == 1 && $algo == 'extdes')
         {
-            return crypt($str, '$2y$11$'.self::rnd(22).'$');
+            return crypt($str, '_'.self::rnd(8));
         }
         // Blowfish salted
         if (CRYPT_BLOWFISH == 1 && $algo == 'blowfish')

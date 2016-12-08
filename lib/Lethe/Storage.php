@@ -225,16 +225,40 @@ class Storage
     }
 
     /**
-    * Delete directory
+    * Delete directory, recursive
     * @param string $path
     * @return bool
     */
     public static function deleteDir($path)
     {
-        if(self::isDir($path) && self::isEmptyDir($path))
+        if(self::isDir($path) && self::isEmptyDir($path) )
         {
             return rmdir($path);
+
+        }elseif(self::isDir($path))
+        {
+            $handle = opendir($path);
+
+            while(false !== ( $file = readdir($handle)) )
+            {
+                if (( $file != '.' ) && ( $file != '..' ))
+                {
+                    if ( self::isDir($path . '/' . $file) )
+                    {
+                        $stat = self::deleteDir($path . '/' . $file);
+
+                    }elseif( self::isFile($path . '/' . $file) )
+                    {
+                        $stat = self::deleteFile($path . '/' . $file);
+                    }
+                }
+            }
+
+            closedir($handle);
+
+            return rmdir($path);
         }
+
         return false;
     }
 
@@ -250,9 +274,9 @@ class Storage
 
         if(self::isDir($path))
         {
-            $dir = opendir($path);
+            $handle = opendir($path);
 
-            while(false !== ( $o = readdir($dir)))
+            while(false !== ( $o = readdir($handle)))
             {
                 if(( $o != '.' ) && ( $o != '..' ))
                 {
@@ -276,7 +300,7 @@ class Storage
                     }
                 }
             }
-            closedir($dir);
+            closedir($handle);
         }
 
         ksort($stat['dirs']);
@@ -297,9 +321,10 @@ class Storage
 
         if(self::isDir($pathFrom))
         {
-            $dir = opendir($pathFrom);
+            $handle = opendir($pathFrom);
             self::makeDir($pathTo);
-            while(false !== ( $file = readdir($dir)) )
+            
+            while(false !== ( $file = readdir($handle)) )
             {
                 if (( $file != '.' ) && ( $file != '..' ))
                 {
@@ -312,7 +337,7 @@ class Storage
                     }
                 }
             }
-            closedir($dir);
+            closedir($handle);
         }
 
         return $stat;
