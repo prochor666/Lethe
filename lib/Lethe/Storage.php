@@ -323,7 +323,7 @@ class Storage
         {
             $handle = opendir($pathFrom);
             self::makeDir($pathTo);
-            
+
             while(false !== ( $file = readdir($handle)) )
             {
                 if (( $file != '.' ) && ( $file != '..' ))
@@ -413,32 +413,46 @@ class Storage
     {
         $chunksize = 4*(1024*1024); // 4M default
 
+
+
         try {
             // parse_url() parse host, path, etc.
             $parts = parse_url($pathFrom);
-            $i_handle = fsockopen($parts['host'], 80, $errstr, $errcode, 5);
+            $scheme = Tools::chef($parts, 'scheme', 'http');
+            $host = Tools::chef($parts, 'host', '');
+            $path = Tools::chef($parts, 'path', '');
+            $query = Tools::chef($parts, 'query', '');
+            $port = Tools::chef($parts, 'port', 0);
+            $port = $port === 0 ? ( $scheme == 'https' ? 443: 80 ): $port;
+
+            $hs = $scheme == 'https' ? 'ssl://': '';
+
+            $i_handle = fsockopen($hs.$host, $port, $errstr, $errcode, 5);
             $o_handle = fopen($pathTo, 'wb');
 
             if ($i_handle == false || $o_handle == false)
             {
-                return false;
+                return -1;
             }
 
-            if (!empty($parts['query']))
+            if ( mb_strlen($query)>0 )
             {
-                $parts['path'] .= '?' . $parts['query'];
+                $path .= '?' . $query;
             }
 
             // Send http request to remote server
-            $request = "GET {$parts['path']} HTTP/1.1\r\n";
-            $request .= "Host: {$parts['host']}\r\n";
+
+            //$request = $scheme == 'https' ? "GET ".$path." HTTPS/1.1\r\n": "GET ".$path." HTTP/1.1\r\n";
+            $request = "GET ".$path." HTTP/1.1\r\n";
+            $request .= "Host: ".$host."\r\n";
             $request .= "User-Agent: Mozilla/5.0\r\n";
             $request .= "Keep-Alive: 115\r\n";
             $request .= "Connection: keep-alive\r\n\r\n";
             fwrite($i_handle, $request);
 
             // Read headers from remote server
-            $headers = array();
+            $headers = [];
+
             while(!feof($i_handle))
             {
                 $line = fgets($i_handle);
@@ -448,6 +462,7 @@ class Storage
 
             // Look for the Content-Length header, and get the size of remote file
             $length = 0;
+
             foreach($headers as $header)
             {
                 if (stripos($header, 'Content-Length:') === 0)
