@@ -413,8 +413,6 @@ class Storage
     {
         $chunksize = 4*(1024*1024); // 4M default
 
-
-
         try {
             // parse_url() parse host, path, etc.
             $parts = parse_url($pathFrom);
