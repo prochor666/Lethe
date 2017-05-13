@@ -84,7 +84,7 @@ class Url
         $result['path'] = $result['name'] = $path;
 
         $src = array_filter(explode($delimiter, $path), function($val){
-            return mb_strlen((string)$val) > 0;
+            return true;
         });
         $i = count($src) - 1;
 
