@@ -33,6 +33,7 @@ class Url
 
         if (!is_null($delimiter) || mb_strlen($delimiter) > 0)
         {
+
             foreach($src as $s)
             {
                 $result[0][] = self::extract($s, $delimiter);
@@ -82,7 +83,9 @@ class Url
 
         $result['path'] = $result['name'] = $path;
 
-        $src = array_filter(explode($delimiter, $path));
+        $src = array_filter(explode($delimiter, $path), function($val){
+            return mb_strlen((string)$val) > 0;
+        });
         $i = count($src) - 1;
 
         if($i>0)
