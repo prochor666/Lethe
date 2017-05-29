@@ -1,8 +1,6 @@
-<?php
-namespace Lethe;
+<?phpnamespace Lethe;
 
-/**
-* Lethe\SqliteDb - Sqlite3 database manipulation class
+/*** Lethe\SqliteDb - Sqlite3 database manipulation class
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Sqlitedb extends Lethe
@@ -82,7 +80,6 @@ class Sqlitedb extends Lethe
         $link = $this->connect();
 
         try {
-
             $result = $link->exec($sqlquery);
 
             if($this->handleInsert($sqlquery) !== false)
@@ -113,7 +110,6 @@ class Sqlitedb extends Lethe
         $link = $this->connect();
 
         try{
-
             $result = $link->query($sqlquery);
 
             if($this->stat === true && $result!==false)
@@ -121,22 +117,18 @@ class Sqlitedb extends Lethe
                 switch($type)
                 {
                     case "array":
-
                         while($row = $result->fetchArray(SQLITE3_BOTH))
                         {
                             $data[] = $row;
                         }
                     break; case "row":
-
                         while($row = $result->fetchArray(SQLITE3_NUM))
                         {
                             $data[] = $row;
                         }
                     break; case 'object':
-
                         $data = false;
                     break; case "assoc": default:
-
                         while($row = $result->fetchArray(SQLITE3_ASSOC))
                         {
                             $data[] = $row;
@@ -163,7 +155,6 @@ class Sqlitedb extends Lethe
     */
     protected function handleInsert($sqlquery)
     {
-
         if(Tools::startsWith($sqlquery, ['INSERT INTO', 'insert into']) !== false)
         {
             $res = explode(' ', trim($sqlquery));

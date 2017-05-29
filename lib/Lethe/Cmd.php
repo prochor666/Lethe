@@ -1,5 +1,4 @@
-<?php
-namespace Lethe;
+<?phpnamespace Lethe;
 
 /**
 * Lethe\Cmd - commandline class
@@ -17,7 +16,6 @@ class Cmd extends Lethe
     public function __construct()
     {
         parent::__construct();
-
         // Set up shell colors
         $this->foregroundColors['black'] = '0;30';
         $this->foregroundColors['dark_gray'] = '1;30';
@@ -35,7 +33,6 @@ class Cmd extends Lethe
         $this->foregroundColors['yellow'] = '1;33';
         $this->foregroundColors['light_gray'] = '0;37';
         $this->foregroundColors['white'] = '1;37';
-
         $this->backgroundColors['black'] = '40';
         $this->backgroundColors['red'] = '41';
         $this->backgroundColors['green'] = '42';
@@ -44,14 +41,11 @@ class Cmd extends Lethe
         $this->backgroundColors['magenta'] = '45';
         $this->backgroundColors['cyan'] = '46';
         $this->backgroundColors['light_gray'] = '47';
-
         $this->options = [];
         $this->command = 'info';
     }
 
-
-    /**
-    * Run command
+    /**    * Run command
     * @param void
     * @return mixed
     */
@@ -86,19 +80,16 @@ class Cmd extends Lethe
         $info = 'Lethe environment: '.$this->getColored(PHP_OS.'/'.PHP_SAPI.'', 'light_green').PHP_EOL
                 .'Lethe version: '.$this->getColored($this->config('system/version'), 'light_green').PHP_EOL
                 .'Lethe codename: '.$this->getColored($this->config('system/productCodename'), 'light_green').PHP_EOL;
-
         return $info;
     }
 
-    /**
-    * Get configuration options
+    /**    * Get configuration options
     * @param void
     * @return string
     */
     public function conf()
     {
         $info = $this->getColored(Tools::dump($this->config('system')), 'light_green').PHP_EOL;
-
         return $info;
     }
 
@@ -110,12 +101,10 @@ class Cmd extends Lethe
     public function registry()
     {
         $info = $this->getColored(Tools::dump(Reg::read()), 'yellow').PHP_EOL;
-
         return $info;
     }
 
-    /**
-    * Get colored string
+    /**    * Get colored string
     * @param void
     * @return string
     */

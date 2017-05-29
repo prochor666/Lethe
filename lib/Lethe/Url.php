@@ -1,10 +1,7 @@
-<?php
-namespace Lethe;
+<?phpnamespace Lethe;
 
-/*** Lethe\Url - universal url parser/extractor
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+/*** Lethe\Url - universal url parser/extractor* @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
-
 class Url
 {
     /**

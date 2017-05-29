@@ -1,10 +1,7 @@
-<?php
-namespace Lethe;
+<?phpnamespace Lethe;
 
-use \stdClass;
-
-/**
-* Lethe\Charon - Lethe queue system, not aplicable yet!
+use \stdClass;
+/*** Lethe\Charon - Lethe queue system, not aplicable yet!
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Charon extends Lethe
@@ -18,14 +15,12 @@ class Charon extends Lethe
     {
         parent::__construct();
 
-        $this->souls = new \stdClass;
-        $this->souls->identity = $this->setIdentity(Tools::rnd(71));
+        $this->souls = new \stdClass;        $this->souls->identity = $this->setIdentity(Tools::rnd(71));
         $this->souls->data = [];
         $this->souls->worker = function($config = []){};
     }
 
-    /**
-    * Set queue item
+    /**    * Set queue item
     * @param array $data
     * @return void
     */
@@ -34,8 +29,7 @@ class Charon extends Lethe
         $this->souls->data[] = $data;
     }
 
-    /**
-    * Run queue
+    /**    * Run queue
     * @param int $usleep
     * @return void
     */
@@ -43,12 +37,10 @@ class Charon extends Lethe
     {
         foreach($this->souls->data[] as $task)
         {
-
         }
     }
 
-    /**
-    * Set custom worker
+    /**    * Set custom worker
     * @param object|function $worker
     * @return void
     */
@@ -76,5 +68,4 @@ class Charon extends Lethe
     {
         return $this->souls->data;
     }
-
 }

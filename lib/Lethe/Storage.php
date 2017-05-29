@@ -1,8 +1,6 @@
-<?php
-namespace Lethe;
+<?phpnamespace Lethe;
 
-/**
-* Lethe\Storage - basic filesystem operations, copy/delete/create files and directories
+/*** Lethe\Storage - basic filesystem operations, copy/delete/create files and directories
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Storage
@@ -12,8 +10,7 @@ class Storage
     */
     final public function __construct(){}
 
-    /**
-    * Open base dir effect, can we read?
+    /**    * Open base dir effect, can we read?
     * @param string $path
     * @return bool
     */
@@ -24,7 +21,6 @@ class Storage
 
     /**
     * Open base dir effect, can we write?
-    *
     * @param string $path
     * @return bool
     */
@@ -108,8 +104,8 @@ class Storage
     public static function putFile($path = null, $data = null)
     {
         $res = false;
-        if( self::canWrite(dirname($path)) && !self::isDir($path) )
-        {
+
+        if( self::canWrite(dirname($path)) && !self::isDir($path) )        {
             $res = file_put_contents($path, $data);
             umask(0000);
             chmod($path, self::defaultFilePermission());
@@ -179,14 +175,12 @@ class Storage
         {
             return pathinfo($path, PATHINFO_FILENAME);
         }
-        $f = explode('.', $path);
-        $ext = array_pop($f);
 
-        return trim(implode('.', $f));
-    }
+        $f = explode('.', $path);        $ext = array_pop($f);
 
-    /**
-    * Directory test
+        return trim(implode('.', $f));    }
+
+    /**    * Directory test
     * @param string $path
     * @return bool
     */
@@ -195,8 +189,7 @@ class Storage
         return self::canRead($path) && file_exists($path) && is_dir($path) ? true: false;
     }
 
-    /**
-    * Create directory
+    /**    * Create directory
     * @param string $path
     * @return bool
     */
@@ -204,17 +197,14 @@ class Storage
     {
         $stat = false;
 
-        if(!self::isDir($path))
-        {
+        if(!self::isDir($path))        {
             umask(0000);
             $stat = mkdir($path, self::defaultDirPermission(), true);
         }
 
-        return $stat;
-    }
+        return $stat;    }
 
-    /**
-    * Rename/move directory
+    /**    * Rename/move directory
     * @param string $pathFrom
     * @param string $pathTo
     * @return bool
@@ -356,9 +346,8 @@ class Storage
     public static function isEmptyDir($path)
     {
         $dir = $path;
-        
-        return ( self::isDir($dir) && ($files = @scandir($dir)) && count($files) <= 2);
-    }
+
+        return ( self::isDir($dir) && ($files = @scandir($dir)) && count($files) <= 2);    }
 
     /**
     * Check permission
@@ -452,8 +441,8 @@ class Storage
             $request .= "User-Agent: Mozilla/5.0\r\n";
             $request .= "Keep-Alive: 115\r\n";
             $request .= "Connection: keep-alive\r\n\r\n";
-            fwrite($i_handle, $request);
 
+            fwrite($i_handle, $request);
             // Read headers from remote server
             $headers = [];
 
@@ -464,11 +453,9 @@ class Storage
                 $headers[] = $line;
             }
 
-            // Look for the Content-Length header, and get the size of remote file
-            $length = 0;
+            // Look for the Content-Length header, and get the size of remote file            $length = 0;
 
-            foreach($headers as $header)
-            {
+            foreach($headers as $header)            {
                 if (stripos($header, 'Content-Length:') === 0)
                 {
                     $length = (int)str_replace('Content-Length: ', '', $header);
@@ -476,37 +463,33 @@ class Storage
                 }
             }
 
-            // Read remote file, and store it to the local file one chunk at a time.
-            $bytesTotal = 0;
+            // Read remote file, and store it to the local file one chunk at a time.            $bytesTotal = 0;
 
             while(!feof($i_handle))
             {
                 $buf = '';
                 $buf = fread($i_handle, $chunksize);
                 $bytes = fwrite($o_handle, $buf);
+
                 if ($bytes == false)
                 {
                     return false;
                 }
-                $bytesTotal += $bytes;
 
-                // Reading until reach the conent length
-                if($bytesTotal >= $length)
+                $bytesTotal += $bytes;
+                // Reading until reach the conent length                if($bytesTotal >= $length)
                 {
                     break;
                 }
             }
 
-            fclose($i_handle);
-            fclose($o_handle);
+            fclose($i_handle);            fclose($o_handle);
 
-            self::permissionChange($pathTo, self::defaultFilePermission());
-
+            self::permissionChange($pathTo, self::defaultFilePermission());
         }catch(Exception $e)
         {
             $bytesTotal = -1;
         }
 
-        return $bytesTotal;
-    }
+        return $bytesTotal;    }
 }

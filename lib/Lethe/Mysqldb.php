@@ -1,8 +1,6 @@
-<?php
-namespace Lethe;
+<?phpnamespace Lethe;
 
-/**
-* Lethe\MysqlDb - mysql database manipulation class
+/*** Lethe\MysqlDb - mysql database manipulation class
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Mysqldb extends Lethe
@@ -75,12 +73,10 @@ class Mysqldb extends Lethe
     */
     private function connect()
     {
-
         if($this->driver == 'ext/mysqli')
         {
-
             $link = mysqli_init();
-            if (!$link)
+            if(!$link)
             {
                 $link = false;
             }else{
@@ -143,19 +139,19 @@ class Mysqldb extends Lethe
             }
         }else{
             $result = !mysql_error() ? mysql_query(trim($sqlquery), $link ): false;
+
             if($result === false)
             {
                 $this->error('MySQL query error: '.mysql_error().' Query: '.$sqlquery);
             }else{
                 mysql_close($link);
-            }
-        }
+
+            }        }
 
         return $result === false ? $this->getErrors(): $result;
     }
 
-    /**
-    * Database query result
+    /**    * Database query result
     * @param string $query
     * @param string $type
     * @return array|object
@@ -191,8 +187,7 @@ class Mysqldb extends Lethe
                         }
                 }
 
-                mysqli_free_result($result);
-            }
+                mysqli_free_result($result);            }
         }else{
             if($this->stat === true && mysql_num_rows($result)>0)
             {

@@ -1,5 +1,4 @@
-<?php
-namespace Lethe;
+<?phpnamespace Lethe;
 
 /**
 * Lethe\Postgresqldb - PostgreSQL database manipulation class
@@ -61,7 +60,6 @@ class Postgresqldb extends Lethe
         return  $link;
     }
 
-
     /**
     * Database connection test
     * @param array $conf
@@ -72,8 +70,7 @@ class Postgresqldb extends Lethe
         return $this->connect();
     }
 
-    /**
-    * Database query INSERT/UPDATE?DELETE etc..
+    /**    * Database query INSERT/UPDATE?DELETE etc..
     * @param string $query
     * @return bool|resource
     */
@@ -93,9 +90,7 @@ class Postgresqldb extends Lethe
         return $result === false ? $this->getErrors(): $result;
     }
 
-
-    /**
-    * Database query result
+    /**    * Database query result
     * @param string $query
     * @param string $type
     * @return array|object
@@ -121,24 +116,19 @@ class Postgresqldb extends Lethe
                     }
                 break; case 'object':
                     $data = pg_fetch_object($result);
-
                 break; case "assoc": default:
                     while($row = pg_fetch_assoc($result))
                     {
                         array_push($data, $row);
                     }
             }
-
             pg_free_result($result);
         }
-
 
         return $data;
     }
 
-
-    /**
-    * Get last serial value
+    /**    * Get last serial value
     * @param string $table
     * @return int
     */
@@ -149,7 +139,6 @@ class Postgresqldb extends Lethe
         $sql = "SELECT * FROM " . $table;
         $ret = pg_query($link, $sql);
         $idseq = pg_field_name($ret, 0);
-
         // Execute last item query
         $result = $this->result("SELECT MAX(".$idseq.") FROM ".$table."", 'row');
 

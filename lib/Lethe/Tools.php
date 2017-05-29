@@ -1,8 +1,6 @@
-<?php
-namespace Lethe;
+<?phpnamespace Lethe;
 
-/**
-* Lethe\Tools - Lethe tools/generators
+/*** Lethe\Tools - Lethe tools/generators
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Tools
@@ -122,33 +120,29 @@ class Tools
     {
         $n = func_num_args();
         $a = func_get_args();
-
         ob_start();
-        if($n>0)
-        {
+
+        if($n>0)        {
             foreach($a as $var)
             {
                 if(PHP_SAPI !== 'cli')
                 {
                     echo '<pre>';
                 }
-
                 var_dump($var);
+
                 if(PHP_SAPI !== 'cli')
                 {
                     echo '</pre>';
                 }
             }
-
         }else{
             echo PHP_SAPI === 'cli' ? 'DUMP: no-data': '<pre>DUMP: no-data</pre>';
         }
 
-        $result = ob_get_clean();        return $result;
-    }
+        $result = ob_get_clean();        return $result;    }
 
-    /**
-    * Die dump
+    /**    * Die dump
     * @return void
     */
     public static function dd()
@@ -156,8 +150,7 @@ class Tools
         die(self::dump(func_get_args()));
     }
 
-    /**
-    * Slice big array
+    /**    * Slice big array
     * @param array $data
     * @param int $from
     * @param int $to
@@ -166,6 +159,7 @@ class Tools
     public static function slice($data=[], $from = 0, $to = 0)
     {
         $newDataset = [];
+
         if(is_array($data) && count($data)>0 && $to > 0)
         {
             $newDataset = array_slice($data, $from, $to);
@@ -175,8 +169,7 @@ class Tools
         return $newDataset;
     }
 
-    /**
-    * Sort single array by length
+    /**    * Sort single array by length
     * @param array $data
     * @return array
     */
@@ -326,7 +319,8 @@ class Tools
             'REMOTE_ADDR'
         ];
 
-        foreach($clientVars as $key)        {
+        foreach($clientVars as $key)
+        {
             if(array_key_exists($key, $_SERVER) === true)
             {
                 foreach(explode(',', $_SERVER[$key]) as $ip)

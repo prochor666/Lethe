@@ -1,8 +1,6 @@
-<?php
-namespace Lethe;
+<?phpnamespace Lethe;
 
-/**
-* Base class, initalizes config and registry, provide debug messaging
+/*** Base class, initalizes config and registry, provide debug messaging
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Lethe implements ISystem, IDebug
@@ -110,5 +108,4 @@ class Lethe implements ISystem, IDebug
     {
         return json_decode(Storage::getFileData(__LETHE_LETHE__.'/init/lang.json'), true);
     }
-
 }

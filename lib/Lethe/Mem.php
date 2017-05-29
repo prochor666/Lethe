@@ -1,8 +1,6 @@
-<?php
-namespace Lethe;
+<?phpnamespace Lethe;
 
-/**
-* Lethe\Mem - Lethe Memcache/Memcached wrapper
+/*** Lethe\Mem - Lethe Memcache/Memcached wrapper
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Mem extends Lethe
