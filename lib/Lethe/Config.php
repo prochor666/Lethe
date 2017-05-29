@@ -5,7 +5,7 @@ use Lethe\Tools;
 
 /**
 * Lethe\Config - Lethe configurator
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 */
 class Config{
 

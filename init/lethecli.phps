@@ -2,8 +2,7 @@
 <?php
 /**
 * Lethe CLI interpreter
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 * @package Lethe
 */
 use Lethe\Lethe;

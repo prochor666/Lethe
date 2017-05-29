@@ -3,7 +3,7 @@ namespace Lethe;
 
 /**
 * Lethe\MysqlDb - mysql database manipulation class
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 */
 class Mysqldb extends Lethe
 {

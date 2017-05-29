@@ -2,8 +2,8 @@
 namespace Lethe;
 
 /**
-* interface.IDebug.php
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* interface IDebug.php
+* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 */
 interface IDebug
 {

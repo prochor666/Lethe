@@ -1,8 +1,8 @@
 {
     "name": "prochor666/lethe",
     "type": "library",
-    "description": "PHP 5.3+ toolkit",
-    "keywords": ["toolkit","framework"],
+    "description": "PHP toolkit",
+    "keywords": ["toolkit"],
     "homepage": "https://github.com/prochor666/Lethe",
     "license": "MIT",
     "authors": [

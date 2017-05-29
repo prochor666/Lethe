@@ -1,8 +1,7 @@
 <?php
 /**
 * Lethe bootstrap
-*
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 * @package Lethe
 */
 if (version_compare(PHP_VERSION, '5.3.0', '<') )

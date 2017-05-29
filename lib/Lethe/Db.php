@@ -3,7 +3,7 @@ namespace Lethe;
 
 /**
 * Lethe\Db - databse wrapper, multiple SQL databases/engines support
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 */
 class Db
 {

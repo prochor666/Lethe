@@ -3,7 +3,7 @@ namespace Lethe;
 
 /**
 * Lethe\Mem - Lethe Memcache/Memcached wrapper
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 */
 class Mem extends Lethe
 {

@@ -6,7 +6,7 @@ use Lethe\Tools;
 
 /**
 * Lethe\Cache - basic filesystem caching operations
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 */
 class Cache extends Lethe
 {

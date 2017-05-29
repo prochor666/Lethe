@@ -3,7 +3,7 @@ namespace Lethe;
 
 /**
 * Lethe\FtpClient - FTP client used to download/upload/manage files on remote FTP server
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 * @todo non-blocking support
 * @todo listing directory (iterations)
 * @todo remote file/directory exists

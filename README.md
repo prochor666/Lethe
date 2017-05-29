@@ -1,6 +1,6 @@
 Lethe
 =====
 
-Simple PHP toolkit
+PHP toolkit
 
-Required: PHP 5.3+, gdlib
+Required: PHP 5.3+

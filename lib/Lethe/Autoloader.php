@@ -3,7 +3,7 @@ namespace Lethe;
 
 /**
 * Lethe\Autoloader - Lethe class autoloader
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 */
 class Autoloader
 {

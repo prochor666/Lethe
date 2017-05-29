@@ -3,7 +3,7 @@ namespace Lethe;
 
 /**
 * Lethe\Postgresqldb - PostgreSQL database manipulation class
-* @author Jan Prochazka aka prochor <prochor666@gmail.com>
+* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 */
 class Postgresqldb extends Lethe
 {
