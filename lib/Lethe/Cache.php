@@ -1,8 +1,11 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
-use Lethe\Storage;use Lethe\Tools;
+use Lethe\Storage;
+use Lethe\Tools;
 
-/*** Lethe\Cache - basic filesystem caching operations
+/**
+* Lethe\Cache - basic filesystem caching operations
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Cache extends Lethe
@@ -26,7 +29,8 @@ class Cache extends Lethe
         $this->permission = $this->config('system/filePermission');
     }
 
-    /**    * Autocache content, compare cache and live data
+    /**
+    * Autocache content, compare cache and live data
     * @param void
     * @return string
     */
@@ -48,7 +52,8 @@ class Cache extends Lethe
         return $this->cacheRead();
     }
 
-    /**    * Check cache expiration
+    /**
+    * Check cache expiration
     * @param void
     * @return bool
     */
@@ -63,7 +68,8 @@ class Cache extends Lethe
         return ( !is_array($this->meta) || count($this->meta)<1 ) || ((int)$this->keepalive + $this->meta['mtime']) < time() ? true: false;
     }
 
-    /**    * Write cache file
+    /**
+    * Write cache file
     * @param void
     * @return void
     */
@@ -73,7 +79,8 @@ class Cache extends Lethe
         Storage::permissionChange( $this->cacheFile, $this->permission );
     }
 
-    /**    * Direct read cache file, no compare
+    /**
+    * Direct read cache file, no compare
     * @param void
     * @return string
     */
@@ -82,7 +89,8 @@ class Cache extends Lethe
         return  Storage::getFileData($this->cacheFile);
     }
 
-    /**    * Sets cache file metadata
+    /**
+    * Sets cache file metadata
     * @param void
     * @return void
     */

@@ -1,4 +1,5 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
 /**
 * Lethe\Cmd - commandline class
@@ -45,7 +46,8 @@ class Cmd extends Lethe
         $this->command = 'info';
     }
 
-    /**    * Run command
+    /**
+    * Run command
     * @param void
     * @return mixed
     */
@@ -83,7 +85,8 @@ class Cmd extends Lethe
         return $info;
     }
 
-    /**    * Get configuration options
+    /**
+    * Get configuration options
     * @param void
     * @return string
     */
@@ -104,7 +107,8 @@ class Cmd extends Lethe
         return $info;
     }
 
-    /**    * Get colored string
+    /**
+    * Get colored string
     * @param void
     * @return string
     */

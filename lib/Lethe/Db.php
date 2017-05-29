@@ -1,6 +1,8 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
-/*** Lethe\Db - databse wrapper, multiple SQL databases/engines support
+/**
+* Lethe\Db - databse wrapper, multiple SQL databases/engines support
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Db
@@ -60,7 +62,8 @@ class Db
         return $db->result($conf['query'], $conf['type'] );
     }
 
-    /**    * Database query INSET/UPDATE?DELETE etc..
+    /**
+    * Database query INSET/UPDATE?DELETE etc..
     * @param array $conf
     * @return bool|resource
     */
@@ -70,7 +73,8 @@ class Db
         return $db->query($conf['query']);
     }
 
-    /**    * Get next autoincrement value
+    /**
+    * Get next autoincrement value
     * @param array $conf
     * @return int
     */

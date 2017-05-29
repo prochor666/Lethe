@@ -1,4 +1,5 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
 /**
 * Lethe\Postgresqldb - PostgreSQL database manipulation class
@@ -70,7 +71,8 @@ class Postgresqldb extends Lethe
         return $this->connect();
     }
 
-    /**    * Database query INSERT/UPDATE?DELETE etc..
+    /**
+    * Database query INSERT/UPDATE?DELETE etc..
     * @param string $query
     * @return bool|resource
     */
@@ -90,7 +92,8 @@ class Postgresqldb extends Lethe
         return $result === false ? $this->getErrors(): $result;
     }
 
-    /**    * Database query result
+    /**
+    * Database query result
     * @param string $query
     * @param string $type
     * @return array|object
@@ -128,7 +131,8 @@ class Postgresqldb extends Lethe
         return $data;
     }
 
-    /**    * Get last serial value
+    /**
+    * Get last serial value
     * @param string $table
     * @return int
     */

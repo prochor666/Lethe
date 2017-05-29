@@ -1,13 +1,17 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
-use Lethe\Config;use Lethe\Tools;
+use Lethe\Config;
+use Lethe\Tools;
 use Lethe\Url;
 
-/*** Lethe\Route - simple static router
+/**
+* Lethe\Route - simple static router
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 
-class Route{
+class Route
+{
     /**
     * @ignore
     */
@@ -23,7 +27,8 @@ class Route{
         return Config::query('system/rel');
     }
 
-    /**    * Get relative path
+    /**
+    * Get relative path
     * @description full relative path
     * @param integer $index
     * @return string
@@ -55,7 +60,8 @@ class Route{
         return count(self::all());
     }
 
-    /**    * Redirect
+    /**
+    * Redirect
     * @description redirect helper
     * @param string $path = /some/path/to
     * @return void

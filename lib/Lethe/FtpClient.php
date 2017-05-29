@@ -1,6 +1,8 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
-/*** Lethe\FtpClient - FTP client used to download/upload/manage files on remote FTP server
+/**
+* Lethe\FtpClient - FTP client used to download/upload/manage files on remote FTP server
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 * @todo non-blocking support
 * @todo listing directory (iterations)
@@ -14,7 +16,8 @@ class FtpClient extends Lethe
     private $connection,
             $mode;
 
-    public  $user,            $password,
+    public  $user,
+            $password,
             $host,
             $port,
             $passive,
@@ -24,7 +27,8 @@ class FtpClient extends Lethe
             $status,
             $binary;
 
-    /**    * Grab connection settings
+    /**
+    * Grab connection settings
     * @param string $host
     * @param string $user
     * @param string $password
@@ -45,7 +49,8 @@ class FtpClient extends Lethe
         $this->status = false;
     }
 
-    /**    * Establish FTP connection
+    /**
+    * Establish FTP connection
     * @param void
     * @return bool
     */
@@ -63,28 +68,34 @@ class FtpClient extends Lethe
             {
                 $this->debugSet('401', 'Login ok');
 
-                if($this->passive === true)                {
+                if($this->passive === true)
+                {
                     $pasv = ftp_pasv($this->connection, true);
 
-                    if($login === true)                    {
+                    if($login === true)
+                    {
                         $this->debugSet('402', 'Passive mode ok');
                     }else{
                         $this->debugSet('1402', 'Passive mode failed');
                     }
                 }
 
-                $this->status = true;            }else{
+                $this->status = true;
+            }else{
                 $this->debugSet('1401', 'FTP Login failed');
                 ftp_close($this->connection);
                 $this->connection = false;
             }
 
-        }else{            $this->debugSet('1400', 'FTP Connection failed');
+        }else{
+            $this->debugSet('1400', 'FTP Connection failed');
         }
 
-        return $this->status;    }
+        return $this->status;
+    }
 
-    /**    * Change active directory on FTP server
+    /**
+    * Change active directory on FTP server
     * @param string $dir
     * @return bool
     */
@@ -92,7 +103,8 @@ class FtpClient extends Lethe
     {
         $action = @ftp_chdir($this->connection, $dir);
 
-        if($action === true)        {
+        if($action === true)
+        {
             $this->debugSet('403', 'Chdir ok ('.$dir.')');
         }else{
             $this->debugSet('1403', 'Chdir failed ('.$dir.')');
@@ -101,7 +113,8 @@ class FtpClient extends Lethe
         return $action;
     }
 
-    /**    * Go to the parent directory on FTP server
+    /**
+    * Go to the parent directory on FTP server
     * @param void
     * @return bool
     */
@@ -119,7 +132,8 @@ class FtpClient extends Lethe
         return $action;
     }
 
-    /**    * Make new directory on remote FTP server
+    /**
+    * Make new directory on remote FTP server
     * @param string $dir
     * @return string|bool
     */
@@ -171,9 +185,11 @@ class FtpClient extends Lethe
             $this->debugSet('407', 'SysType failed');
         }
 
-        return $action;    }
+        return $action;
+    }
 
-    /**    * Check directory on remote FTP server
+    /**
+    * Check directory on remote FTP server
     * @param string $dir
     * @return bool
     */
@@ -181,16 +197,19 @@ class FtpClient extends Lethe
     {
         $action = @ftp_chdir($this->connection, $dir);
 
-        if($action !== false)        {
+        if($action !== false)
+        {
             $this->debugSet('408', 'Dir exists ('.$dir.')');
              @ftp_cdup($this->connection);
         }else{
             $this->debugSet('1408', 'Dir doesn\'t exist ('.$dir.')');
         }
 
-        return $action;    }
+        return $action;
+    }
 
-    /**    * Upload file from ($from) to the FTP server directory ($to)
+    /**
+    * Upload file from ($from) to the FTP server directory ($to)
     * @param string $from
     * @param string $to
     * @return bool
@@ -231,7 +250,8 @@ class FtpClient extends Lethe
         return $action;
     }
 
-    /**    * Upload file from ($from) to the FTP server directory ($to)
+    /**
+    * Upload file from ($from) to the FTP server directory ($to)
     * Alias for FtpClient::putFile()
     * @param string $from
     * @param string $to
@@ -242,7 +262,8 @@ class FtpClient extends Lethe
         return $this->putFile($from, $to);
     }
 
-    /**    * Download file from FTP server ($from) to local directory ($to)
+    /**
+    * Download file from FTP server ($from) to local directory ($to)
     * Alias for FtpClient::getFile()
     * @param string $from
     * @param string $to

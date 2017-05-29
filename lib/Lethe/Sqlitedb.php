@@ -1,6 +1,8 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
-/*** Lethe\SqliteDb - Sqlite3 database manipulation class
+/**
+* Lethe\SqliteDb - Sqlite3 database manipulation class
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Sqlitedb extends Lethe

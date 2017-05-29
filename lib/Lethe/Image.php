@@ -1,6 +1,8 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
-/*** Lethe\Image - image manipulation class, resize/convert/save images
+/**
+* Lethe\Image - image manipulation class, resize/convert/save images
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Image
@@ -25,7 +27,8 @@ class Image
         $this->permissions = 0777;
     }
 
-    /**    * Image load and parse type
+    /**
+    * Image load and parse type
     * @param void
     * @return void
     */
@@ -53,7 +56,8 @@ class Image
         }
     }
 
-    /**    * Image processing, save buffer or output image result
+    /**
+    * Image processing, save buffer or output image result
     * @param bool $save
     * @return bool
     */
@@ -80,7 +84,8 @@ class Image
         return $result;
     }
 
-    /**    * Output image reource
+    /**
+    * Output image reource
     * @param void
     * @return void
     */
@@ -101,9 +106,11 @@ class Image
                 echo 'IMAGE TYPE ERROR';
         }
 
-        return ob_get_clean();    }
+        return ob_get_clean();
+    }
 
-    /**    * File conversion, set image type to force format change
+    /**
+    * File conversion, set image type to force format change
     * @param void
     * @return bool
     */
@@ -113,7 +120,8 @@ class Image
         return $this->process(true);
     }
 
-    /**    * Save image resource to a file
+    /**
+    * Save image resource to a file
     * @param void
     * @return bool
     */
@@ -122,7 +130,8 @@ class Image
         return $this->process(true);
     }
 
-    /**    * Outuput raw image resource with proper header
+    /**
+    * Outuput raw image resource with proper header
     * @param void
     * @return bool
     */
@@ -141,7 +150,8 @@ class Image
         return $this->process(false);
     }
 
-    /**    * Get image width
+    /**
+    * Get image width
     * @param void
     * @return int
     */
@@ -150,7 +160,8 @@ class Image
         return imagesx($this->image);
     }
 
-    /**    * Get image height
+    /**
+    * Get image height
     * @param void
     * @return int
     */
@@ -159,7 +170,8 @@ class Image
         return imagesy($this->image);
     }
 
-    /**    * Get image type
+    /**
+    * Get image type
     * @param void
     * @return string
     */
@@ -168,7 +180,8 @@ class Image
         return $this->imageType;
     }
 
-    /**    * Resize image, respect input height, set proper aspect ratio and calculate width
+    /**
+    * Resize image, respect input height, set proper aspect ratio and calculate width
     * @param int $height
     * @return int
     */
@@ -179,7 +192,8 @@ class Image
         $this->resize($width, $height);
     }
 
-    /**    * Resize image, respect input width, set proper aspect ratio and calculate height
+    /**
+    * Resize image, respect input width, set proper aspect ratio and calculate height
     * @param int $height
     * @return int
     */
@@ -190,7 +204,8 @@ class Image
         $this->resize($width,$height);
     }
 
-    /**    * Resize image to $scale %, based on origin size
+    /**
+    * Resize image to $scale %, based on origin size
     * @param int $scale
     * @return void
     */
@@ -201,7 +216,8 @@ class Image
         $this->resize($width, $height);
     }
 
-    /**    * Resize image to $width & $height
+    /**
+    * Resize image to $width & $height
     * @param int $width
     * @param int $height
     * @return void
@@ -222,7 +238,8 @@ class Image
         $this->image = $imageResized;
     }
 
-    /**    * Closet (destroy) image resource
+    /**
+    * Closet (destroy) image resource
     * @param void
     * @return void
     */

@@ -6,7 +6,6 @@
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 * @package Lethe
 */
-
 use Lethe\Lethe;
 use Lethe\Cmd;
 

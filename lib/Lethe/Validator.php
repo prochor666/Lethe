@@ -1,6 +1,8 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
-/*** Lethe\Validator - Lethe data validator
+/**
+* Lethe\Validator - Lethe data validator
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Validator

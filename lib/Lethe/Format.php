@@ -1,6 +1,8 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
-/*** Lethe\Format - data formatter
+/**
+* Lethe\Format - data formatter
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Format
@@ -189,7 +191,8 @@ class Format
             'ч' => 'ch', 'ш' => 'sh', 'щ' => 'sh', 'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e', 'ю' => 'yu',
             'я' => 'ya',
 
-            // Ukrainian            'Є' => 'Ye', 'І' => 'I', 'Ї' => 'Yi', 'Ґ' => 'G',
+            // Ukrainian
+            'Є' => 'Ye', 'І' => 'I', 'Ї' => 'Yi', 'Ґ' => 'G',
             'є' => 'ye', 'і' => 'i', 'ї' => 'yi', 'ґ' => 'g',
 
             // Czech
@@ -198,12 +201,14 @@ class Format
             'č' => 'c', 'ď' => 'd', 'ě' => 'e', 'ň' => 'n', 'ř' => 'r', 'š' => 's', 'ť' => 't', 'ů' => 'u',
             'ž' => 'z',
 
-            // Polish            'Ą' => 'A', 'Ć' => 'C', 'Ę' => 'e', 'Ł' => 'L', 'Ń' => 'N', 'Ó' => 'o', 'Ś' => 'S', 'Ź' => 'Z',
+            // Polish
+            'Ą' => 'A', 'Ć' => 'C', 'Ę' => 'e', 'Ł' => 'L', 'Ń' => 'N', 'Ó' => 'o', 'Ś' => 'S', 'Ź' => 'Z',
             'Ż' => 'Z',
             'ą' => 'a', 'ć' => 'c', 'ę' => 'e', 'ł' => 'l', 'ń' => 'n', 'ó' => 'o', 'ś' => 's', 'ź' => 'z',
             'ż' => 'z',
 
-            // Latvian            'Ā' => 'A', 'Č' => 'C', 'Ē' => 'E', 'Ģ' => 'G', 'Ī' => 'i', 'Ķ' => 'k', 'Ļ' => 'L', 'Ņ' => 'N',
+            // Latvian
+            'Ā' => 'A', 'Č' => 'C', 'Ē' => 'E', 'Ģ' => 'G', 'Ī' => 'i', 'Ķ' => 'k', 'Ļ' => 'L', 'Ņ' => 'N',
             'Š' => 'S', 'Ū' => 'u', 'Ž' => 'Z',
             'ā' => 'a', 'č' => 'c', 'ē' => 'e', 'ģ' => 'g', 'ī' => 'i', 'ķ' => 'k', 'ļ' => 'l', 'ņ' => 'n',
             'š' => 's', 'ū' => 'u', 'ž' => 'z'
@@ -219,9 +224,12 @@ class Format
             $str = preg_replace('/[^\p{L}\p{Nd}]+/u', $delimiter, $str);
         }
 
-        // Remove duplicate delimiters        $str = preg_replace('/(' . preg_quote($delimiter, '/') . '){2,}/', '$1', $str);        $str = mb_strtolower($str, 'UTF-8');
+        // Remove duplicate delimiters
+        $str = preg_replace('/(' . preg_quote($delimiter, '/') . '){2,}/', '$1', $str);
+        $str = mb_strtolower($str, 'UTF-8');
 
-        if( $pathSafe === true )        {
+        if( $pathSafe === true )
+        {
             $str = preg_replace("/[_|+ -]+/", $delimiter, $str);
         }else{
             $str = preg_replace("/[\/_|+ -]+/", $delimiter, $str);
@@ -230,5 +238,6 @@ class Format
         // Remove delimiter from ends
         $str = trim($str, $delimiter);
 
-        return $str;    }
+        return $str;
+    }
 }

@@ -1,6 +1,8 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
-/*** Lethe\Reg - session registry configuration engine
+/**
+* Lethe\Reg - session registry configuration engine
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Reg
@@ -53,7 +55,8 @@ class Reg
             }
         }
 
-        return $result;    }
+        return $result;
+    }
 
     /**
     * Config array, key/value pairs, multiple
@@ -68,7 +71,8 @@ class Reg
         }
     }
 
-    /**    * Config array, key/value pairs, multiple, helper
+    /**
+    * Config array, key/value pairs, multiple, helper
     * Alias for Reg::setBlock
     * @param array $block
     * @return void
@@ -78,7 +82,8 @@ class Reg
         self::setBlock($block);
     }
 
-    /**    * Config pair, key/value pair
+    /**
+    * Config pair, key/value pair
     * @param string $q = 'path/to'
     * @param mixed $value
     * @return void
@@ -88,7 +93,8 @@ class Reg
         $branch = &$_SESSION['__lethe_registry'][session_id()];
         $section = explode('/', trim($q, ' /'));
 
-        if(count($section)>1)        {
+        if(count($section)>1)
+        {
             $lastRound = count($section)-1;
 
             foreach($section as $k => $s)
@@ -101,10 +107,12 @@ class Reg
                 }
             }
 
-            unset($branch);        }
+            unset($branch);
+        }
     }
 
-    /**    * Read whole registry, use for development
+    /**
+    * Read whole registry, use for development
     * @param void
     * @return array
     */
@@ -113,7 +121,8 @@ class Reg
         return $_SESSION['__lethe_registry'][session_id()];
     }
 
-    /**    * Reset registry, recreate core defaults, use for development
+    /**
+    * Reset registry, recreate core defaults, use for development
     * @param void
     * @return array
     */
@@ -124,7 +133,8 @@ class Reg
         return self::read();
     }
 
-    /**    * Initialize registry, core values, readonly system variables
+    /**
+    * Initialize registry, core values, readonly system variables
     * @param void
     * @return void
     */

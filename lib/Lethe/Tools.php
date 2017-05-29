@@ -1,6 +1,8 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
-/*** Lethe\Tools - Lethe tools/generators
+/**
+* Lethe\Tools - Lethe tools/generators
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Tools
@@ -122,7 +124,8 @@ class Tools
         $a = func_get_args();
         ob_start();
 
-        if($n>0)        {
+        if($n>0)
+        {
             foreach($a as $var)
             {
                 if(PHP_SAPI !== 'cli')
@@ -140,9 +143,11 @@ class Tools
             echo PHP_SAPI === 'cli' ? 'DUMP: no-data': '<pre>DUMP: no-data</pre>';
         }
 
-        $result = ob_get_clean();        return $result;    }
+        $result = ob_get_clean();        return $result;
+    }
 
-    /**    * Die dump
+    /**
+    * Die dump
     * @return void
     */
     public static function dd()
@@ -150,7 +155,8 @@ class Tools
         die(self::dump(func_get_args()));
     }
 
-    /**    * Slice big array
+    /**
+    * Slice big array
     * @param array $data
     * @param int $from
     * @param int $to
@@ -169,7 +175,8 @@ class Tools
         return $newDataset;
     }
 
-    /**    * Sort single array by length
+    /**
+    * Sort single array by length
     * @param array $data
     * @return array
     */

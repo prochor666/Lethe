@@ -1,6 +1,8 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
-/*** Lethe\Autoloader - Lethe class autoloader
+/**
+* Lethe\Autoloader - Lethe class autoloader
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
 */
 class Autoloader
@@ -10,7 +12,8 @@ class Autoloader
     */
     private static $instance = NULL;
 
-    /**    * Files system paths, separated by PATH_SEPARATOR
+    /**
+    * Files system paths, separated by PATH_SEPARATOR
     */
     private static $libreg = NULL;
 
@@ -21,7 +24,8 @@ class Autoloader
     {
     }
 
-    /**    * Autoloader init, creating instance
+    /**
+    * Autoloader init, creating instance
     * @param void
     * @return object
     */
@@ -32,23 +36,28 @@ class Autoloader
             self::$instance = new self();
         }
 
-        return self::$instance;    }
+        return self::$instance;
+    }
 
-    /**    * @ignore
+    /**
+    * @ignore
     */
 
-    public function __clone()    {
+    public function __clone()
+    {
         trigger_error('Clone is not allowed.', E_USER_ERROR);
     }
 
-    /**    * @ignore
+    /**
+    * @ignore
     */
     public function __wakeup()
     {
         trigger_error('Unserializing is not allowed.', E_USER_ERROR);
     }
 
-    /**    * Register inlcude/require paths
+    /**
+    * Register inlcude/require paths
     * @param array $param
     */
     public function register($param = [])
@@ -59,7 +68,8 @@ class Autoloader
         set_include_path(self::$libreg);
     }
 
-    /**    * Register inlcude/require paths, name variants, namespaces
+    /**
+    * Register inlcude/require paths, name variants, namespaces
     * @param string $className
     * @return bool
     */
@@ -90,13 +100,15 @@ class Autoloader
                             require_once $fileNameNS;
                             return true;
 
-                        }elseif(file_exists($fileNameNSLower))                        {
+                        }elseif(file_exists($fileNameNSLower))
+                        {
                             require_once $fileNameNSLower;
                             return true;
                         }
                     }
 
-                    if($nsIndex<1)                    {
+                    if($nsIndex<1)
+                    {
                         $fileName = str_replace( '//', '/', $_dir_.'/'.sprintf( $prefix, $classNameNS ) );
                         $fileNameLower = str_replace( '//', '/', $_dir_.'/'.mb_strtolower( sprintf( $prefix, $classNameNS ) ) );
 
@@ -105,7 +117,8 @@ class Autoloader
                             require_once $fileName;
                             return true;
 
-                        }elseif(file_exists($fileNameLower))                        {
+                        }elseif(file_exists($fileNameLower))
+                        {
                             require_once $fileNameLower;
                             return true;
                         }
