@@ -1,4 +1,5 @@
-<?phpnamespace Lethe;
+<?php
+namespace Lethe;
 
 /**
 * Lethe\Format - data formatter
@@ -29,7 +30,8 @@ class Format
 
         return round($size, $round) . ' ' . $units[$i];    }
 
-    /**     * Human readable xml array/object convertor
+    /**
+    * Human readable xml array/object convertor
      * @param object|array $arr
      * @param boolean $cdata
      * @return string
@@ -54,7 +56,8 @@ class Format
         return $xml;
     }
 
-    /**    * Convert string to UTF-8
+    /**
+    * Convert string to UTF-8
     * @param string $str
     * @return string
     */
@@ -73,7 +76,8 @@ class Format
         return iconv('ISO-8859-2', 'UTF-8', $str);
     }
 
-    /**    * Clear HTML & trim
+    /**
+    * Clear HTML & trim
     * @param string $str
     * @return string
     */
@@ -83,7 +87,8 @@ class Format
         return trim($str);
     }
 
-    /**    * Cut string, reflect words delimited by space, cuts some ugly chars from the end
+    /**
+    * Cut string, reflect words delimited by space, cuts some ugly chars from the end
     * @param string $str
     * @param int $length
     * @return string
@@ -117,7 +122,8 @@ class Format
         return $str.$suffix;
     }
 
-    /**    * Proper substr for unicode strings
+    /**
+    * Proper substr for unicode strings
     * @param string $str
     * @param string $start
     * @param array $length
@@ -130,7 +136,8 @@ class Format
         );
     }
 
-    /**    * Make URL friendly string
+    /**
+    * Make URL friendly string
     * @param string $str
     * @param string $delimiter
     * @return string

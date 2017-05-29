@@ -54,6 +54,7 @@ class Storage
             umask(0000);
             chmod($pathTo, self::defaultFilePermission());
         }
+
         return (bool)$status;
     }
 
@@ -69,6 +70,7 @@ class Storage
         {
             return rename($pathFrom, $pathTo);
         }
+
         return false;
     }
 
@@ -83,6 +85,7 @@ class Storage
         {
             return unlink($path);
         }
+
         return false;
     }
 
@@ -111,6 +114,7 @@ class Storage
             umask(0000);
             chmod($path, self::defaultFilePermission());
         }
+
         return $res;
     }
 
@@ -177,6 +181,7 @@ class Storage
         }
         $f = explode('.', $path);
         $ext = array_pop($f);
+
         return trim(implode('.', $f));
     }
 
@@ -220,6 +225,7 @@ class Storage
         {
             return rename($pathFrom, $pathTo);
         }
+
         return false;
     }
 
@@ -350,6 +356,7 @@ class Storage
     public static function isEmptyDir($path)
     {
         $dir = $path;
+        
         return ( self::isDir($dir) && ($files = @scandir($dir)) && count($files) <= 2);
     }
 

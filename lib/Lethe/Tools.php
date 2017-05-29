@@ -27,9 +27,11 @@ class Tools
             $str .= mb_substr($args, mt_rand(0, strlen($args) - 1), 1);
         }
 
-        return (string)$str;    }
+        return (string)$str;
+    }
 
-    /**    * Hash wrapper
+    /**
+    * Hash wrapper
     * @param string $str
     * @param string $algo
     * @return string
@@ -38,68 +40,82 @@ class Tools
     {
         $algo = mb_strtolower($algo);
 
-        // DES std, salted        if (CRYPT_STD_DES == 1 && $algo == 'stddes')
+        // DES std, salted
+        if (CRYPT_STD_DES == 1 && $algo == 'stddes')
         {
             return crypt($str, self::rnd(2));
         }
 
-        // DES extended, salted        if (CRYPT_EXT_DES == 1 && $algo == 'extdes')
+        // DES extended, salted
+        if (CRYPT_EXT_DES == 1 && $algo == 'extdes')
         {
             return crypt($str, '_'.self::rnd(8));
         }
 
-        // Blowfish salted        if (CRYPT_BLOWFISH == 1 && $algo == 'blowfish')
+        // Blowfish salted
+        if (CRYPT_BLOWFISH == 1 && $algo == 'blowfish')
         {
             return crypt($str, '$2y$11$'.self::rnd(22).'$');
         }
 
-        // SHA-512 salted        if (CRYPT_SHA512 == 1 && $algo == 'sha512salt')
+        // SHA-512 salted
+        if (CRYPT_SHA512 == 1 && $algo == 'sha512salt')
         {
             return crypt($str, '$6$rounds=5000$'.self::rnd(16).'$');
         }
 
-        // SHA-256 salted        if (CRYPT_SHA256 == 1 && $algo == 'sha256salt')
+        // SHA-256 salted
+        if (CRYPT_SHA256 == 1 && $algo == 'sha256salt')
         {
             return crypt($str, '$5$rounds=5000$'.self::rnd(16).'$');
         }
 
-        // SHA-512        if (function_exists('hash') && in_array( 'sha512', hash_algos() ) && $algo == 'sha512' )
+        // SHA-512
+        if (function_exists('hash') && in_array( 'sha512', hash_algos() ) && $algo == 'sha512' )
         {
             return hash('sha512', $str);
         }
 
-        // SHA-384        if (function_exists('hash') && in_array( 'sha384', hash_algos() ) && $algo == 'sha384' )
+        // SHA-384
+        if (function_exists('hash') && in_array( 'sha384', hash_algos() ) && $algo == 'sha384' )
         {
             return hash('sha384', $str);
         }
 
-        // SHA-256        if (function_exists('hash') && in_array( 'sha256', hash_algos() ) && $algo == 'sha256' )
+        // SHA-256
+        if (function_exists('hash') && in_array( 'sha256', hash_algos() ) && $algo == 'sha256' )
         {
             return hash('sha256', $str);
         }
 
-        // SHA-1        if (function_exists('sha1') && $algo == 'sha1')
+        // SHA-1
+        if (function_exists('sha1') && $algo == 'sha1')
         {
             return sha1($str);
         }
 
-        // CRC32        if (function_exists('hash') && in_array( 'crc32', hash_algos() ) && $algo == 'crc32' )
+        // CRC32
+        if (function_exists('hash') && in_array( 'crc32', hash_algos() ) && $algo == 'crc32' )
         {
             return hash('crc32', $str);
         }
 
-        return md5($str);    }
+        return md5($str);
+    }
 
-    /**    * Validate str vs hash
+    /**
+    * Validate str vs hash
     * @param string $str
     * @param string $hash
     * @return string
     */
-    public static function validate($str, $hash){
+    public static function validate($str, $hash)
+    {
         return crypt($str, $hash) == $hash;
     }
 
-    /**    * Dump
+    /**
+    * Dump
     * @return string
     */
     public static function dump()
@@ -108,7 +124,8 @@ class Tools
         $a = func_get_args();
 
         ob_start();
-        if($n>0)        {
+        if($n>0)
+        {
             foreach($a as $var)
             {
                 if(PHP_SAPI !== 'cli')
@@ -117,18 +134,21 @@ class Tools
                 }
 
                 var_dump($var);
-                if(PHP_SAPI !== 'cli')                {
+                if(PHP_SAPI !== 'cli')
+                {
                     echo '</pre>';
                 }
             }
 
-        }else{            echo PHP_SAPI === 'cli' ? 'DUMP: no-data': '<pre>DUMP: no-data</pre>';
+        }else{
+            echo PHP_SAPI === 'cli' ? 'DUMP: no-data': '<pre>DUMP: no-data</pre>';
         }
 
         $result = ob_get_clean();        return $result;
     }
 
-    /**    * Die dump
+    /**
+    * Die dump
     * @return void
     */
     public static function dd()
@@ -136,7 +156,8 @@ class Tools
         die(self::dump(func_get_args()));
     }
 
-    /**    * Slice big array
+    /**
+    * Slice big array
     * @param array $data
     * @param int $from
     * @param int $to
@@ -151,9 +172,11 @@ class Tools
             unset($data);
         }
 
-        return $newDataset;    }
+        return $newDataset;
+    }
 
-    /**    * Sort single array by length
+    /**
+    * Sort single array by length
     * @param array $data
     * @return array
     */
@@ -180,32 +203,38 @@ class Tools
             return false;
         }
 
-        if(!is_array($needle))        {
+        if(!is_array($needle))
+        {
             $needle = [$needle];
         }
         $needle = self::sortByLength($needle);
 
-        foreach($needle as $s)        {
+        foreach($needle as $s)
+        {
             if( mb_strlen($s)>0 && strpos($str, $s) === 0 )
             {
                 return $s;
             }
         }
 
-        return false;    }
+        return false;
+    }
 
-    /**    * Tests if string ends with another string
+    /**
+    * Tests if string ends with another string
     * @param string $path
     * @param string|array $needle
     * @return bool|string
     */
     public static function endsWith($str = NULL, $needle = [])
     {
-        if(mb_strlen($str) == 0){
+        if(mb_strlen($str) == 0)
+        {
             return false;
         }
 
-        if(!is_array($needle))        {
+        if(!is_array($needle))
+        {
             $needle = [$needle];
         }
         $needle = self::sortByLength($needle);
@@ -219,9 +248,11 @@ class Tools
             }
         }
 
-        return false;    }
+        return false;
+    }
 
-    /**    * array check helper
+    /**
+    * array check helper
     * @param array $a
     * @param string $k as key value
     * @param mixed $d default value
@@ -232,7 +263,8 @@ class Tools
         return is_array($a) && array_key_exists($k, $a) ? $a[$k]: $d;
     }
 
-    /**    * Domain string detect
+    /**
+    * Domain string detect
     * @return string
     */
     public static function detectDomain()
@@ -250,7 +282,8 @@ class Tools
         return $domain;
     }
 
-    /**    * Web redirect
+    /**
+    * Web redirect
     * @param string $url
     */
     public static function redirect($url = null)
@@ -263,7 +296,8 @@ class Tools
         }
     }
 
-    /**    * Sned custom HTTP status code
+    /**
+    * Sned custom HTTP status code
     * @param string $headerStatus
     */
     public static function headerStatus($headerStatus, $replace = false, $code = 0)
@@ -276,7 +310,8 @@ class Tools
         }
     }
 
-    /**    * Get client IPv4/IPv6 address (proxies enabled)
+    /**
+    * Get client IPv4/IPv6 address (proxies enabled)
     * @return string
     */
     public static function clientIp()
@@ -305,7 +340,8 @@ class Tools
         }
     }
 
-    /**    * Detect SSL (proxies enabled)
+    /**
+    * Detect SSL (proxies enabled)
     * @return bool
     */
     public static function ssl()

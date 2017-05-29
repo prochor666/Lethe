@@ -70,7 +70,6 @@ class Mysqldb extends Lethe
 
     /**
     * Database connection
-    *
     * @param array $conf
     * @return bool|resource
     */
@@ -116,7 +115,6 @@ class Mysqldb extends Lethe
 
     /**
     * Database connection test
-    *
     * @param array $conf
     * @return bool|resource
     */
@@ -127,7 +125,6 @@ class Mysqldb extends Lethe
 
     /**
     * Database query INSERT/UPDATE?DELETE etc..
-    *
     * @param string $query
     * @return bool|resource
     */
@@ -159,7 +156,6 @@ class Mysqldb extends Lethe
 
     /**
     * Database query result
-    *
     * @param string $query
     * @param string $type
     * @return array|object
@@ -231,7 +227,6 @@ class Mysqldb extends Lethe
 
     /**
     * Get last autoincrement value
-    *
     * @param string $table
     * @return int
     */
@@ -246,7 +241,6 @@ class Mysqldb extends Lethe
 
     /**
     * Escape data for safety
-    *
     * @param string $data
     * @return string
     */

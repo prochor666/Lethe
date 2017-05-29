@@ -12,7 +12,8 @@ class Url
     */
     final public function __construct(){}
 
-    /**    * Url parse
+    /**
+    * Url parse
     * @description Create array from given path!!!!
     * @param string $path = some/path/to
     * @return string
@@ -27,9 +28,11 @@ class Url
             $path = mb_substr( $path, 0, $qspos );
         }
 
-        $src = explode('/', $path);        $src = array_filter($src, ['self', 'string']);
+        $src = explode('/', $path);
+        $src = array_filter($src, ['self', 'string']);
 
-        if (!is_null($delimiter) || mb_strlen($delimiter) > 0)        {
+        if (!is_null($delimiter) || mb_strlen($delimiter) > 0)
+        {
             foreach($src as $s)
             {
                 $result[0][] = self::extract($s, $delimiter);
@@ -39,18 +42,20 @@ class Url
         return $result;
     }
 
-    /**    * Check string
+    /**
+    * Check string
     * @description Check string length
     * @mixed $index
     * @return bool
     */
-
-    public static function string($v)    {
+    public static function string($v)
+    {
         $v = (string)$v;
         return mb_strlen($v)>0 ? true: false;
     }
 
-    /**    * Url model checker
+    /**
+    * Url model checker
     * @description Create array from given path!!!!
     * @param array $model
     * @param int $index
@@ -61,7 +66,8 @@ class Url
         return is_array($model) && array_key_exists($index, $model) ? $model[$index]['path']: false;
     }
 
-    /**    * Fragment parse
+    /**
+    * Fragment parse
     * @description Create identifier from given fragment!!!!
     * @param string $path = name-to-123
     * @param string $delimiter = null, '-'...
@@ -77,16 +83,19 @@ class Url
         });
 
         $i = count($src) - 1;
-        if($i>0)        {
+        if($i>0)
+        {
             $id = $src[$i];
             array_pop($src);
             $result['name'] = implode($delimiter, $src);
             $result['id'] = $id;
         }
 
-        return $result;    }
+        return $result;
+    }
 
-    /**    * Fragment update
+    /**
+    * Fragment update
     * @description Create identifier from given fragment!!!!
     * @param array $urlArray
     * @param array $keys
@@ -100,7 +109,8 @@ class Url
             parse_str( $urlArray['query'], $query );
         }
 
-        foreach($keys as $key => $value)        {
+        foreach($keys as $key => $value)
+        {
             $query[$key] = $value;
         }
 

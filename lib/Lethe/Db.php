@@ -14,7 +14,6 @@ class Db
 
     /**
     * Database driver choose
-    *
     * @param array $conf
     * @return object
     */
@@ -42,7 +41,6 @@ class Db
 
     /**
     * Database connection test
-    *
     * @param array $conf
     * @return bool|resource
     */
@@ -54,12 +52,9 @@ class Db
 
     /**
     * Database query result
-    *
     * @param array $conf
     * @return array|object
     */
-
-    // $type = 'assoc'
     public static function result($conf)
     {
         $conf['type'] = Tools::chef($conf, 'type', 'assoc');
@@ -69,7 +64,6 @@ class Db
 
     /**
     * Database query INSET/UPDATE?DELETE etc..
-    *
     * @param array $conf
     * @return bool|resource
     */
@@ -81,7 +75,6 @@ class Db
 
     /**
     * Get next autoincrement value
-    *
     * @param array $conf
     * @return int
     */
@@ -93,7 +86,6 @@ class Db
 
     /**
     * Escape data for safety
-    *
     * @param array $conf
     * @return string
     */

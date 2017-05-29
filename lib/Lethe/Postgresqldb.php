@@ -51,7 +51,6 @@ class Postgresqldb extends Lethe
 
     /**
     * Database connection
-    *
     * @param array $conf
     * @return bool|resource
     */
@@ -65,7 +64,6 @@ class Postgresqldb extends Lethe
 
     /**
     * Database connection test
-    *
     * @param array $conf
     * @return bool|resource
     */
@@ -76,7 +74,6 @@ class Postgresqldb extends Lethe
 
     /**
     * Database query INSERT/UPDATE?DELETE etc..
-    *
     * @param string $query
     * @return bool|resource
     */
@@ -99,7 +96,6 @@ class Postgresqldb extends Lethe
 
     /**
     * Database query result
-    *
     * @param string $query
     * @param string $type
     * @return array|object
@@ -143,14 +139,12 @@ class Postgresqldb extends Lethe
 
     /**
     * Get last serial value
-    *
     * @param string $table
     * @return int
     */
     public function getLastId($table)
     {
         $link = $this->connect();
-
         /* Auto field[0]  */
         $sql = "SELECT * FROM " . $table;
         $ret = pg_query($link, $sql);
@@ -168,10 +162,8 @@ class Postgresqldb extends Lethe
         }
     }
 
-
     /**
     * Escape data for safety
-    *
     * @param string $data
     * @return string
     */

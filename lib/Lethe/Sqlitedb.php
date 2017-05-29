@@ -44,7 +44,6 @@ class Sqlitedb extends Lethe
 
     /**
     * Database connection
-    *
     * @param array $conf
     * @return bool|resource
     */
@@ -65,7 +64,6 @@ class Sqlitedb extends Lethe
 
     /**
     * Database connection test
-    *
     * @param array $conf
     * @return bool|resource
     */
@@ -76,7 +74,6 @@ class Sqlitedb extends Lethe
 
     /**
     * Database query INSERT/UPDATE?DELETE etc..
-    *
     * @param string $query
     * @return bool|resource
     */
@@ -106,7 +103,6 @@ class Sqlitedb extends Lethe
 
     /**
     * Database query result
-    *
     * @param string $query
     * @param string $type
     * @return array|object
@@ -162,7 +158,6 @@ class Sqlitedb extends Lethe
 
     /**
     * Ask for insert query
-    *
     * @param string $query
     * @return bool|string
     */
@@ -184,7 +179,6 @@ class Sqlitedb extends Lethe
 
     /**
     * Get last autoincrement value
-    *
     * @param string $table
     * @return int
     */
@@ -195,7 +189,6 @@ class Sqlitedb extends Lethe
 
     /**
     * Escape data for safety
-    *
     * @param string $data
     * @return string
     */
@@ -210,5 +203,4 @@ class Sqlitedb extends Lethe
 
         return $result;
     }
-
 }
