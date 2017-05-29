@@ -143,7 +143,9 @@ class Tools
             echo PHP_SAPI === 'cli' ? 'DUMP: no-data': '<pre>DUMP: no-data</pre>';
         }
 
-        $result = ob_get_clean();        return $result;
+        $result = ob_get_clean();
+
+        return $result;
     }
 
     /**
