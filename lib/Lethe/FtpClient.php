@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\FtpClient - FTP client used to download/upload/manage files on remote FTP server
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.1
 * @todo non-blocking support
 * @todo listing directory (iterations)
 * @todo remote file/directory exists
@@ -14,7 +13,6 @@ namespace Lethe;
 */
 class FtpClient extends Lethe
 {
-
     private $connection,
             $mode;
 
@@ -294,5 +292,4 @@ class FtpClient extends Lethe
     {
         $this->close();
     }
-
 }

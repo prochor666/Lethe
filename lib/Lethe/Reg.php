@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\Reg - session registry configuration engine
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.1
 */
 class Reg
 {
@@ -157,4 +156,3 @@ class Reg
         $_SESSION['__lethe_registry'][session_id()] = array_merge($_SESSION['__lethe_registry'][session_id()], $config);
     }
 }
-?>

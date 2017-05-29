@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\Db - databse wrapper, multiple SQL databases/engines support
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.7
 */
 class Db
 {
@@ -103,5 +102,4 @@ class Db
         $db = self::instance($conf);
         return $db->sanitize($conf['query']);
     }
-
 }

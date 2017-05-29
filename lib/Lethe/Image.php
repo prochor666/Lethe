@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\Image - image manipulation class, resize/convert/save images
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.1
 */
 class Image
 {
@@ -264,6 +263,4 @@ class Image
         imagedestroy($this->image);
         $this->image = false;
     }
-
 }
-?>

@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\Cmd - commandline class
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.1
 */
 class Cmd extends Lethe
 {
@@ -160,5 +159,4 @@ class Cmd extends Lethe
     {
         return array_keys($this->backgroundColors);
     }
-
 }

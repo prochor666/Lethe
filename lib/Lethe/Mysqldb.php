@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\MysqlDb - mysql database manipulation class
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.3
 */
 class Mysqldb extends Lethe
 {
@@ -260,8 +259,9 @@ class Mysqldb extends Lethe
             if($result === false)
             {
                 $this->error('MySQL error: '.mysqli_connect_error());
+            }else{
+                mysqli_close($link);
             }
-            mysqli_close($link);
         }else{
             @mysql_set_charset('utf8');
             $link = $this->connect();
@@ -269,12 +269,11 @@ class Mysqldb extends Lethe
             if($result === false)
             {
                 $this->error('MySQL error: '.mysql_error());
+            }else{
+                mysql_close($link);
             }
-            mysql_close($link);
         }
 
         return $result;
     }
-
 }
-?>

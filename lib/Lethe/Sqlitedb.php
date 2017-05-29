@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\SqliteDb - Sqlite3 database manipulation class
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.3
 */
 class Sqlitedb extends Lethe
 {
@@ -213,4 +212,3 @@ class Sqlitedb extends Lethe
     }
 
 }
-?>

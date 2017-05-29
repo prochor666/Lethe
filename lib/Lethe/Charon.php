@@ -6,7 +6,6 @@ use \stdClass;
 /**
 * Lethe\Charon - Lethe queue system, not aplicable yet!
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.0
 */
 class Charon extends Lethe
 {

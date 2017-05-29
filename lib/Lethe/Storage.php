@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\Storage - basic filesystem operations, copy/delete/create files and directories
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.2
 */
 class Storage
 {

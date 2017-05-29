@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\Validator - Lethe data validator
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.2
 */
 class Validator
 {
@@ -95,6 +94,4 @@ class Validator
     {
         return (bool)preg_match('|^http(s)?://[a-z0-9-]+(.[a-z0-9-]+)*(:[0-9]+)?(/.*)?$|i', $url);
     }
-
 }
-?>

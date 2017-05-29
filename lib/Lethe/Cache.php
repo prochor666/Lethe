@@ -7,7 +7,6 @@ use Lethe\Tools;
 /**
 * Lethe\Cache - basic filesystem caching operations
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.1
 */
 class Cache extends Lethe
 {
@@ -103,5 +102,4 @@ class Cache extends Lethe
     {
         $this->meta = Storage::isFile($this->cacheFile) ? @stat($this->cacheFile): [];
     }
-
 }

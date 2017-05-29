@@ -6,7 +6,6 @@ use Lethe\Tools;
 /**
 * Lethe\Config - Lethe configurator
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.0
 */
 class Config{
 
@@ -308,7 +307,7 @@ class Config{
         $config['system']['productName'] = 'Lethe';
 
         // System version
-        $config['system']['version'] = '0.9.1';
+        $config['system']['version'] = '0.9.2';
 
         // Code name
         $config['system']['productCodename'] = 'Catacombs';
@@ -316,4 +315,3 @@ class Config{
         self::$config = $config;
     }
 }
-?>

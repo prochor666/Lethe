@@ -1,10 +1,8 @@
-<?php
-namespace Lethe;
+<?phpnamespace Lethe;
 
 /**
 * Lethe\Format - data formatter
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.2
 */
 class Format
 {
@@ -12,7 +10,6 @@ class Format
     * @ignore
     */
     final public function __construct(){}
-
 
     /**
      * Human readable bytes
@@ -25,16 +22,14 @@ class Format
         $round = abs((int)$round);
         $mod = 1024;
         $units = explode(' ','B KB MB GB TB PB');
-        for ($i = 0; (int)$size > $mod; $i++)
-        {
+
+        for ($i = 0; (int)$size > $mod; $i++)        {
             (int)$size /= $mod;
         }
-        return round($size, $round) . ' ' . $units[$i];
-    }
 
+        return round($size, $round) . ' ' . $units[$i];    }
 
-    /**
-     * Human readable xml array/object convertor
+    /**     * Human readable xml array/object convertor
      * @param object|array $arr
      * @param boolean $cdata
      * @return string
@@ -42,14 +37,14 @@ class Format
     public static function ObjXml( $arr, $cdata = false )
     {
         $xml = NULL;
+
         foreach( $arr as $k => $v )
         {
             $tag = trim( $k );
             $tag = is_numeric( $tag ) ? 'num_'.$tag: $tag;
             $tag = str_replace([" ", "\t"], "-", $tag);
 
-            if( is_array( $v ) || is_object( $v ) )
-            {
+            if( is_array( $v ) || is_object( $v ) )            {
                 $xml .=  "<$tag>".self::ObjXml( $v, $cdata )."</$tag>";
             }else{
                 $xml .= $cdata === true ? "<$tag><![CDATA[".$v."]]></$tag>": "<$tag>".htmlentities( $v )."</$tag>";
@@ -59,8 +54,7 @@ class Format
         return $xml;
     }
 
-    /**
-    * Convert string to UTF-8
+    /**    * Convert string to UTF-8
     * @param string $str
     * @return string
     */
@@ -79,9 +73,7 @@ class Format
         return iconv('ISO-8859-2', 'UTF-8', $str);
     }
 
-
-    /**
-    * Clear HTML & trim
+    /**    * Clear HTML & trim
     * @param string $str
     * @return string
     */
@@ -91,18 +83,15 @@ class Format
         return trim($str);
     }
 
-    /**
-    * Cut string, reflect words delimited by space, cuts some ugly chars from the end
+    /**    * Cut string, reflect words delimited by space, cuts some ugly chars from the end
     * @param string $str
     * @param int $length
     * @return string
     */
     public static function cutStr($str, $length = 255, $suffix = NULL)
     {
-
         // printable, formal
         // $str = mb_ereg_replace( '[^[:print:]]', '', self::autoUTF( $str ) );
-
         $str = trim(strip_tags($str));
         $str = trim($str, ',.');
 
@@ -111,14 +100,11 @@ class Format
             return $str;
         }
 
-        $str = mb_substr($str, 0, $length);
-
-        $pos = mb_strrpos($str, " ");
+        $str = mb_substr($str, 0, $length);        $pos = mb_strrpos($str, " ");
         $str = $pos>1 ? mb_substr( $str, 0, $pos ): $str;
         $str = trim($str, '-, ');
 
-        // short last word
-        $wordLimit = 4;
+        // short last word        $wordLimit = 4;
         $words = explode( ' ', $str );
         $lastPos = count( $words ) - 1;
         $lastWordLength = mb_strlen( $words[$lastPos] );
@@ -131,8 +117,7 @@ class Format
         return $str.$suffix;
     }
 
-    /**
-    * Proper substr for unicode strings
+    /**    * Proper substr for unicode strings
     * @param string $str
     * @param string $start
     * @param array $length
@@ -145,9 +130,7 @@ class Format
         );
     }
 
-
-    /**
-    * Make URL friendly string
+    /**    * Make URL friendly string
     * @param string $str
     * @param string $delimiter
     * @return string
@@ -156,7 +139,6 @@ class Format
     {
         // Make sure string is in UTF-8 and strip invalid UTF-8 characters
         $str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
-
         $char_map = array(
             // Latin
             'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'AE', 'Ç' => 'C',
@@ -169,10 +151,10 @@ class Format
             'ð' => 'd', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o', 'õ' => 'o', 'ö' => 'o', 'ő' => 'o',
             'ø' => 'o', 'ù' => 'u', 'ú' => 'u', 'û' => 'u', 'ü' => 'u', 'ű' => 'u', 'ý' => 'y', 'þ' => 'th',
             'ÿ' => 'y',
-            // Latin symbols
-            '©' => '(c)',
-            // Greek
-            'Α' => 'A', 'Β' => 'B', 'Γ' => 'G', 'Δ' => 'D', 'Ε' => 'E', 'Ζ' => 'Z', 'Η' => 'H', 'Θ' => '8',
+
+            // Latin symbols            '©' => '(c)',
+
+            // Greek            'Α' => 'A', 'Β' => 'B', 'Γ' => 'G', 'Δ' => 'D', 'Ε' => 'E', 'Ζ' => 'Z', 'Η' => 'H', 'Θ' => '8',
             'Ι' => 'I', 'Κ' => 'K', 'Λ' => 'L', 'Μ' => 'M', 'Ν' => 'N', 'Ξ' => '3', 'Ο' => 'O', 'Π' => 'P',
             'Ρ' => 'R', 'Σ' => 'S', 'Τ' => 'T', 'Υ' => 'Y', 'Φ' => 'F', 'Χ' => 'X', 'Ψ' => 'PS', 'Ω' => 'W',
             'Ά' => 'A', 'Έ' => 'E', 'Ί' => 'I', 'Ό' => 'O', 'Ύ' => 'Y', 'Ή' => 'H', 'Ώ' => 'W', 'Ϊ' => 'I',
@@ -182,9 +164,11 @@ class Format
             'ρ' => 'r', 'σ' => 's', 'τ' => 't', 'υ' => 'y', 'φ' => 'f', 'χ' => 'x', 'ψ' => 'ps', 'ω' => 'w',
             'ά' => 'a', 'έ' => 'e', 'ί' => 'i', 'ό' => 'o', 'ύ' => 'y', 'ή' => 'h', 'ώ' => 'w', 'ς' => 's',
             'ϊ' => 'i', 'ΰ' => 'y', 'ϋ' => 'y', 'ΐ' => 'i',
+
             // Turkish
             'Ş' => 'S', 'İ' => 'I', 'Ç' => 'C', 'Ü' => 'U', 'Ö' => 'O', 'Ğ' => 'G',
             'ş' => 's', 'ı' => 'i', 'ç' => 'c', 'ü' => 'u', 'ö' => 'o', 'ğ' => 'g',
+
             // Russian
             'А' => 'A', 'Б' => 'B', 'В' => 'V', 'Г' => 'G', 'Д' => 'D', 'Е' => 'E', 'Ё' => 'Yo', 'Ж' => 'Zh',
             'З' => 'Z', 'И' => 'I', 'Й' => 'J', 'К' => 'K', 'Л' => 'L', 'М' => 'M', 'Н' => 'N', 'О' => 'O',
@@ -196,19 +180,23 @@ class Format
             'п' => 'p', 'р' => 'r', 'с' => 's', 'т' => 't', 'у' => 'u', 'ф' => 'f', 'х' => 'h', 'ц' => 'c',
             'ч' => 'ch', 'ш' => 'sh', 'щ' => 'sh', 'ъ' => '', 'ы' => 'y', 'ь' => '', 'э' => 'e', 'ю' => 'yu',
             'я' => 'ya',
+
             // Ukrainian
             'Є' => 'Ye', 'І' => 'I', 'Ї' => 'Yi', 'Ґ' => 'G',
             'є' => 'ye', 'і' => 'i', 'ї' => 'yi', 'ґ' => 'g',
+
             // Czech
             'Č' => 'C', 'Ď' => 'D', 'Ě' => 'E', 'Ň' => 'N', 'Ř' => 'R', 'Š' => 'S', 'Ť' => 'T', 'Ů' => 'U',
             'Ž' => 'Z',
             'č' => 'c', 'ď' => 'd', 'ě' => 'e', 'ň' => 'n', 'ř' => 'r', 'š' => 's', 'ť' => 't', 'ů' => 'u',
             'ž' => 'z',
+
             // Polish
             'Ą' => 'A', 'Ć' => 'C', 'Ę' => 'e', 'Ł' => 'L', 'Ń' => 'N', 'Ó' => 'o', 'Ś' => 'S', 'Ź' => 'Z',
             'Ż' => 'Z',
             'ą' => 'a', 'ć' => 'c', 'ę' => 'e', 'ł' => 'l', 'ń' => 'n', 'ó' => 'o', 'ś' => 's', 'ź' => 'z',
             'ż' => 'z',
+
             // Latvian
             'Ā' => 'A', 'Č' => 'C', 'Ē' => 'E', 'Ģ' => 'G', 'Ī' => 'i', 'Ķ' => 'k', 'Ļ' => 'L', 'Ņ' => 'N',
             'Š' => 'S', 'Ū' => 'u', 'Ž' => 'Z',
@@ -216,19 +204,15 @@ class Format
             'š' => 's', 'ū' => 'u', 'ž' => 'z'
         );
 
-        $str = str_replace(array_keys($char_map), $char_map, $str);
+        $str = str_replace(array_keys($char_map), $char_map, $str);        // Replace non-alphanumeric characters with our delimiter
 
-        // Replace non-alphanumeric characters with our delimiter
-        if( $pathSafe === true )
-        {
+        if( $pathSafe === true )        {
             $str = preg_replace('/[^\/.+\p{L}\p{Nd}]+/u', $delimiter, $str);
         }else{
             $str = preg_replace('/[^\p{L}\p{Nd}]+/u', $delimiter, $str);
         }
 
-        // Remove duplicate delimiters
-        $str = preg_replace('/(' . preg_quote($delimiter, '/') . '){2,}/', '$1', $str);
-
+        // Remove duplicate delimiters        $str = preg_replace('/(' . preg_quote($delimiter, '/') . '){2,}/', '$1', $str);
         $str = mb_strtolower($str, 'UTF-8');
 
         if( $pathSafe === true )
@@ -238,11 +222,8 @@ class Format
             $str = preg_replace("/[\/_|+ -]+/", $delimiter, $str);
         }
 
-        // Remove delimiter from ends
-        $str = trim($str, $delimiter);
+        // Remove delimiter from ends        $str = trim($str, $delimiter);
 
         return $str;
     }
-
 }
-?>

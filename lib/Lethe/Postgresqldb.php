@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\Postgresqldb - PostgreSQL database manipulation class
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.4
 */
 class Postgresqldb extends Lethe
 {
@@ -182,10 +181,9 @@ class Postgresqldb extends Lethe
         if($result === false)
         {
             $this->error('PostgreSQL error: '.pg_last_notice($link));
+        }else{
+            pg_close($link);
         }
-        pg_close($link);
         return $result;
     }
-
 }
-?>

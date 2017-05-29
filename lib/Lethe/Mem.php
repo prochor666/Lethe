@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\Mem - Lethe Memcache/Memcached wrapper
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.1
 */
 class Mem extends Lethe
 {

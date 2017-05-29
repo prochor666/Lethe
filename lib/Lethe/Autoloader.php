@@ -4,7 +4,6 @@ namespace Lethe;
 /**
 * Lethe\Autoloader - Lethe class autoloader
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.1
 */
 class Autoloader
 {
@@ -131,5 +130,4 @@ class Autoloader
 
         return false;
     }
-
 }

@@ -4,9 +4,7 @@ namespace Lethe;
 /**
 * Base class, initalizes config and registry, provide debug messaging
 * @author Jan Prochazka aka prochor <prochor666@gmail.com>
-* @version 1.1
 */
-
 class Lethe implements ISystem, IDebug
 {
     /**
