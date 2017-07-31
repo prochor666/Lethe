@@ -169,6 +169,26 @@ class Postgresqldb extends Lethe
         }else{
             pg_close($link);
         }
+
         return $result;
+    }
+
+    /**
+    * Get server version
+    * @param void
+    * @return string
+    */
+    public function version()
+    {
+        $link = $this->connect();
+        $result = !$link ? false: pg_version($link);
+        if($result === false)
+        {
+            $this->error('PostgreSQL error: '.pg_last_notice($link));
+        }else{
+            pg_close($link);
+        }
+
+        return is_array($result) && array_key_exists('server', $result) ? $result['server']: '';
     }
 }

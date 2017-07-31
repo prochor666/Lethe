@@ -94,4 +94,15 @@ class Db
         $db = self::instance($conf);
         return $db->sanitize($conf['query']);
     }
+
+    /**
+    * Get server version
+    * @param array $conf
+    * @return string
+    */
+    public static function version($conf)
+    {
+        $db = self::instance($conf);
+        return $db->version();
+    }
 }

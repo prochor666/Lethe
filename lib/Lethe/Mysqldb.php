@@ -259,7 +259,7 @@ class Mysqldb extends Lethe
         }else{
             @mysql_set_charset('utf8');
             $link = $this->connect();
-            $result = !mysql_error() ? mysql_real_escape_string($data, $link): false;
+            $result = !$link ? mysql_real_escape_string($data, $link): false;
             if($result === false)
             {
                 $this->error('MySQL error: '.mysql_error());
@@ -269,5 +269,37 @@ class Mysqldb extends Lethe
         }
 
         return $result;
+    }
+
+    /**
+    * Get server version
+    * @param void
+    * @return string
+    */
+    public function version()
+    {
+        if($this->driver == 'ext/mysqli')
+        {
+            $link = $this->connect();
+            $result = !$link ? false: mysqli_get_server_info($link);
+            if($result === false)
+            {
+                $this->error('MySQL error: '.mysqli_connect_error());
+            }else{
+                mysqli_close($link);
+            }
+        }else{
+            @mysql_set_charset('utf8');
+            $link = $this->connect();
+            $result = !$link ? mysql_get_server_info($link): false;
+            if($result === false)
+            {
+                $this->error('MySQL error: '.mysql_error());
+            }else{
+                mysql_close($link);
+            }
+        }
+
+        return $result !== false ? (string)$result: '';
     }
 }

@@ -196,4 +196,21 @@ class Sqlitedb extends Lethe
 
         return $result;
     }
+
+    /**
+    * Get server version
+    * @param void
+    * @return string
+    */
+    public function version()
+    {
+        $link = $this->connect();
+        $result = !$link ? false: $link->escapeString($data);
+        if($result === false)
+        {
+            $this->error('Sqlite error: '.$link->lastErrorMsg());
+        }
+
+        return is_array($result) && array_key_exists('versionString', $result) ? $result['versionString']: '';
+    }
 }
