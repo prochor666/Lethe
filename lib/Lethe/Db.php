@@ -100,9 +100,9 @@ class Db
     * @param array $conf
     * @return string
     */
-    public static function version($conf)
+    public static function version()
     {
-        $db = self::instance($conf);
+        $db = self::instance([]);
         return $db->version();
     }
 }
