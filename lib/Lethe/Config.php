@@ -282,7 +282,7 @@ class Config{
             parse_str( $config['system']['urlArray']['query'], $_queryArray );
         }
         $config['system']['queryArray'] = $_queryArray;
-
+        
         // Initial time
         $config['system']['start'] = microtime(true);
 

@@ -111,10 +111,9 @@ class Url
 
         foreach($keys as $key => $value)
         {
-            $query[$key] = $value;
+            $query[$key] = rawurldecode($value);
         }
-
-        $urlArray['query'] = http_build_query($query, 'p', '&amp;');
+        $urlArray['query'] = http_build_query($query);
         $url = $urlArray['scheme'].'://'.$urlArray['host'].rtrim($urlArray['path'], '/').'?'.$urlArray['query'];
 
         return $url;
