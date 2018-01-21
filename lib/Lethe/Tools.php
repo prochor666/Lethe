@@ -299,8 +299,9 @@ class Tools
     }
 
     /**
-    * Web redirect
+    * http/https GET and POST request
     * @param string $url
+    * @param array $post
     */
     public static function request($url = null, $post = [])
     {
