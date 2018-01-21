@@ -299,6 +299,45 @@ class Tools
     }
 
     /**
+    * Web redirect
+    * @param string $url
+    */
+    public static function request($url = null, $post = [])
+    {
+        $options = [
+            CURLOPT_RETURNTRANSFER => true,                         // return web page
+            CURLOPT_HEADER         => true,                         // don't return headers
+            CURLOPT_FOLLOWLOCATION => true,                         // follow redirects
+            CURLOPT_ENCODING       => "",                           // handle all encodings
+            CURLOPT_USERAGENT      => "Lethe\Tools::request",       // who am i
+            CURLOPT_AUTOREFERER    => true,                         // set referer on redirect
+            CURLOPT_CONNECTTIMEOUT => 120,                          // timeout on connect
+            CURLOPT_TIMEOUT        => 120,                          // timeout on response
+            CURLOPT_MAXREDIRS      => 10,                           // stop after 10 redirects
+            CURLOPT_SSL_VERIFYPEER => false,                        // Disabled SSL Cert checks
+        ];
+
+        if (is_array($post) && count($post)>0) {
+            $options[CURLOPT_POST] = 1;
+            $options[CURLOPT_POSTFIELDS] = http_build_query($post);
+        }
+
+        $ci      = curl_init( $url );
+        curl_setopt_array( $ci, $options );
+        $content = curl_exec( $ci );
+        $err     = curl_errno( $ci );
+        $errmsg  = curl_error( $ci );
+        $result  = curl_getinfo( $ci );
+        curl_close( $ci );
+
+        $result['errno']   = $err;
+        $result['errmsg']  = $errmsg;
+        $result['content'] = $content;
+
+        return $result;
+    }
+
+    /**
     * Sned custom HTTP status code
     * @param string $headerStatus
     */
