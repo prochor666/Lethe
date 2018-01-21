@@ -307,7 +307,7 @@ class Tools
     {
         $options = [
             CURLOPT_RETURNTRANSFER => true,                         // return web page
-            CURLOPT_HEADER         => true,                         // don't return headers
+            CURLOPT_HEADER         => false,                        // don't return headers
             CURLOPT_FOLLOWLOCATION => true,                         // follow redirects
             CURLOPT_ENCODING       => "",                           // handle all encodings
             CURLOPT_USERAGENT      => "Lethe\Tools::request",       // who am i
