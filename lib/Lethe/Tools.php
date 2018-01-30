@@ -287,6 +287,7 @@ class Tools
     /**
     * Web redirect
     * @param string $url
+    * @return void
     */
     public static function redirect($url = null)
     {
@@ -299,28 +300,30 @@ class Tools
     }
 
     /**
-    * http/https GET and POST request
+    * Http/s GET and POST request
     * @param string $url
-    * @param array $post
+    * @param array $config
+    * @return void
     */
-    public static function request($url = null, $post = [])
+    public static function request($url = null, $config = [])
     {
         $options = [
-            CURLOPT_RETURNTRANSFER => true,                         // return web page
-            CURLOPT_HEADER         => false,                        // don't return headers
-            CURLOPT_FOLLOWLOCATION => true,                         // follow redirects
-            CURLOPT_ENCODING       => "",                           // handle all encodings
-            CURLOPT_USERAGENT      => "Lethe\Tools::request",       // who am i
-            CURLOPT_AUTOREFERER    => true,                         // set referer on redirect
-            CURLOPT_CONNECTTIMEOUT => 120,                          // timeout on connect
-            CURLOPT_TIMEOUT        => 120,                          // timeout on response
-            CURLOPT_MAXREDIRS      => 10,                           // stop after 10 redirects
-            CURLOPT_SSL_VERIFYPEER => false,                        // Disabled SSL Cert checks
+            CURLOPT_RETURNTRANSFER => self::chef($config, 'CURLOPT_RETURNTRANSFER', true),                 // return web page
+            CURLOPT_HEADER         => self::chef($config, 'CURLOPT_HEADER', false),                        // don't return headers
+            CURLOPT_FOLLOWLOCATION => self::chef($config, 'CURLOPT_FOLLOWLOCATION', true),                 // follow redirects
+            CURLOPT_ENCODING       => self::chef($config, 'CURLOPT_ENCODING', ''),                         // handle all encodings
+            CURLOPT_USERAGENT      => self::chef($config, 'CURLOPT_USERAGENT', 'Lethe\Tools::request'),    // who am i
+            CURLOPT_AUTOREFERER    => self::chef($config, 'CURLOPT_AUTOREFERER', true),                    // set referer on redirect
+            CURLOPT_CONNECTTIMEOUT => self::chef($config, 'CURLOPT_CONNECTTIMEOUT', 30),                   // timeout on connect
+            CURLOPT_TIMEOUT        => self::chef($config, 'CURLOPT_TIMEOUT', 60),                          // timeout on response
+            CURLOPT_MAXREDIRS      => self::chef($config, 'CURLOPT_MAXREDIRS', 10),                        // stop after 10 redirects
+            CURLOPT_SSL_VERIFYPEER => self::chef($config, 'CURLOPT_SSL_VERIFYPEER', false),                // Disabled SSL Cert checks
         ];
 
-        if (is_array($post) && count($post)>0) {
+        // POST request
+        if (self::chef($config, 'CURLOPT_POST', 0)==1) {
             $options[CURLOPT_POST] = 1;
-            $options[CURLOPT_POSTFIELDS] = http_build_query($post);
+            $options[CURLOPT_POSTFIELDS] = is_array(self::chef($config, 'CURLOPT_POSTFIELDS', '')) ? http_build_query($config['CURLOPT_POSTFIELDS']): $config['CURLOPT_POSTFIELDS'];
         }
 
         $ci      = curl_init( $url );
