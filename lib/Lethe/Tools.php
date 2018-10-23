@@ -318,7 +318,7 @@ class Tools
             CURLOPT_TIMEOUT        => self::chef($config, 'CURLOPT_TIMEOUT', 60),                          // timeout on response
             CURLOPT_MAXREDIRS      => self::chef($config, 'CURLOPT_MAXREDIRS', 10),                        // stop after 10 redirects
             CURLOPT_SSL_VERIFYPEER => self::chef($config, 'CURLOPT_SSL_VERIFYPEER', false),                // Disabled SSL Cert checks
-            CURLOPT_HTTPHEADER     => self::chef($config, 'CURLOPT_SSL_VERIFYPEER', false),                // HTTP headers
+            CURLOPT_HTTPHEADER     => self::chef($config, 'CURLOPT_HTTPHEADER', -[]),                      // HTTP headers
         ];
 
         // POST request
