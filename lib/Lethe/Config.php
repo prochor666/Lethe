@@ -308,7 +308,7 @@ class Config{
         $config['system']['productName'] = 'Lethe';
 
         // System version
-        $config['system']['version'] = '0.9.12';
+        $config['system']['version'] = '0.9.13';
 
         // Code name
         $config['system']['productCodename'] = 'Catacombs';
