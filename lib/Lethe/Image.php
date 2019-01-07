@@ -45,10 +45,13 @@ class Image
                 {
                     case IMAGETYPE_JPEG:
                         $this->image = imagecreatefromjpeg($this->imageSource);
+                        imageinterlace($this->image, true);
                     break; case IMAGETYPE_PNG:
                         $this->image = imagecreatefrompng($this->imageSource);
+                        imageinterlace($this->image, true);
                     break; case IMAGETYPE_GIF:
                         $this->image = imagecreatefromgif($this->imageSource);
+                        imageinterlace($this->image, true);
                     break; default:
                         $this->image = NULL;
                 }
