@@ -77,10 +77,14 @@ class Cache extends Lethe
     */
     private function isValid()
     {
-        if (is_array($this->meta) && count($this->meta)>0 && array_key_exists('mtime',$this->meta) && ((int)$this->keepalive + $this->meta['mtime']) >= time()) {
+        if (is_array($this->meta) && count($this->meta)>0 && array_key_exists('mtime',$this->meta) && ((int)$this->keepalive + $this->meta['mtime']) >= time()) 
+        {
             return true;
-        } elseif (is_array($this->meta) && count($this->meta)>0 && array_key_exists('mtime',$this->meta) && ((int)$this->keepalive + $this->meta['mtime']) < time()) {
-            Storage::deleteFile($this->cacheFile);
+        } elseif (is_array($this->meta) && count($this->meta)>0 && array_key_exists('mtime',$this->meta) && ((int)$this->keepalive + $this->meta['mtime']) < time()) 
+        {
+            if (Storage::isFile($this->cacheFile)) {
+                Storage::deleteFile($this->cacheFile);
+            }
         }
         return false;
     }
