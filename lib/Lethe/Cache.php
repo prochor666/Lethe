@@ -5,14 +5,14 @@ use Lethe\Storage;
 use Lethe\Tools;
 
 /**
-* Lethe\Cache - basic filesystem caching operations
+* Lethe\Cache - basic filesystem caching
 * @author Jan Prochazka, prochor666 <prochor666@gmail.com>
 */
 class Cache extends Lethe
 {
-    public $key, $data, $keepalive, $storage;
+    public $key, $data, $keepalive, $storage, $extension;
 
-    private $cacheFile, $meta, $permission, $extension;
+    private $cacheFile, $meta, $permission;
 
     /**
     * Cache class constructor
@@ -24,7 +24,7 @@ class Cache extends Lethe
         parent::__construct();
         $this->keepalive = 15;
         $this->key = 'lethe';
-        $this->extension = 'wcache';
+        $this->extension = 'lcache';
         $this->data = '';
         $this->meta = [];
         $this->cacheFile = null;
@@ -103,7 +103,7 @@ class Cache extends Lethe
     */
     private function cacheRead()
     {
-        return  Storage::getFileData($this->cacheFile);
+        return Storage::getFileData($this->cacheFile);
     }
 
     /**
