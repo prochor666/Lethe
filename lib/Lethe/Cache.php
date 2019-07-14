@@ -10,9 +10,9 @@ use Lethe\Tools;
 */
 class Cache extends Lethe
 {
-    public $data, $keepalive, $forceRewrite, $cacheFile;
+    public $key, $data, $keepalive, $storage;
 
-    private $storage, $meta, $permission;
+    private $cacheFile, $meta, $permission, $extension;
 
     /**
     * Cache class constructor
@@ -22,34 +22,52 @@ class Cache extends Lethe
     public function __construct()
     {
         parent::__construct();
-        $this->keepalive = 3600;
+        $this->keepalive = 15;
+        $this->key = 'lethe';
+        $this->extension = 'wcache';
+        $this->data = '';
         $this->meta = [];
-        $this->data = null;
         $this->cacheFile = null;
+        $this->storage = sys_get_temp_dir();
         $this->permission = $this->config('system/filePermission');
     }
 
     /**
-    * Autocache content, compare cache and live data
-    * @param void
+    * Get cache content
+    * @param string
     * @return string
     */
-    public function auto()
+    public function getKey($key)
     {
-        if(is_null($this->cacheFile))
-        {
-            return $this->data;
+        if ($this->has($key)) {
+            return json_decode($this->cacheRead(), true);
         }
+        return false;
+    }
 
-        $this->cacheFile = $this->storage.'/'.$this->cacheFile;
+    /**
+    * Set cache content
+    * @param string
+    * @return string
+    */
+    public function setKey($key, $data)
+    {
+        $this->has($key);
+        $this->data = json_encode($data);
+        $this->cacheStore();
+    }
+
+
+    /**
+    * Check cache key
+    * @param string
+    * @return bool
+    */
+    public function has($key)
+    {
+        $this->cacheFile = $this->storage.'/'.$key.'.'.$this->extension;
         $this->getMeta();
-
-        if(!is_array($this->meta) || !array_key_exists('mtime',$this->meta) || $this->isExpired() || $this->meta['size']<1 || $this->keepalive == 0 )
-        {
-           $this->cacheStore();
-        }
-
-        return $this->cacheRead();
+        return $this->isValid();
     }
 
     /**
@@ -57,15 +75,14 @@ class Cache extends Lethe
     * @param void
     * @return bool
     */
-    public function isExpired()
+    private function isValid()
     {
-        if(is_null( $this->cacheFile ))
-        {
+        if (is_array($this->meta) && count($this->meta)>0 && array_key_exists('mtime',$this->meta) && ((int)$this->keepalive + $this->meta['mtime']) >= time()) {
             return true;
+        } elseif (is_array($this->meta) && count($this->meta)>0 && array_key_exists('mtime',$this->meta) && ((int)$this->keepalive + $this->meta['mtime']) < time()) {
+            Storage::deleteFile($this->cacheFile);
         }
-        $this->getMeta();
-
-        return ( !is_array($this->meta) || count($this->meta)<1 ) || ((int)$this->keepalive + $this->meta['mtime']) < time() ? true: false;
+        return false;
     }
 
     /**
@@ -75,8 +92,8 @@ class Cache extends Lethe
     */
     private function cacheStore()
     {
-        Storage::putFile( $this->cacheFile, $this->data );
-        Storage::permissionChange( $this->cacheFile, $this->permission );
+        Storage::putFile($this->cacheFile, $this->data);
+        Storage::permissionChange($this->cacheFile, $this->permission);
     }
 
     /**
