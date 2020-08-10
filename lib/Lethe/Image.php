@@ -267,7 +267,7 @@ class Image
 
 
     /**
-    * Flip image by mode 0,1,2
+    * Flip image by mode 1,2,3
     * @param int $mode
     * @return void
     */
