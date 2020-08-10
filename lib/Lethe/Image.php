@@ -7,8 +7,8 @@ namespace Lethe;
 */
 class Image
 {
-    public $imageSource, $imageTarget, $compression, $permissions;
-    protected $image, $imageInfo, $extendedInfo, $imageType;
+    public $imageSource, $imageTarget, $compression, $permissions, $fixExifRotation;
+    protected $image, $imageInfo, $extendedInfo, $imageType, $exif;
 
     /**
     * Image class contructor, default  value set
@@ -18,6 +18,7 @@ class Image
     public function __construct()
     {
         $this->image = false;
+        $this->exif = false;
         $this->imageType = null;
         $this->imageInfo = [];
         $this->extendedInfo = [];
@@ -25,6 +26,7 @@ class Image
         $this->imageTarget = null;
         $this->compression = 90;
         $this->permissions = 0777;
+        $this->fixExifRotation = true;
     }
 
     /**
@@ -43,8 +45,9 @@ class Image
             {
                 switch( $this->imageType )
                 {
-                    case IMAGETYPE_JPEG:
+                    case IMAGETYPE_JPEG: case IMAGETYPE_JPEG2000: case IMAGETYPE_JPX: case IMAGETYPE_JP2: case IMAGETYPE_JPC: 
                         $this->image = imagecreatefromjpeg($this->imageSource);
+                        $this->fix();
                         imageinterlace($this->image, true);
                     break; case IMAGETYPE_PNG:
                         $this->image = imagecreatefrompng($this->imageSource);
@@ -57,6 +60,57 @@ class Image
                 }
             }
         }
+    }
+
+
+    protected function fix() {
+        if (function_exists('exif_read_data')) {
+            $this->exif = exif_read_data($this->imageSource, NULL, true);
+            
+            if ($this->fixExifRotation === true && Tools::chef($this->exif, 'IFD0', false) !== false && Tools::chef($this->exif['IFD0'], 'Orientation', false) !== false) {
+                
+                switch((int)$this->exif['IFD0']['Orientation']) {
+                    case 1: // nothing
+                    break; case 2: // horizontal flip
+                        $this->flip(1);
+                    break; case 3: // 180 rotate left
+                        rotateImage($public,180);
+                    break; case 4: // vertical flip
+                        $this->flip(2);
+                    break; case 5: // vertical flip + 90 rotate right
+                        $this->flip(2);
+                        $this->rotate(-90);
+                    break; case 6: // 90 rotate right
+                        $this->rotate(-90);
+                    break; case 7: // horizontal flip + 90 rotate right
+                        $this->flip(1);   
+                        $this->rotate(-90);
+                    break; case 8:    // 90 rotate left
+                        $this->rotate(90);
+                    break; default: 
+                        // nothing
+                }
+            }
+        }
+    }
+
+
+    /**
+    * Image resource getter
+    * @param void
+    * @return resource|bool
+    */
+    public function getResource() {
+        return $this->image;
+    }
+
+    /**
+    * Image resource getter
+    * @param void
+    * @return array|bool
+    */
+    public function getExif() {
+        return $this->exif;
     }
 
     /**
@@ -205,6 +259,36 @@ class Image
         $ratio = $width / $this->width();
         $height = $this->height() * $ratio;
         $this->resize($width,$height);
+    }
+
+
+    /**
+    * Flip image by mode 0,1,2
+    * @param int $mode
+    * @return void
+    */
+    public function flip($mode = -1) 
+    {
+        switch ($mode) 
+        {
+            case IMG_FLIP_HORIZONTAL: case IMG_FLIP_VERTICAL: case IMG_FLIP_BOTH:
+                $this->image = imageflip($this->image, $mode);
+            break; default:
+                // unknown mode, do nothing
+        }
+    }
+
+    /**
+    * Rotate image by angle
+    * @param float $angle
+    * @return void
+    */
+    public function rotate($angle = 0) 
+    {
+        if ((int)$angle !== 0) 
+        {
+            $this->image = imagerotate($this->image, $angle, 0);
+        }
     }
 
     /**
