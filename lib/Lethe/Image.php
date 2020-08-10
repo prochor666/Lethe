@@ -62,13 +62,18 @@ class Image
         }
     }
 
-
+    /**
+    * EXIF rotation fix based on IFD0 tag section
+    * @param void
+    * @return void
+    */
     protected function fix() {
-        if (function_exists('exif_read_data')) {
+        if (function_exists('exif_read_data')) 
+        {
             $this->exif = exif_read_data($this->imageSource, NULL, true);
-            
-            if ($this->fixExifRotation === true && Tools::chef($this->exif, 'IFD0', false) !== false && Tools::chef($this->exif['IFD0'], 'Orientation', false) !== false) {
-                
+
+            if ($this->fixExifRotation === true && is_array($this->exif) && array_key_exists('IFD0', $this->exif) && array_key_exists('Orientation', $this->exif['IFD0'])) 
+            {
                 switch((int)$this->exif['IFD0']['Orientation']) {
                     case 1: // nothing
                     break; case 2: // horizontal flip
@@ -93,7 +98,6 @@ class Image
             }
         }
     }
-
 
     /**
     * Image resource getter
@@ -152,7 +156,7 @@ class Image
         ob_start();
         switch( $this->imageType )
         {
-            case IMAGETYPE_JPEG:
+            case IMAGETYPE_JPEG: case IMAGETYPE_JPEG2000: case IMAGETYPE_JPX: case IMAGETYPE_JP2: case IMAGETYPE_JPC: 
                 imagejpeg($this->image, null, $this->compression);
             break; case IMAGETYPE_PNG:
                 $this->compression = $this->compression>9 ? 7: (int)$this->compression;
@@ -272,7 +276,7 @@ class Image
         switch ($mode) 
         {
             case IMG_FLIP_HORIZONTAL: case IMG_FLIP_VERTICAL: case IMG_FLIP_BOTH:
-                $this->image = imageflip($this->image, $mode);
+                imageflip($this->image, $mode);
             break; default:
                 // unknown mode, do nothing
         }
@@ -326,7 +330,7 @@ class Image
     }
 
     /**
-    * Closet (destroy) image resource
+    * Close (destroy) image resource
     * @param void
     * @return void
     */
