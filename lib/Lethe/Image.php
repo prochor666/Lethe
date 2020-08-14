@@ -70,7 +70,7 @@ class Image
     protected function fix() {
         if (function_exists('exif_read_data')) 
         {
-            $this->exif = exif_read_data($this->imageSource, NULL, true);
+            $this->exif = @exif_read_data($this->imageSource, NULL, true);
 
             if ($this->fixExifRotation === true && is_array($this->exif) && array_key_exists('IFD0', $this->exif) && array_key_exists('Orientation', $this->exif['IFD0'])) 
             {
