@@ -1,40 +1,41 @@
 <?php
+
 namespace Lethe;
 
 /**
-* Lethe\Url - universal url parser/extractor
-* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
-*/
+ * Lethe\Url - universal url parser/extractor
+ * @author Jan Prochazka, prochor666 <prochor666@gmail.com>
+ */
 class Url
 {
     /**
-    * @ignore
-    */
-    final public function __construct(){}
+     * @ignore
+     */
+    final public function __construct() {}
 
     /**
-    * Url parse
-    * @description Create array from given path!!!!
-    * @param string $path = some/path/to
-    * @return string
-    */
+     * Url parse
+     * @description Create array from given path!!!!
+     * @param string $path = some/path/to
+     * @return string
+     */
     public static function parse($path = null, $delimiter = '-')
     {
         $result = [0 => [], 1 => []];
-        $qspos = strpos( $path, '?' );
+        $qspos = strpos($path, '?');
 
-        if( $qspos !== false )
-        {
-            $path = mb_substr( $path, 0, $qspos );
+        if ($qspos !== false) {
+            $path = mb_substr($path, 0, $qspos);
         }
 
         $src = explode('/', $path);
-        $src = array_filter($src, ['self', 'string']);
+        // Oprava: nepouzivat self v callables, PHP 8+ kompatibilita
+        $src = array_filter($src, function ($v) {
+            return is_string($v) && $v !== '';
+        });
 
-        if (!is_null($delimiter) || mb_strlen($delimiter) > 0)
-        {
-            foreach($src as $s)
-            {
+        if (!is_null($delimiter) || mb_strlen($delimiter) > 0) {
+            foreach ($src as $s) {
                 $result[0][] = self::extract($s, $delimiter);
                 $result[1][$s] = self::extract($s, $delimiter);
             }
@@ -43,48 +44,46 @@ class Url
     }
 
     /**
-    * Check string
-    * @description Check string length
-    * @mixed $index
-    * @return bool
-    */
+     * Check string
+     * @description Check string length
+     * @mixed $index
+     * @return bool
+     */
     public static function string($v)
     {
         $v = (string)$v;
-        return mb_strlen($v)>0 ? true: false;
+        return mb_strlen($v) > 0 ? true : false;
     }
 
     /**
-    * Url model checker
-    * @description Create array from given path!!!!
-    * @param array $model
-    * @param int $index
-    * @return bool|string
-    */
+     * Url model checker
+     * @description Create array from given path!!!!
+     * @param array $model
+     * @param int $index
+     * @return bool|string
+     */
     public static function check($model, $index = 0)
     {
-        return is_array($model) && array_key_exists($index, $model) ? $model[$index]['path']: false;
+        return is_array($model) && array_key_exists($index, $model) ? $model[$index]['path'] : false;
     }
 
     /**
-    * Fragment parse
-    * @description Create identifier from given fragment!!!!
-    * @param string $path = name-to-123
-    * @param string $delimiter = null, '-'...
-    * @return string
-    */
+     * Fragment parse
+     * @description Create identifier from given fragment!!!!
+     * @param string $path = name-to-123
+     * @param string $delimiter = null, '-'...
+     * @return string
+     */
     public static function extract($path = null, $delimiter = null)
     {
         $result = ['path' => null, 'name' => null, 'id' => null];
         $result['path'] = $result['name'] = $path;
-        $src = array_filter(explode($delimiter, $path), function($val)
-        {
+        $src = array_filter(explode($delimiter, $path), function ($val) {
             return true;
         });
 
         $i = count($src) - 1;
-        if($i>0)
-        {
+        if ($i > 0) {
             $id = $src[$i];
             array_pop($src);
             $result['name'] = implode($delimiter, $src);
@@ -95,26 +94,24 @@ class Url
     }
 
     /**
-    * Fragment update
-    * @description Create identifier from given fragment!!!!
-    * @param array $urlArray
-    * @param array $keys
-    * @return string
-    */
+     * Fragment update
+     * @description Create identifier from given fragment!!!!
+     * @param array $urlArray
+     * @param array $keys
+     * @return string
+     */
     public static function update($urlArray, $keys = [])
     {
         $query = [];
-        if( array_key_exists('query', $urlArray) )
-        {
-            parse_str( $urlArray['query'], $query );
+        if (array_key_exists('query', $urlArray)) {
+            parse_str($urlArray['query'], $query);
         }
 
-        foreach($keys as $key => $value)
-        {
+        foreach ($keys as $key => $value) {
             $query[$key] = rawurldecode($value);
         }
         $urlArray['query'] = http_build_query($query);
-        $url = $urlArray['scheme'].'://'.$urlArray['host'].rtrim($urlArray['path'], '/').'?'.$urlArray['query'];
+        $url = $urlArray['scheme'] . '://' . $urlArray['host'] . rtrim($urlArray['path'], '/') . '?' . $urlArray['query'];
 
         return $url;
     }

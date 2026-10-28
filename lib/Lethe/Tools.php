@@ -24,10 +24,36 @@ class Tools
         $str = null;
         while(strlen($str) < $length)
         {
-            $str .= mb_substr($args, mt_rand(0, strlen($args) - 1), 1);
+            try {
+                $index = random_int(0, strlen($args) - 1);
+            } catch (\Exception $e) {
+                $index = mt_rand(0, strlen($args) - 1);
+            }
+            $str .= mb_substr($args, $index, 1);
         }
 
         return (string)$str;
+    }
+
+    /**
+    * Create random hexadecimal token
+    * @param int $bytes
+    * @return string
+    */
+    public static function randomHex($bytes = 32)
+    {
+        $bytes = (int)$bytes;
+        $bytes = $bytes > 0 ? $bytes: 32;
+
+        try {
+            return bin2hex(random_bytes($bytes));
+        } catch (\Exception $e) {
+            if (function_exists('openssl_random_pseudo_bytes')) {
+                return bin2hex(openssl_random_pseudo_bytes($bytes));
+            }
+        }
+
+        return self::hash(self::rnd($bytes * 2), 'sha256');
     }
 
     /**

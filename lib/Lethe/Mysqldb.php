@@ -1,23 +1,25 @@
 <?php
+
 namespace Lethe;
 
 /**
-* Lethe\MysqlDb - mysql database manipulation class
-* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
-*/
+ * Lethe\MysqlDb - mysql database manipulation class
+ * @author Jan Prochazka, prochor666 <prochor666@gmail.com>
+ */
 class Mysqldb extends Lethe
 {
-    private $host, $db, $user, $password, $engine, $errors, $stat;
+    private $host, $db, $user, $password, $engine, $driver, $port, $errors, $stat, $persistent;
+    private static $persistentLinks = [];
 
     /**
-    * Construcor, configures MySQL driver
-    * @param array $conf
-    * @return void
-    */
+     * Construcor, configures MySQL driver
+     * @param array $conf
+     * @return void
+     */
     public function __construct($conf = null)
     {
 
-        if(
+        if (
             function_exists('mysqli_init') &&
             function_exists('mysqli_connect') &&
             function_exists('mysqli_select_db') &&
@@ -28,10 +30,9 @@ class Mysqldb extends Lethe
             function_exists('mysqli_fetch_row') &&
             function_exists('mysqli_fetch_object') &&
             function_exists('mysqli_real_escape_string')
-        )
-        {
+        ) {
             $this->driver = 'ext/mysqli';
-        }else{
+        } else {
             $this->driver = 'ext/mysql';
         }
 
@@ -42,16 +43,17 @@ class Mysqldb extends Lethe
         $this->port =       3306;
         $this->errors =     [];
         $this->stat =       false;
+        $this->persistent = false;
 
-        if($conf != null && is_array($conf) && count($conf)>3 && isset( $conf['host'], $conf['db'], $conf['user'], $conf['password'] ) )
-        {
+        if ($conf != null && is_array($conf) && count($conf) > 3 && isset($conf['host'], $conf['db'], $conf['user'], $conf['password'])) {
             $this->host =       $conf['host'];
             $this->user =       $conf['user'];
             $this->password =   $conf['password'];
             $this->db =         $conf['db'];
-            $this->port =       isset($conf['port']) ? $conf['port']: $this->port;
+            $this->port =       isset($conf['port']) ? $conf['port'] : $this->port;
+            $this->persistent = isset($conf['persistent']) ? (bool)$conf['persistent'] : false;
             $this->stat =       true;
-        }else{
+        } else {
             $this->error('MySQL configuration error');
         }
     }
@@ -59,7 +61,7 @@ class Mysqldb extends Lethe
     private function error($e)
     {
         $this->errors[] =   $e;
-        $this->log( ['case' => 'mysql', 'message' => $e] );
+        $this->log(['case' => 'mysql', 'message' => $e]);
         $this->stat =       false;
     }
 
@@ -69,41 +71,51 @@ class Mysqldb extends Lethe
     }
 
     /**
-    * Database connection
-    * @param array $conf
-    * @return bool|resource
-    */
+     * Database connection
+     * @param array $conf
+     * @return bool|resource
+     */
     private function connect()
     {
-        if($this->driver == 'ext/mysqli')
-        {
-            $link = mysqli_init();
-            if(!$link)
-            {
-                $link = false;
-            }else{
-                $link = @mysqli_connect($this->host, $this->user, $this->password);
-                if($link !== false)
-                {
-                    $db = @mysqli_select_db($link, $this->db);
-                    mysqli_set_charset($link, "utf8");
+        if ($this->driver == 'ext/mysqli') {
+            if (function_exists('mysqli_report')) {
+                mysqli_report(MYSQLI_REPORT_OFF);
+            }
+
+            $host = $this->host;
+            if ($this->persistent === true && strpos($host, 'p:') !== 0) {
+                $host = 'p:' . $host;
+            }
+            $linkKey = $host . '|' . $this->port . '|' . $this->db . '|' . $this->user;
+
+            if ($this->persistent === true && isset(self::$persistentLinks[$linkKey])) {
+                $link = self::$persistentLinks[$linkKey];
+            } else {
+                $link = mysqli_init();
+                if (!$link) {
+                    $link = false;
+                } else {
+                    $link = @mysqli_connect($host, $this->user, $this->password, $this->db, (int)$this->port);
+                    if ($link !== false) {
+                        mysqli_set_charset($link, "utf8");
+                        if ($this->persistent === true) {
+                            self::$persistentLinks[$linkKey] = $link;
+                        }
+                    }
                 }
             }
 
-            if($link === false)
-            {
-                $this->error('MySQL connection error: '.mysqli_connect_error());
+            if ($link === false) {
+                $this->error('MySQL connection error: ' . mysqli_connect_error());
             }
-        }else{
-            $link = @mysql_connect($this->host, $this->user, $this->password);
-            if($link !== false)
-            {
-                $db = @mysql_select_db($this->db,$link);
+        } else {
+            $link = $this->persistent === true ? @mysql_pconnect($this->host, $this->user, $this->password) : @mysql_connect($this->host, $this->user, $this->password);
+            if ($link !== false) {
+                $db = @mysql_select_db($this->db, $link);
                 mysql_query("SET NAMES 'utf8'");
-            }else{
-                if($link === false)
-                {
-                    $this->error('MySQL connection error: '.mysql_error());
+            } else {
+                if ($link === false) {
+                    $this->error('MySQL connection error: ' . mysql_error());
                 }
             }
         }
@@ -112,108 +124,101 @@ class Mysqldb extends Lethe
     }
 
     /**
-    * Database connection test
-    * @param array $conf
-    * @return bool|resource
-    */
+     * Database connection test
+     * @param array $conf
+     * @return bool|resource
+     */
     public function testConnection()
     {
         return $this->connect();
     }
 
     /**
-    * Database query INSERT/UPDATE?DELETE etc..
-    * @param string $query
-    * @return bool|resource
-    */
+     * Database query INSERT/UPDATE?DELETE etc..
+     * @param string $query
+     * @return bool|resource
+     */
     public function query($sqlquery)
     {
         $link = $this->connect();
 
-        if($this->driver == 'ext/mysqli')
-        {
-            $result = !$link ? false: mysqli_query($link, $sqlquery);
-            if($result === false && $link !== false)
-            {
-                $this->error('MySQL query error: '.mysqli_error($link).' Query: '.$sqlquery);
-            }elseif($link !== false){
+        if ($this->driver == 'ext/mysqli') {
+            $result = !$link ? false : mysqli_query($link, $sqlquery);
+            if ($result === false && $link !== false) {
+                $this->error('MySQL query error: ' . mysqli_error($link) . ' Query: ' . $sqlquery);
+            } elseif ($link !== false && $this->persistent !== true) {
                 mysqli_close($link);
             }
-        }else{
-            $result = !mysql_error() ? mysql_query(trim($sqlquery), $link ): false;
+        } else {
+            $result = !mysql_error() ? mysql_query(trim($sqlquery), $link) : false;
 
-            if($result === false)
-            {
-                $this->error('MySQL query error: '.mysql_error().' Query: '.$sqlquery);
-            }else{
+            if ($result === false) {
+                $this->error('MySQL query error: ' . mysql_error() . ' Query: ' . $sqlquery);
+            } else {
                 mysql_close($link);
-
             }
         }
 
-        return $result === false ? $this->getErrors(): $result;
+        return $result === false ? $this->getErrors() : $result;
     }
 
     /**
-    * Database query result
-    * @param string $query
-    * @param string $type
-    * @return array|object
-    */
+     * Database query result
+     * @param string $query
+     * @param string $type
+     * @return array|object
+     */
     public function result($sqlquery, $type = 'assoc')
     {
         $result = $this->query($sqlquery);
         $data = [];
 
-        if($this->driver == 'ext/mysqli')
-        {
-            if($this->stat === true && mysqli_num_rows($result)>0)
-            {
-                switch($type)
-                {
+        if ($this->driver == 'ext/mysqli') {
+            if ($this->stat === true && mysqli_num_rows($result) > 0) {
+                switch ($type) {
                     case "array":
-                        while($row = mysqli_fetch_array($result))
-                        {
+                        while ($row = mysqli_fetch_array($result)) {
                             array_push($data, $row);
                         }
-                    break; case "row":
-                        while($row = mysqli_fetch_row($result))
-                        {
+                        break;
+                    case "row":
+                        while ($row = mysqli_fetch_row($result)) {
                             array_push($data, $row);
                         }
-                    break; case 'object':
+                        break;
+                    case 'object':
                         $data =  mysqli_fetch_object($result);
 
-                    break; case "assoc": default:
-                        while($row = mysqli_fetch_assoc($result))
-                        {
+                        break;
+                    case "assoc":
+                    default:
+                        while ($row = mysqli_fetch_assoc($result)) {
                             array_push($data, $row);
                         }
                 }
 
                 mysqli_free_result($result);
             }
-        }else{
-            if($this->stat === true && mysql_num_rows($result)>0)
-            {
-                switch($type)
-                {
+        } else {
+            if ($this->stat === true && mysql_num_rows($result) > 0) {
+                switch ($type) {
                     case "array":
-                        while($row = mysql_fetch_array($result))
-                        {
+                        while ($row = mysql_fetch_array($result)) {
                             array_push($data, $row);
                         }
-                    break; case "row":
-                        while($row = mysql_fetch_row($result))
-                        {
+                        break;
+                    case "row":
+                        while ($row = mysql_fetch_row($result)) {
                             array_push($data, $row);
                         }
-                    break; case 'object':
+                        break;
+                    case 'object':
                         $data =  mysql_fetch_object($result);
 
-                    break; case "assoc": default:
-                        while($row = mysql_fetch_assoc($result))
-                        {
+                        break;
+                    case "assoc":
+                    default:
+                        while ($row = mysql_fetch_assoc($result)) {
                             array_push($data, $row);
                         }
                 }
@@ -226,44 +231,41 @@ class Mysqldb extends Lethe
     }
 
     /**
-    * Get last autoincrement value
-    * @param string $table
-    * @return int
-    */
+     * Get last autoincrement value
+     * @param string $table
+     * @return int
+     */
     public function getLastId($table)
     {
-        $result = $this->result("SHOW TABLE STATUS LIKE '".$table."'", 'assoc');
+        $result = $this->result("SHOW TABLE STATUS LIKE '" . $table . "'", 'assoc');
         $result2 = $this->result("SHOW VARIABLES LIKE 'auto_increment_offset'");
-        $offset = $result2 !== false ? $result2[0]['Value']: 1;
+        $offset = $result2 !== false ? $result2[0]['Value'] : 1;
 
-        return $result !== false && count($result) === 1 ? (int)$result[0]['Auto_increment'] - $offset: 0;
+        return $result !== false && count($result) === 1 ? (int)$result[0]['Auto_increment'] - $offset : 0;
     }
 
     /**
-    * Escape data for safety
-    * @param string $data
-    * @return string
-    */
+     * Escape data for safety
+     * @param string $data
+     * @return string
+     */
     public function sanitize($data)
     {
-        if($this->driver == 'ext/mysqli')
-        {
+        if ($this->driver == 'ext/mysqli') {
             $link = $this->connect();
-            $result = !$link ? false: mysqli_real_escape_string($link, $data);
-            if($result === false)
-            {
-                $this->error('MySQL error: '.mysqli_connect_error());
-            }else{
+            $result = !$link ? false : mysqli_real_escape_string($link, $data);
+            if ($result === false) {
+                $this->error('MySQL error: ' . mysqli_connect_error());
+            } elseif ($this->persistent !== true) {
                 mysqli_close($link);
             }
-        }else{
+        } else {
             @mysql_set_charset('utf8');
             $link = $this->connect();
-            $result = !$link ? mysql_real_escape_string($data, $link): false;
-            if($result === false)
-            {
-                $this->error('MySQL error: '.mysql_error());
-            }else{
+            $result = !$link ? mysql_real_escape_string($data, $link) : false;
+            if ($result === false) {
+                $this->error('MySQL error: ' . mysql_error());
+            } else {
                 mysql_close($link);
             }
         }
@@ -272,34 +274,31 @@ class Mysqldb extends Lethe
     }
 
     /**
-    * Get server version
-    * @param void
-    * @return string
-    */
+     * Get server version
+     * @param void
+     * @return string
+     */
     public function version()
     {
-        if($this->driver == 'ext/mysqli')
-        {
+        if ($this->driver == 'ext/mysqli') {
             $link = $this->connect();
-            $result = !$link ? false: mysqli_get_server_info($link);
-            if($result === false)
-            {
-                $this->error('MySQL error: '.mysqli_connect_error());
-            }else{
+            $result = !$link ? false : mysqli_get_server_info($link);
+            if ($result === false) {
+                $this->error('MySQL error: ' . mysqli_connect_error());
+            } elseif ($this->persistent !== true) {
                 mysqli_close($link);
             }
-        }else{
+        } else {
             @mysql_set_charset('utf8');
             $link = $this->connect();
-            $result = !$link ? mysql_get_server_info($link): false;
-            if($result === false)
-            {
-                $this->error('MySQL error: '.mysql_error());
-            }else{
+            $result = !$link ? mysql_get_server_info($link) : false;
+            if ($result === false) {
+                $this->error('MySQL error: ' . mysql_error());
+            } else {
                 mysql_close($link);
             }
         }
 
-        return $result !== false ? (string)$result: '';
+        return $result !== false ? (string)$result : '';
     }
 }

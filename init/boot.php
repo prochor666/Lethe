@@ -1,17 +1,22 @@
 <?php
+
 /**
-* Lethe bootstrap
-* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
-* @package Lethe
-*/
-if (version_compare(PHP_VERSION, '5.3.0', '<') )
-{
-    die('Now runing '.PHP_VERSION.'. You need PHP version 5.3.0 or later.');
+ * Lethe bootstrap
+ * @author Jan Prochazka, prochor666 <prochor666@gmail.com>
+ * @package Lethe
+ */
+if (version_compare(PHP_VERSION, '5.3.0', '<')) {
+    die('Now runing ' . PHP_VERSION . '. You need PHP version 5.3.0 or later.');
 }
 
 mb_internal_encoding('UTF-8');
 mb_http_output('UTF-8');
-mb_http_input('UTF-8');
+// Volání mb_http_input('UTF-8') nastavuje očekávané kódování vstupních dat pouze v PHP < 8.0.
+// Od PHP 8.0 již není možné kódování tímto způsobem nastavovat a PHP pracuje s UTF-8 jako výchozím.
+// Pokud by bylo potřeba detekovat kódování vstupu, lze použít mb_http_input() bez argumentu.
+if (PHP_VERSION_ID < 80000) {
+    mb_http_input('UTF-8');
+}
 mb_language('uni');
 mb_regex_encoding('UTF-8');
 
@@ -20,23 +25,23 @@ mb_regex_encoding('UTF-8');
 *  MAIN CONFIGURATION + CORE LOAD   *
 * *****************************************
 */
+
 use Lethe\Lethe;
 use Lethe\Autoloader;
 use Lethe\Config;
 use Lethe\Reg;
 use Lethe\Tools;
 
-if( file_exists(__LETHE_LETHE__.'/lib/Lethe/Autoloader.php') )
-{
-    require_once __LETHE_LETHE__.'/lib/Lethe/Autoloader.php';
+if (file_exists(__LETHE_LETHE__ . '/lib/Lethe/Autoloader.php')) {
+    require_once __LETHE_LETHE__ . '/lib/Lethe/Autoloader.php';
 
-    try
-    {
+    try {
         ob_start('mb_output_handler');
 
+
         Autoloader::init()->register([
-            __LETHE_LETHE__.'/interfaces/',
-            __LETHE_LETHE__.'/lib/',
+            __LETHE_LETHE__ . '/interfaces/',
+            __LETHE_LETHE__ . '/lib/',
         ]);
 
         Config::init();
@@ -46,12 +51,9 @@ if( file_exists(__LETHE_LETHE__.'/lib/Lethe/Autoloader.php') )
         ob_end_clean();
 
         echo trim($buffer);
-
-    }catch(Exception $e)
-    {
-        echo 'Fix me: '.$e->getMessage();
+    } catch (Exception $e) {
+        echo 'Fix me: ' . $e->getMessage();
     }
-
-}else{
+} else {
     die('Lethe boot error, check core files.');
 }

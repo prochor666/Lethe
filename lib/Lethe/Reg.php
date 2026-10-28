@@ -13,16 +13,30 @@ class Reg
     final public function __construct(){}
 
     /**
+    * Ensure current session registry exists and is an array
+    * @return array
+    */
+    private static function ensureRegistry()
+    {
+        if (!isset($_SESSION['__lethe_registry']) || !is_array($_SESSION['__lethe_registry'])) {
+            $_SESSION['__lethe_registry'] = [];
+        }
+
+        if (!isset($_SESSION['__lethe_registry'][session_id()]) || !is_array($_SESSION['__lethe_registry'][session_id()])) {
+            $_SESSION['__lethe_registry'][session_id()] = [];
+        }
+
+        return $_SESSION['__lethe_registry'][session_id()];
+    }
+
+    /**
     * Session registry init, creating registry, use it once at boot
     * @param void
     * @return array
     */
     public static function init()
     {
-        if(!isset($_SESSION['__lethe_registry'][session_id()]) || !is_array($_SESSION['__lethe_registry']))
-        {
-            $_SESSION['__lethe_registry'][session_id()] = [];
-        }
+        self::ensureRegistry();
         self::release();
         return self::read();
     }
@@ -34,7 +48,7 @@ class Reg
     */
     public static function query($q = null)
     {
-        $origin = $_SESSION['__lethe_registry'][session_id()];
+        $origin = self::ensureRegistry();
         $section = explode('/', trim($q, ' /'));
         $result = false;
 
@@ -90,6 +104,7 @@ class Reg
     */
     public static function set($q = 'store/blind', $value = false)
     {
+        self::ensureRegistry();
         $branch = &$_SESSION['__lethe_registry'][session_id()];
         $section = explode('/', trim($q, ' /'));
 
@@ -118,7 +133,7 @@ class Reg
     */
     public static function read()
     {
-        return $_SESSION['__lethe_registry'][session_id()];
+        return self::ensureRegistry();
     }
 
     /**
@@ -128,6 +143,7 @@ class Reg
     */
     public static function reset()
     {
+        self::ensureRegistry();
         unset($_SESSION['__lethe_registry'][session_id()]);
         self::init();
         return self::read();
@@ -140,6 +156,7 @@ class Reg
     */
     private static function release()
     {
+        self::ensureRegistry();
         // Read only
         $config = [];
         //$_SESSION['__lethe_registry'][session_id()];

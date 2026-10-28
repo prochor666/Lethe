@@ -36,7 +36,7 @@ class Route
     public static function index($index = -1)
     {
         $r = Tools::chef(self::all(), $index, null);
-        return $r['path'];
+        return is_array($r) && array_key_exists('path', $r) ? $r['path'] : null;
     }
 
     /**

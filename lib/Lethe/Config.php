@@ -1,56 +1,59 @@
 <?php
+
 namespace Lethe;
 
 use Lethe\Tools;
 
 /**
-* Lethe\Config - Lethe configurator
-* @author Jan Prochazka, prochor666 <prochor666@gmail.com>
-*/
-class Config{
+ * Lethe\Config - Lethe configurator
+ * @author Jan Prochazka, prochor666 <prochor666@gmail.com>
+ */
+class Config
+{
+    private const PATH_SEPARATOR = '/';
 
     /**
-    * @ignore
-    */
-    private static $instance = NULL;
+     * @ignore
+     */
+    private static $instance = null;
 
     /**
-    * @ignore
-    */
+     * @ignore
+     */
     private static $config = [];
 
     /**
-    * @ignore
-    */
+     * @ignore
+     */
     private function __construct()
     {
+        // Nothing to do here
     }
 
     /**
-    * @ignore
-    */
+     * @ignore
+     */
     public function __clone()
     {
         trigger_error('Clone is not allowed.', E_USER_ERROR);
     }
 
     /**
-    * @ignore
-    */
+     * @ignore
+     */
     public function __wakeup()
     {
         trigger_error('Unserializing is not allowed.', E_USER_ERROR);
     }
 
     /**
-    * Config init, creating registry, use it once at boot
-    * @param void
-    * @return object
-    */
+     * Config init, creating registry, use it once at boot
+     * @param void
+     * @return object
+     */
     public static function init($config = [])
     {
-        if (self::$instance == NULL)
-        {
+        if (self::$instance == null) {
             self::$instance = new self();
             self::release($config);
         }
@@ -59,135 +62,192 @@ class Config{
     }
 
     /**
-    * Read key/value pair
-    * @param string $q
-    * @return mixed
-    */
+     * Read key/value pair
+     * @param string $q
+     * @return mixed
+     */
     public static function query($q = null)
     {
-        $origin = self::$config;
-        $section = explode('/', trim($q, ' /'));
-        //$valid = ['user', 'db', 'mail', 'store', 'system', 'error'];
-        $result = false;
-
-        if(count($section)>0 && array_key_exists($section[0], $origin)/* && in_array($section[0], $valid)*/ )
-        {
-            $lastRound = count($section)-1;
-
-            foreach($section as $k => $s)
-            {
-                if(array_key_exists($s, $origin))
-                {
-                    $origin = $origin[$s];
-
-                    if($lastRound == $k)
-                    {
-                        $result = $origin;
-                    }
-                }
-            }
-        }
-
-        return $result;
+        return self::getByPath(self::$config, self::normalizePath($q), false);
     }
 
     /**
-    * Config array, key/value pairs, multiple
-    * @param array $block
-    * @return void
-    */
-    public static function setBlock( $block = [] )
+     * Config array, key/value pairs, multiple
+     * @param array $block
+     * @return void
+     */
+    public static function setBlock($block = [])
     {
-        foreach($block as $k => $v)
-        {
+        if (!is_array($block)) {
+            return;
+        }
+
+        foreach ($block as $k => $v) {
             self::set($k, $v);
         }
     }
 
     /**
-    * Config array, key/value pairs, multiple, helper
-    * Alias for Reg::setBlock
-    * @param array $block
-    * @return void
-    */
-    public static function configure( $block = [] )
+     * Config array, key/value pairs, multiple, helper
+     * Alias for Reg::setBlock
+     * @param array $block
+     * @return void
+     */
+    public static function configure($block = [])
     {
-        if(is_array($block))
-        {
+        if (is_array($block)) {
             self::setBlock($block);
         }
     }
 
     /**
-    * Config pair, key/value pair
-    * @param string $q = 'path/to'
-    * @param mixed $value
-    * @return void
-    */
+     * Config pair, key/value pair
+     * @param string $q = 'path/to'
+     * @param mixed $value
+     * @return void
+     */
     public static function set($q = 'store/blind', $value = false)
     {
-        $branch = &self::$config;
-        $section = explode('/', trim($q, ' /'));
+        $section = self::normalizePath($q);
 
-        if(count($section)>1)
-        {
-            $lastRound = count($section)-1;
-
-            foreach($section as $k => $s)
-            {
-                if(is_object($branch))
-                {
-                    $branch = &$branch->$s;
-                }else{
-                    $branch = &$branch[$s];
-                }
-
-                if($lastRound == $k)
-                {
-                    $branch = $value;
-                }
-            }
-            unset($branch);
+        if (count($section) > 1) {
+            self::setByPath(self::$config, $section, $value);
         }
     }
 
     /**
-    * Read whole registry, use for development
-    * @param void
-    * @return array
-    */
+     * Read whole registry, use for development
+     * @param void
+     * @return array
+     */
     public static function read()
     {
         return self::$config;
     }
 
     /**
-    * Reset registry, recreate core defaults, use for development
-    * @param void
-    * @return array
-    */
+     * Reset registry, recreate core defaults, use for development
+     * @param void
+     * @return array
+     */
     public static function reset()
     {
         self::$config = [];
+        self::$instance = null;
         self::init();
         return self::read();
     }
 
     /**
-    * Set proper and safe session cookie
-    * @param integer sessionLifetime
-    * @return void
-    */
+     * Normalize slash-delimited config path
+     * @param mixed $q
+     * @return array
+     */
+    private static function normalizePath($q)
+    {
+        $q = trim((string)$q, ' ' . self::PATH_SEPARATOR);
+        if ($q === '') {
+            return [];
+        }
+
+        return explode(self::PATH_SEPARATOR, $q);
+    }
+
+    /**
+     * Read value by normalized config path
+     * @param mixed $origin
+     * @param array $section
+     * @param mixed $default
+     * @return mixed
+     */
+    private static function getByPath($origin, $section = [], $default = false)
+    {
+        if (!is_array($section) || count($section) === 0) {
+            return $default;
+        }
+
+        foreach ($section as $segment) {
+            if (is_array($origin) && array_key_exists($segment, $origin)) {
+                $origin = $origin[$segment];
+                continue;
+            }
+
+            if (is_object($origin) && isset($origin->$segment)) {
+                $origin = $origin->$segment;
+                continue;
+            }
+
+            return $default;
+        }
+
+        return $origin;
+    }
+
+    /**
+     * Write value by normalized config path
+     * @param array|object $origin
+     * @param array $section
+     * @param mixed $value
+     * @return void
+     */
+    private static function setByPath(&$origin, $section = [], $value = false)
+    {
+        if (!is_array($section) || count($section) === 0) {
+            return;
+        }
+
+        $branch = &$origin;
+        $lastRound = count($section) - 1;
+
+        foreach ($section as $k => $segment) {
+            if ($lastRound === $k) {
+                if (is_object($branch)) {
+                    $branch->$segment = $value;
+                } else {
+                    $branch[$segment] = $value;
+                }
+                break;
+            }
+
+            if (is_object($branch)) {
+                if (!isset($branch->$segment) || (!is_array($branch->$segment) && !is_object($branch->$segment))) {
+                    $branch->$segment = [];
+                }
+                $branch = &$branch->$segment;
+            } else {
+                if (!isset($branch[$segment]) || (!is_array($branch[$segment]) && !is_object($branch[$segment]))) {
+                    $branch[$segment] = [];
+                }
+                $branch = &$branch[$segment];
+            }
+        }
+
+        unset($branch);
+    }
+
+    /**
+     * Remove trailing slash from derived URL-like value
+     * @param string $value
+     * @return string
+     */
+    private static function trimTrailingSlash($value)
+    {
+        $value = (string)$value;
+        return mb_substr($value, -1, 1, 'UTF-8') === '/' ? mb_substr($value, 0, -1, 'UTF-8') : $value;
+    }
+
+    /**
+     * Set proper and safe session cookie
+     * @param integer sessionLifetime
+     * @return void
+     */
     public static function cookieDomain($sessionLifetime)
     {
 
-        if(isset($_SERVER['HTTP_HOST']))
-        {
-            if(strpos($_SERVER['HTTP_HOST'], ':') !== false)
-            {
+        if (isset($_SERVER['HTTP_HOST'])) {
+            if (strpos($_SERVER['HTTP_HOST'], ':') !== false) {
                 $domain = substr($_SERVER['HTTP_HOST'], 0, (int)strpos($_SERVER['HTTP_HOST'], ':'));
-
-            }else{
+            } else {
                 $domain = $_SERVER['HTTP_HOST'];
             }
 
@@ -197,41 +257,47 @@ class Config{
             // first. For hosts such as 'localhost', we don't set a cookie domain.
             $nd = explode('.', $domain);
 
-            if (count($nd) > 2)
-            {
-
+            if (count($nd) > 2) {
                 unset($nd[0]);
-
                 $rootDomain = implode('.', $nd);
-
             }
 
-            session_set_cookie_params ( $sessionLifetime, '/', '.'.$rootDomain, Tools::ssl(), true );
+            if (PHP_VERSION_ID >= 70300) {
+                session_set_cookie_params([
+                    'lifetime' => $sessionLifetime,
+                    'path' => '/',
+                    'domain' => '.' . $rootDomain,
+                    'secure' => Tools::ssl(),
+                    'httponly' => true,
+                    'samesite' => 'Lax',
+                ]);
+            } else {
+                ini_set('session.cookie_samesite', 'Lax');
+                session_set_cookie_params($sessionLifetime, '/', '.' . $rootDomain, Tools::ssl(), true);
+            }
         }
     }
 
     /**
-    * Initialize registry, core values, readonly system variables
-    * @param void
-    * @return void
-    */
+     * Initialize registry, core values, readonly system variables
+     * @param void
+     * @return void
+     */
     private static function release($config = [])
     {
         // Read only
-        $config = !is_array($config) ? []: $config;
-        $valid =['db', 'mail', 'store', 'system'];
+        $config = !is_array($config) ? [] : $config;
+        $valid = ['db', 'mail', 'store', 'system'];
 
-        foreach($valid as $v)
-        {
-            if(!Tools::chef(self::$config, $v))
-            {
+        foreach ($valid as $v) {
+            if (!Tools::chef(self::$config, $v)) {
                 $config[$v] = [];
             }
         }
 
         // Server override
-        $__SERVER_NAME = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST']: PHP_SAPI;
-        $__REQUEST_URI = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI']: '';
+        $__SERVER_NAME = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : PHP_SAPI;
+        $__REQUEST_URI = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
 
         // INIT defaults
 
@@ -239,17 +305,18 @@ class Config{
         $config['system']['root'] = __LETHE_ROOT__;
 
         // Protocol
-        $config['system']['protocol'] = Tools::ssl() === true ? 'https://': 'http://';
+        $config['system']['protocol'] = Tools::ssl() === true ? 'https://' : 'http://';
 
         // Port umber
-        $config['system']['port'] = isset($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != '80' && $_SERVER["SERVER_PORT"] != '443' ? (int)$_SERVER["SERVER_PORT"]: 80;
+        $config['system']['port'] = isset($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != '80' && $_SERVER["SERVER_PORT"] != '443' ? (int)$_SERVER["SERVER_PORT"] : 80;
 
         // Port used in URLs
-        $config['system']['portPath'] = isset($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != '80' && $_SERVER["SERVER_PORT"] != '443' ? ':'.$_SERVER["SERVER_PORT"]: null;
+        $config['system']['portPath'] = isset($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != '80' && $_SERVER["SERVER_PORT"] != '443' ? ':' . $_SERVER["SERVER_PORT"] : null;
 
         // Full site, domain and REQUEST_URI (only dirname)
-        $config['system']['site'] = (string)( $config['system']['protocol'].$__SERVER_NAME.$config['system']['portPath'].$__REQUEST_URI );
-        $config['system']['site'] = mb_substr((string)$config['system']['site'], -1, 1, 'UTF-8') === '/' ? mb_substr((string)$config['system']['site'], 0, -1, 'UTF-8'): $config['system']['site'];
+        $config['system']['site'] = self::trimTrailingSlash(
+            (string)($config['system']['protocol'] . $__SERVER_NAME . $config['system']['portPath'] . $__REQUEST_URI)
+        );
 
         // Full site, domain and REQUEST_URI (only dirname),
         // Mostly the same as site, but if you use some htaccess tricks:
@@ -257,29 +324,34 @@ class Config{
         // ReWriteCond %{REQUEST_URI} public-fake-dir
         // ReWriteRule ^public-fake-dir/(.*)$ real/server/directory/$1 [L,QSA]
         // siteOrigin will point to 'real/server/directory'
-        $config['system']['siteOrigin'] = (string)( $config['system']['protocol'].$__SERVER_NAME.$config['system']['portPath'].dirname($_SERVER['SCRIPT_NAME']) );
-        $config['system']['siteOrigin'] = mb_substr((string)$config['system']['siteOrigin'], -1, 1, 'UTF-8') === '/' ? mb_substr((string)$config['system']['siteOrigin'], 0, -1, 'UTF-8'): $config['system']['siteOrigin'];
+        $scriptDir = isset($_SERVER['SCRIPT_NAME']) ? str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])) : '';
+        $scriptDir = $scriptDir === '.' || $scriptDir === '/' ? '' : '/' . trim($scriptDir, '/');
+        $config['system']['siteOrigin'] = self::trimTrailingSlash(
+            (string)($config['system']['protocol'] . $__SERVER_NAME . $config['system']['portPath'] . $scriptDir)
+        );
 
         // Domain used in system
-        $config['system']['domain'] = (string)( $config['system']['protocol'].$__SERVER_NAME.$config['system']['portPath'] );
+        $config['system']['domain'] = (string)($config['system']['protocol']
+            . $__SERVER_NAME . $config['system']['portPath']);
 
         // Clear domain name without www or http...
-        $config['system']['domainName'] = str_replace('www.', NULL, (string)$__SERVER_NAME);
+        $config['system']['domainName'] = str_replace('www.', '', (string)$__SERVER_NAME);
 
         // Full address
-        $config['system']['url'] = $config['system']['protocol'].$__SERVER_NAME.$config['system']['portPath'].$__REQUEST_URI;
+        $config['system']['url'] = $config['system']['protocol']
+            . $__SERVER_NAME . $config['system']['portPath'] . $__REQUEST_URI;
 
         // Relative path
-        $config['system']['rel'] = isset($_SERVER['REQUEST_URI']) ? $__REQUEST_URI: '/';
+        $config['system']['rel'] = isset($_SERVER['REQUEST_URI']) ? $__REQUEST_URI : '/';
 
         // Browser address parsed
         $config['system']['urlArray'] = parse_url($config['system']['url']);
+        $config['system']['urlArray'] = is_array($config['system']['urlArray']) ? $config['system']['urlArray'] : [];
 
         // Browser query string parsed
         $_queryArray = [];
-        if( array_key_exists('query', $config['system']['urlArray']) )
-        {
-            parse_str( $config['system']['urlArray']['query'], $_queryArray );
+        if (array_key_exists('query', $config['system']['urlArray'])) {
+            parse_str($config['system']['urlArray']['query'], $_queryArray);
         }
         $config['system']['queryArray'] = $_queryArray;
 
@@ -293,10 +365,10 @@ class Config{
         $config['system']['initMemPeakTop'] = memory_get_peak_usage(true);
 
         // Browser language
-        $config['system']['lang'] = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2): 'en';
+        $config['system']['lang'] = isset($_SERVER['HTTP_ACCEPT_LANGUAGE']) ? substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2) : 'en';
 
         // Browser type
-        $config['system']['userAgent'] = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"]: 'Unknown';
+        $config['system']['userAgent'] = isset($_SERVER["HTTP_USER_AGENT"]) ? $_SERVER["HTTP_USER_AGENT"] : 'Unknown';
 
         // OS type
         $config['system']['os'] = PHP_OS;
@@ -308,7 +380,7 @@ class Config{
         $config['system']['productName'] = 'Lethe';
 
         // System version
-        $config['system']['version'] = '0.9.16';
+        $config['system']['version'] = '0.10.0';
 
         // Code name
         $config['system']['productCodename'] = 'Catacombs';
