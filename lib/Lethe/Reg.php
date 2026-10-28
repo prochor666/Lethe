@@ -50,26 +50,15 @@ class Reg
     {
         $origin = self::ensureRegistry();
         $section = explode('/', trim($q, ' /'));
-        $result = false;
 
-        if(count($section)>0 && array_key_exists($section[0], $origin) )
-        {
-            $lastRound = count($section)-1;
-
-            foreach($section as $k => $s)
-            {
-                if(array_key_exists($s, $origin))
-                {
-                    $origin = $origin[$s];
-                    if($lastRound == $k)
-                    {
-                        $result = $origin;
-                    }
-                }
+        foreach ($section as $segment) {
+            if (!is_array($origin) || !array_key_exists($segment, $origin)) {
+                return false;
             }
+            $origin = $origin[$segment];
         }
 
-        return $result;
+        return $origin;
     }
 
     /**
