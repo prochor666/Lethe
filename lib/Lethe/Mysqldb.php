@@ -8,7 +8,7 @@ namespace Lethe;
  */
 class Mysqldb extends Lethe
 {
-    private $host, $db, $user, $password, $engine, $driver, $port, $errors, $stat, $persistent;
+    private $host, $db, $user, $password, $engine, $driver, $port, $errors, $stat, $persistent, $linkKey;
     private static $persistentLinks = [];
 
     /**
@@ -70,6 +70,27 @@ class Mysqldb extends Lethe
         return $this->errors;
     }
 
+    private function withMysqliReportDisabled($operation)
+    {
+        $previousMode = (new \mysqli_driver())->report_mode;
+        mysqli_report(MYSQLI_REPORT_OFF);
+        try {
+            return $operation();
+        } finally {
+            mysqli_report($previousMode);
+        }
+    }
+
+    private function closeMysqliLink($link, $invalidate = false)
+    {
+        if ($invalidate) {
+            unset(self::$persistentLinks[$this->linkKey]);
+        }
+        if ($this->persistent !== true || $invalidate) {
+            mysqli_close($link);
+        }
+    }
+
     /**
      * Database connection
      * @param array $conf
@@ -77,38 +98,52 @@ class Mysqldb extends Lethe
      */
     private function connect()
     {
+        if ($this->host === null || $this->db === null || $this->user === null || $this->password === null) {
+            return false;
+        }
+
         if ($this->driver == 'ext/mysqli') {
-            if (function_exists('mysqli_report')) {
-                mysqli_report(MYSQLI_REPORT_OFF);
-            }
-
-            $host = $this->host;
-            if ($this->persistent === true && strpos($host, 'p:') !== 0) {
-                $host = 'p:' . $host;
-            }
-            $linkKey = $host . '|' . $this->port . '|' . $this->db . '|' . $this->user;
-
-            if ($this->persistent === true && isset(self::$persistentLinks[$linkKey])) {
-                $link = self::$persistentLinks[$linkKey];
-            } else {
-                $link = mysqli_init();
-                if (!$link) {
-                    $link = false;
-                } else {
-                    $link = @mysqli_connect($host, $this->user, $this->password, $this->db, (int)$this->port);
-                    if ($link !== false) {
-                        mysqli_set_charset($link, "utf8");
-                        if ($this->persistent === true) {
-                            self::$persistentLinks[$linkKey] = $link;
-                        }
-                    }
+            return $this->withMysqliReportDisabled(function () {
+                $host = $this->host;
+                if ($this->persistent === true && strpos($host, 'p:') !== 0) {
+                    $host = 'p:' . $host;
                 }
-            }
+                $this->linkKey = hash('sha256', serialize([$host, (int)$this->port, $this->db, $this->user, $this->password]));
 
-            if ($link === false) {
-                $this->error('MySQL connection error: ' . mysqli_connect_error());
-            }
+                if ($this->persistent === true && isset(self::$persistentLinks[$this->linkKey])) {
+                    $link = self::$persistentLinks[$this->linkKey];
+                    try {
+                        if (@mysqli_thread_id($link) > 0) {
+                            $this->stat = true;
+                            return $link;
+                        }
+                    } catch (\Throwable $error) {
+                        // PHP 8 throws for a closed handle; PHP 7 returns false/null.
+                    }
+                    unset(self::$persistentLinks[$this->linkKey]);
+                }
+
+                $link = @mysqli_connect($host, $this->user, $this->password, $this->db, (int)$this->port);
+                if ($link === false) {
+                    $this->error('MySQL connection error: ' . mysqli_connect_error());
+                    return false;
+                }
+                if (!mysqli_set_charset($link, "utf8")) {
+                    $this->error('MySQL charset error: ' . mysqli_error($link));
+                    $this->closeMysqliLink($link, true);
+                    return false;
+                }
+                $this->stat = true;
+                if ($this->persistent === true) {
+                    self::$persistentLinks[$this->linkKey] = $link;
+                }
+                return $link;
+            });
         } else {
+            if (!function_exists('mysql_connect')) {
+                $this->error('MySQL extension is not available');
+                return false;
+            }
             $link = $this->persistent === true ? @mysql_pconnect($this->host, $this->user, $this->password) : @mysql_connect($this->host, $this->user, $this->password);
             if ($link !== false) {
                 $db = @mysql_select_db($this->db, $link);
@@ -141,14 +176,24 @@ class Mysqldb extends Lethe
     public function query($sqlquery)
     {
         $link = $this->connect();
+        if ($link === false) {
+            return $this->getErrors();
+        }
 
         if ($this->driver == 'ext/mysqli') {
-            $result = !$link ? false : mysqli_query($link, $sqlquery);
-            if ($result === false && $link !== false) {
-                $this->error('MySQL query error: ' . mysqli_error($link) . ' Query: ' . $sqlquery);
-            } elseif ($link !== false && $this->persistent !== true) {
-                mysqli_close($link);
-            }
+            $result = $this->withMysqliReportDisabled(function () use ($link, $sqlquery) {
+                $invalidate = false;
+                try {
+                    $result = @mysqli_query($link, $sqlquery);
+                    if ($result === false) {
+                        $invalidate = in_array(mysqli_errno($link), [2006, 2013, 2055], true);
+                        $this->error('MySQL query error: ' . mysqli_error($link) . ' Query: ' . $sqlquery);
+                    }
+                    return $result;
+                } finally {
+                    $this->closeMysqliLink($link, $invalidate);
+                }
+            });
         } else {
             $result = !mysql_error() ? mysql_query(trim($sqlquery), $link) : false;
 
@@ -174,30 +219,33 @@ class Mysqldb extends Lethe
         $data = [];
 
         if ($this->driver == 'ext/mysqli') {
-            if ($this->stat === true && mysqli_num_rows($result) > 0) {
-                switch ($type) {
-                    case "array":
-                        while ($row = mysqli_fetch_array($result)) {
-                            array_push($data, $row);
+            if ($result instanceof \mysqli_result) {
+                try {
+                    if (mysqli_num_rows($result) > 0) {
+                        switch ($type) {
+                            case "array":
+                                while ($row = mysqli_fetch_array($result)) {
+                                    array_push($data, $row);
+                                }
+                                break;
+                            case "row":
+                                while ($row = mysqli_fetch_row($result)) {
+                                    array_push($data, $row);
+                                }
+                                break;
+                            case 'object':
+                                $data = mysqli_fetch_object($result);
+                                break;
+                            case "assoc":
+                            default:
+                                while ($row = mysqli_fetch_assoc($result)) {
+                                    array_push($data, $row);
+                                }
                         }
-                        break;
-                    case "row":
-                        while ($row = mysqli_fetch_row($result)) {
-                            array_push($data, $row);
-                        }
-                        break;
-                    case 'object':
-                        $data =  mysqli_fetch_object($result);
-
-                        break;
-                    case "assoc":
-                    default:
-                        while ($row = mysqli_fetch_assoc($result)) {
-                            array_push($data, $row);
-                        }
+                    }
+                } finally {
+                    mysqli_free_result($result);
                 }
-
-                mysqli_free_result($result);
             }
         } else {
             if ($this->stat === true && mysql_num_rows($result) > 0) {
@@ -251,17 +299,21 @@ class Mysqldb extends Lethe
      */
     public function sanitize($data)
     {
+        $link = $this->connect();
+        if ($link === false) {
+            return false;
+        }
         if ($this->driver == 'ext/mysqli') {
-            $link = $this->connect();
-            $result = !$link ? false : mysqli_real_escape_string($link, $data);
-            if ($result === false) {
-                $this->error('MySQL error: ' . mysqli_connect_error());
-            } elseif ($this->persistent !== true) {
-                mysqli_close($link);
+            try {
+                $result = mysqli_real_escape_string($link, $data);
+                if ($result === false) {
+                    $this->error('MySQL error: ' . mysqli_connect_error());
+                }
+            } finally {
+                $this->closeMysqliLink($link);
             }
         } else {
             @mysql_set_charset('utf8');
-            $link = $this->connect();
             $result = !$link ? mysql_real_escape_string($data, $link) : false;
             if ($result === false) {
                 $this->error('MySQL error: ' . mysql_error());
@@ -280,17 +332,21 @@ class Mysqldb extends Lethe
      */
     public function version()
     {
+        $link = $this->connect();
+        if ($link === false) {
+            return '';
+        }
         if ($this->driver == 'ext/mysqli') {
-            $link = $this->connect();
-            $result = !$link ? false : mysqli_get_server_info($link);
-            if ($result === false) {
-                $this->error('MySQL error: ' . mysqli_connect_error());
-            } elseif ($this->persistent !== true) {
-                mysqli_close($link);
+            try {
+                $result = mysqli_get_server_info($link);
+                if ($result === false) {
+                    $this->error('MySQL error: ' . mysqli_connect_error());
+                }
+            } finally {
+                $this->closeMysqliLink($link);
             }
         } else {
             @mysql_set_charset('utf8');
-            $link = $this->connect();
             $result = !$link ? mysql_get_server_info($link) : false;
             if ($result === false) {
                 $this->error('MySQL error: ' . mysql_error());
