@@ -173,6 +173,60 @@ class Mysqldb extends Lethe
      * @param string $query
      * @return bool|resource
      */
+    public function preparedResult($sql, array $params = []) {
+        return $this->prepared($sql, $params, true);
+    }
+
+    /** Returns affected row count, including zero for a concurrent conditional update. */
+    public function preparedQuery($sql, array $params = []) {
+        return $this->prepared($sql, $params, false);
+    }
+
+    private function prepared($sql, array $params, $fetch) {
+        if ($this->driver !== 'ext/mysqli') { throw new \RuntimeException('Prepared queries require mysqli'); }
+        $link = $this->connect();
+        if ($link === false) { throw new \RuntimeException('Database unavailable'); }
+        return $this->withMysqliReportDisabled(function () use ($sql, $params, $fetch, $link) {
+            $statement = false; $metadata = false;
+            try {
+                $statement = mysqli_prepare($link, $sql);
+                if (!$statement || mysqli_stmt_param_count($statement) !== count($params)) { throw new \RuntimeException('Database prepare failed'); }
+                $types = ''; $values = array_values($params);
+                foreach ($values as &$value) {
+                    if (is_bool($value)) { $value = (int)$value; }
+                    if (is_int($value)) { $types .= 'i'; }
+                    elseif (is_float($value) && is_finite($value)) { $types .= 'd'; }
+                    elseif (is_string($value) || $value === null) { $types .= 's'; }
+                    else { throw new \InvalidArgumentException('Invalid database parameter'); }
+                }
+                unset($value);
+                if ($values && !mysqli_stmt_bind_param($statement, $types, ...$values)) { throw new \RuntimeException('Database bind failed'); }
+                if (!mysqli_stmt_execute($statement)) { throw new \RuntimeException('Database execute failed'); }
+                if (!$fetch) { return mysqli_stmt_affected_rows($statement); }
+                // bind_result works without mysqlnd/get_result and preserves associative column names.
+                $metadata = mysqli_stmt_result_metadata($statement);
+                if (!$metadata) { throw new \RuntimeException('Database result unavailable'); }
+                $row = []; $references = [];
+                foreach (mysqli_fetch_fields($metadata) as $field) {
+                    $row[$field->name] = null; $references[] = &$row[$field->name];
+                }
+                if (!mysqli_stmt_bind_result($statement, ...$references)) { throw new \RuntimeException('Database result bind failed'); }
+                $rows = [];
+                while (($status = mysqli_stmt_fetch($statement)) === true) {
+                    $copy = [];
+                    foreach ($row as $key => $value) { $copy[$key] = $value; }
+                    $rows[] = $copy;
+                }
+                if ($status === false) { throw new \RuntimeException('Database fetch failed'); }
+                return $rows;
+            } finally {
+                if ($metadata) { mysqli_free_result($metadata); }
+                if ($statement) { mysqli_stmt_close($statement); }
+                $this->closeMysqliLink($link);
+            }
+        });
+    }
+
     public function query($sqlquery)
     {
         $link = $this->connect();

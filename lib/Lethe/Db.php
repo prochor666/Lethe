@@ -80,6 +80,19 @@ class Db
         return $db->query($conf['query']);
     }
 
+    /** Separate parameterized API; existing callers and driver contracts are unchanged. */
+    public static function preparedResult($conf) {
+        $db = self::instance($conf);
+        if (!method_exists($db, 'preparedResult')) { throw new \RuntimeException('Prepared queries unsupported by driver'); }
+        return $db->preparedResult($conf['query'], $conf['params'] ?? []);
+    }
+
+    public static function preparedQuery($conf) {
+        $db = self::instance($conf);
+        if (!method_exists($db, 'preparedQuery')) { throw new \RuntimeException('Prepared queries unsupported by driver'); }
+        return $db->preparedQuery($conf['query'], $conf['params'] ?? []);
+    }
+
     /**
      * Get next autoincrement value
      * @param array $conf

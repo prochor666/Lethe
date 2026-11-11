@@ -49,7 +49,7 @@ class Reg
     public static function query($q = null)
     {
         $origin = self::ensureRegistry();
-        $section = explode('/', trim($q, ' /'));
+        $section = explode('/', trim($q === null ? '': $q, ' /'));
 
         foreach ($section as $segment) {
             if (!is_array($origin) || !array_key_exists($segment, $origin)) {
@@ -95,7 +95,7 @@ class Reg
     {
         self::ensureRegistry();
         $branch = &$_SESSION['__lethe_registry'][session_id()];
-        $section = explode('/', trim($q, ' /'));
+        $section = explode('/', trim($q === null ? '': $q, ' /'));
 
         if(count($section)>1)
         {

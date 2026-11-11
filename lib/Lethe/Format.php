@@ -146,7 +146,10 @@ class Format
     public static function urlSafe($str, $delimiter='-', $pathSafe=false)
     {
         // Make sure string is in UTF-8 and strip invalid UTF-8 characters
-        $str = mb_convert_encoding((string)$str, 'UTF-8', mb_list_encodings());
+        $str = (string)$str;
+        if (!mb_check_encoding($str, 'UTF-8')) {
+            $str = mb_convert_encoding($str, 'UTF-8', mb_list_encodings());
+        }
         $char_map = array(
             // Latin
             'À' => 'A', 'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A', 'Æ' => 'AE', 'Ç' => 'C',

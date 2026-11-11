@@ -82,7 +82,25 @@ class Storage
     {
         if( self::canWrite($path) && self::isFile($path) )
         {
-            return unlink($path);
+            // The file can disappear between the checks above and unlink().
+            // Only that harmless race is handled here; forward all other warnings.
+            $previousHandler = null;
+            $previousHandler = set_error_handler(function ($level, $message, $file, $line, $context = []) use ($path, &$previousHandler) {
+                clearstatcache(true, $path);
+                if ($level === E_WARNING && strpos($message, 'No such file or directory') !== false
+                    && !file_exists($path) && !is_link($path)) {
+                    return true;
+                }
+                if ($previousHandler !== null) {
+                    return call_user_func($previousHandler, $level, $message, $file, $line, $context);
+                }
+                return false;
+            }, E_WARNING);
+            try {
+                return unlink($path);
+            } finally {
+                restore_error_handler();
+            }
         }
 
         return false;
