@@ -1,9 +1,18 @@
 Lethe
 =====
 
-PHP toolkit, version 0.10.3.
+PHP toolkit, version 0.10.4.
 
 Required: PHP 7.2 or later. Version 0.10.2 passed existing driver, native prepared-query, registry and missing-extension checks on PHP 7.2.24, 7.4.33, 8.3.32 and 8.5.12. Database checks used a disposable loopback MariaDB 12.0 instance; no application database was used.
+
+## Changes in 0.10.4
+
+- Require PHP 7.2.0 consistently in the bootstrap and Composer metadata.
+- Validate mbstring with multibyte regex support, root/package directory constants and the autoloader before initialization.
+- Propagate bootstrap failures to the application's exception handler instead of printing internal messages and continuing with partial initialization. The application owns error logging and HTTP error responses; production must disable display_errors.
+- Restore the caller's output-buffer depth on success and on any Throwable, discarding partial bootstrap output on failure.
+- Remove the invalid mb_http_input('UTF-8') query; this function detects input encoding and does not configure it. Keep UTF-8 internal, output and regex settings.
+- Standalone bootstrap regression: `php tests/lethe/boot-regression.php`. Uses isolated PHP processes and temporary fixture files only, without a database or network.
 
 ## Changes in 0.10.3
 

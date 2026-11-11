@@ -5,40 +5,40 @@
  * @author Jan Prochazka, prochor666 <prochor666@gmail.com>
  * @package Lethe
  */
-if (version_compare(PHP_VERSION, '5.3.0', '<')) {
-    die('Now runing ' . PHP_VERSION . '. You need PHP version 5.3.0 or later.');
-}
-
-mb_internal_encoding('UTF-8');
-mb_http_output('UTF-8');
-// Volání mb_http_input('UTF-8') nastavuje očekávané kódování vstupních dat pouze v PHP < 8.0.
-// Od PHP 8.0 již není možné kódování tímto způsobem nastavovat a PHP pracuje s UTF-8 jako výchozím.
-// Pokud by bylo potřeba detekovat kódování vstupu, lze použít mb_http_input() bez argumentu.
-if (PHP_VERSION_ID < 80000) {
-    mb_http_input('UTF-8');
-}
-mb_language('uni');
-mb_regex_encoding('UTF-8');
-
-/*
-* *****************************************
-*  MAIN CONFIGURATION + CORE LOAD   *
-* *****************************************
-*/
-
-use Lethe\Lethe;
 use Lethe\Autoloader;
 use Lethe\Config;
 use Lethe\Reg;
-use Lethe\Tools;
 
-if (file_exists(__LETHE_LETHE__ . '/lib/Lethe/Autoloader.php')) {
-    require_once __LETHE_LETHE__ . '/lib/Lethe/Autoloader.php';
+(static function () {
+    if (version_compare(PHP_VERSION, '7.2.0', '<')) {
+        throw new RuntimeException('Lethe requires PHP 7.2.0 or later; currently running ' . PHP_VERSION . '.');
+    }
+
+    if (!extension_loaded('mbstring') || !function_exists('mb_regex_encoding')) {
+        throw new RuntimeException('Lethe requires the mbstring extension with multibyte regex support.');
+    }
+
+    foreach (['__LETHE_LETHE__', '__LETHE_ROOT__'] as $constant) {
+        if (!defined($constant) || !is_string(constant($constant)) || !is_dir(constant($constant))) {
+            throw new RuntimeException('Lethe requires ' . $constant . ' to point to an existing directory.');
+        }
+    }
+
+    $autoloader = __LETHE_LETHE__ . '/lib/Lethe/Autoloader.php';
+    if (!is_file($autoloader) || !is_readable($autoloader)) {
+        throw new RuntimeException('Lethe boot error: missing or unreadable Autoloader.php.');
+    }
+
+    $bufferLevel = ob_get_level();
+    ob_start('mb_output_handler');
 
     try {
-        ob_start('mb_output_handler');
+        mb_internal_encoding('UTF-8');
+        mb_http_output('UTF-8');
+        mb_language('uni');
+        mb_regex_encoding('UTF-8');
 
-
+        require_once $autoloader;
         Autoloader::init()->register([
             __LETHE_LETHE__ . '/interfaces/',
             __LETHE_LETHE__ . '/lib/',
@@ -48,12 +48,12 @@ if (file_exists(__LETHE_LETHE__ . '/lib/Lethe/Autoloader.php')) {
         Reg::init();
 
         $buffer = ob_get_contents();
-        ob_end_clean();
-
-        echo trim($buffer);
-    } catch (Exception $e) {
-        echo 'Fix me: ' . $e->getMessage();
+    } finally {
+        // Clean up on success and on any Throwable; keep the caller's buffers intact.
+        while (ob_get_level() > $bufferLevel) {
+            ob_end_clean();
+        }
     }
-} else {
-    die('Lethe boot error, check core files.');
-}
+
+    echo trim($buffer);
+})();
